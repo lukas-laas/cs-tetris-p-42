@@ -9,8 +9,8 @@ class Board
     private int height = 40;
     private int visibleHeight = 20;
     private List<List<bool>> collisionGrid;
-    private List<Block> blocks; // Settled blocks on the board only to render colors
-    private List<Block> fallingBlocks; // usually just one but debuffs might change that
+    private List<Tetromino> blocks; // Settled blocks on the board only to render colors
+    private List<Tetromino> fallingBlocks; // usually just one but debuffs might change that
 
     public Board()
     {

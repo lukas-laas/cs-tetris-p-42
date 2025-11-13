@@ -2,7 +2,8 @@
     "dotnet.defaultSolution": "Tetris.sln",
     "cSpell.words": [
         "debuffs",
-        "Tetris"
+        "Tetris",
+        "Tetromino"
     ],
     "editor.tabSize": 4,
     "editor.detectIndentation": false
