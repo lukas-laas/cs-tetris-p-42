@@ -7,15 +7,19 @@ class Renderer
         List<Tetromino> tetrominoes = board.Tetrominoes;
         List<Tetromino> fallingTetrominoes = board.FallingTetrominoes;
 
+        const int TitleWidth = 24;
+        string titlePadLeft = new(' ', (int)Math.Floor((Console.WindowWidth - TitleWidth) / 2d));
+
         string buffer = "";
-        buffer += """
+        buffer += $"""
         
-            ▄▄▄▄ ▄▄▄ ▄▄▄▄ ▄▄▖ ▗▖ ▗▄▖ 
-             ▐▌  █▄   ▐▌  █▂█ ▐▌ ▀▙▝
-             ▐▌  █▄▄  ▐▌  █▀▙ ▐▌ ▜▄▛
+        {titlePadLeft}▄▄▄▄ ▄▄▄ ▄▄▄▄ ▄▄▖ ▗▖ ▗▄▖ 
+        {titlePadLeft} ▐▌  █▄   ▐▌  █▂█ ▐▌ ▀▙▝
+        {titlePadLeft} ▐▌  █▄▄  ▐▌  █▀▙ ▐▌ ▜▄▛
 
 
         """;
+
 
         for (int y = board.VisibleHeight; y < board.Height; y++)
         {
