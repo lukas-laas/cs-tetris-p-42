@@ -1,3 +1,4 @@
+global using CollisionGrid = System.Collections.Generic.List<System.Collections.Generic.List<bool>>;
 
 class Board
 {
@@ -5,16 +6,21 @@ class Board
 
     // Color info (affected by buffs/debuffs)
 
-    private int width = 10;
-    private int height = 40;
-    private int visibleHeight = 20;
-    private List<List<bool>> collisionGrid;
-    private List<Tetromino> blocks; // Settled blocks on the board only to render colors
-    private List<Tetromino> fallingBlocks; // usually just one but debuffs might change that
+    public int Width { get; private set; } = 10;
+    public int Height { get; private set; } = 40;
+    public int VisibleHeight { get; private set; } = 20;
+
+    private CollisionGrid collisionGrid;
+    private List<Tetromino> tetrominoes = []; // Settled blocks on the board only to render colors
+    private List<Tetromino> fallingTetrominoes = []; // usually just one but debuffs might change that
+
+    public CollisionGrid CollisionGrid => collisionGrid;
+    public List<Tetromino> Tetrominoes => tetrominoes;
+    public List<Tetromino> FallingTetrominoes => fallingTetrominoes;
 
     public Board()
     {
-        collisionGrid = [.. new List<List<bool>>(height).Select(_ => new List<bool>(width).Select(__ => false).ToList())];
+        collisionGrid = [.. new CollisionGrid(Height).Select(_ => new List<bool>(Width).Select(__ => false).ToList())];
     }
 
 }
