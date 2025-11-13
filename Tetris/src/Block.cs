@@ -36,6 +36,26 @@ class TetrominoI : Tetromino
     { }
 }
 
+class TetrominoJ : Tetromino
+{
+    public TetrominoJ() : base(new int[,] {
+            { 1, 0, 0},
+            { 1, 1, 1},
+            { 0, 0, 0},
+        })
+    { }
+}
+
+class TetrominoL : Tetromino
+{
+    public TetrominoL() : base(new int[,] {
+            { 0, 0, 1},
+            { 1, 1, 1},
+            { 0, 0, 0},
+        })
+    { }
+}
+
 class TetrominoO : Tetromino
 {
     public TetrominoO() : base(new int[,] {
@@ -47,6 +67,36 @@ class TetrominoO : Tetromino
 
     new public static void Rotate()
     {
-        // O Tetromino does not rotate
+        // O Tetromino does not rotate}
     }
+}
+
+class TetrominoS : Tetromino
+{
+    public TetrominoS() : base(new int[,] {
+            { 0, 1, 1},
+            { 1, 1, 0},
+            { 0, 0, 0},
+        })
+    { }
+}
+
+class TetrominoT : Tetromino
+{
+    public TetrominoT() : base(new int[,] {
+            { 0, 1, 0},
+            { 1, 1, 1},
+            { 0, 0, 0},
+        })
+    { }
+}
+
+class TetrominoZ : Tetromino
+{
+    public TetrominoZ() : base(new int[,] {
+            { 1, 1, 0},
+            { 0, 1, 1},
+            { 0, 0, 0},
+        })
+    { }
 }
