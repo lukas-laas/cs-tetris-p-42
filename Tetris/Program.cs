@@ -2,6 +2,6 @@
 {
     private static void Main(string[] args)
     {
-
+        // https://tetris.wiki/Tetris_Guideline
     }
 }
