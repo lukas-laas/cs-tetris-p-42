@@ -12,14 +12,15 @@ class Renderer
 
         string buffer = "";
         buffer += $"""
-        
-        {titlePadLeft}▄▄▄▄ ▄▄▄ ▄▄▄▄ ▄▄▖ ▗▖ ▗▄▖ 
-        {titlePadLeft} ▐▌  █▄   ▐▌  █▂█ ▐▌ ▀▙▝
-        {titlePadLeft} ▐▌  █▄▄  ▐▌  █▀▙ ▐▌ ▜▄▛
 
+        {titlePadLeft}╔══════════════════════════╗
+        {titlePadLeft}║ ▄▄▄▄ ▄▄▄ ▄▄▄▄ ▄▄▖ ▗▖ ▗▄▖ ║
+        {titlePadLeft}║  ▐▌  █▄   ▐▌  █▂█ ▐▌ ▀▙▝ ║
+        {titlePadLeft}║  ▐▌  █▄▄  ▐▌  █▀▙ ▐▌ ▜▄▛ ║
+        {titlePadLeft}║                          ║
+        {titlePadLeft}▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 
         """;
-
 
         for (int y = board.VisibleHeight; y < board.Height; y++)
         {
