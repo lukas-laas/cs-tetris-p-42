@@ -1,3 +1,7 @@
 {
-  "dotnet.defaultSolution": "Tetris.sln"
+    "dotnet.defaultSolution": "Tetris.sln",
+    "cSpell.words": [
+        "debuffs",
+        "Tetris"
+    ],
 }
