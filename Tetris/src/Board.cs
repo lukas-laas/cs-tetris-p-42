@@ -1,4 +1,3 @@
-global using CollisionGrid = System.Collections.Generic.List<System.Collections.Generic.List<bool>>;
 
 class Board
 {
@@ -10,7 +9,7 @@ class Board
     public int Height { get; private set; } = 40;
     public int VisibleHeight { get; private set; } = 20;
 
-    private CollisionGrid collisionGrid;
+    private CollisionGrid collisionGrid = [];
     private List<Tetromino> tetrominoes = []; // Settled blocks on the board only to render colors
     private List<Tetromino> fallingTetrominoes = []; // usually just one but debuffs might change that
 
@@ -20,7 +19,10 @@ class Board
 
     public Board()
     {
-        collisionGrid = [.. new CollisionGrid(Height).Select(_ => new List<bool>(Width).Select(__ => false).ToList())];
+        for (int y = 0; y < Height; y++)
+        {
+            collisionGrid.Add([.. new bool[Width]]);
+        }
     }
 
 }
