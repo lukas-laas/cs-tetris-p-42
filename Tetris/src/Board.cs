@@ -10,7 +10,7 @@ class Board
     public int VisibleHeight { get; private set; } = 20;
 
     private CollisionGrid collisionGrid = [];
-    private List<Tetromino> tetrominoes = []; // Settled blocks on the board only to render colors
+    private List<Tetromino> tetrominoes = []; // Settled tetrominoes on the board, to keep track of colors and for updating collision grid
     private List<Tetromino> fallingTetrominoes = []; // usually just one but debuffs might change that
 
     public CollisionGrid CollisionGrid => collisionGrid;
@@ -25,4 +25,46 @@ class Board
         }
     }
 
+    public void UpdateCollisionGrid()
+    {
+        // Clear grid
+        for (int y = 0; y < Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                collisionGrid[y][x] = false;
+            }
+        }
+
+        // Set occupied cells
+        List<Tetromino> allTetrominoes = [.. tetrominoes, .. fallingTetrominoes];
+        foreach (Tetromino tetromino in allTetrominoes)
+        {
+            foreach ((int x, int y) in tetromino.GetBlocks())
+            {
+                if (y >= 0 && y < Height && x >= 0 && x < Width)
+                {
+                    collisionGrid[y][x] = true;
+                }
+            }
+        }
+    }
+
+    public void AddTetromino(Tetromino tetromino, int? xPosition = null, int? yPosition = null)
+    {
+        fallingTetrominoes.Add(tetromino);
+        tetromino.SetPosition(xPosition ?? (Width / 2 - 2), yPosition ?? Height - VisibleHeight - 2);
+        UpdateCollisionGrid();
+    }
+
+    public void Tick()
+    {
+        // Move falling tetrominoes down by one
+        foreach (Tetromino tetromino in fallingTetrominoes)
+        {
+            tetromino.SetPosition(tetromino.X, tetromino.Y - 1);
+        }
+
+        UpdateCollisionGrid();
+    }
 }
