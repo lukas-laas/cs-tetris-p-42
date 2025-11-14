@@ -83,7 +83,9 @@ class TetrominoI : Tetromino
             { 0, 0, 0, 0},
             { 0, 0, 0, 0},
         })
-    { }
+    {
+        Color = AnsiColor.CyanCode;
+    }
 }
 
 class TetrominoJ : Tetromino
@@ -93,7 +95,9 @@ class TetrominoJ : Tetromino
             { 1, 1, 1},
             { 0, 0, 0},
         })
-    { }
+    {
+        Color = AnsiColor.BlueCode;
+    }
 }
 
 class TetrominoL : Tetromino
@@ -103,7 +107,9 @@ class TetrominoL : Tetromino
             { 1, 1, 1},
             { 0, 0, 0},
         })
-    { }
+    {
+        Color = AnsiColor.OrangeCode;
+    }
 }
 
 class TetrominoO : Tetromino
@@ -113,7 +119,9 @@ class TetrominoO : Tetromino
             { 0, 1, 1, 0},
             { 0, 0, 0, 0},
         })
-    { }
+    { 
+        Color = AnsiColor.YellowCode;
+    }
 
     public new static void Rotate()
     {
@@ -128,7 +136,9 @@ class TetrominoS : Tetromino
             { 1, 1, 0},
             { 0, 0, 0},
         })
-    { }
+    {
+        Color = AnsiColor.GreenCode;
+    }
 }
 
 class TetrominoT : Tetromino
@@ -138,7 +148,9 @@ class TetrominoT : Tetromino
             { 1, 1, 1},
             { 0, 0, 0},
         })
-    { }
+    {
+        Color = AnsiColor.MagentaCode;
+    }
 }
 
 class TetrominoZ : Tetromino

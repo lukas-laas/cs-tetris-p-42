@@ -78,18 +78,25 @@ class Renderer
 
         for (int y = 0; y < highest; y++)
         {
-            
             if (y < highestVisible) continue;
+            buffer += y;
 
             for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
             {
                 Board board = boards[boardIndex];
                 string[,] colorGrid = colorGrids[boardIndex];
 
+                // If this is the first row above the visible area, draw a roof
+                if (y == board.Height - board.VisibleHeight)
+                {
+                    int canvasWidth = canvasWidths[boardIndex];
+                    buffer += boardRoof(canvasWidth);
+                    continue;
+                }
+
                 buffer += $"{AnsiColor.BorderBlue("│")}"; // Left border
                 for (int x = 0; x < board.Width; x++)
                 {
-                    // 
                     buffer += colorGrid[y, x] != null ?
                         AnsiColor.Apply(new string('▓', 2), colorGrid[y, x])
                         :
