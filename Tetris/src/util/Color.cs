@@ -8,23 +8,36 @@
 class AnsiColor
 {
     public const string ResetCode = "\u001b[0m";
-    public const string RedCode = "\u001b[31m";
-    public const string GreenCode = "\u001b[32m";
-    public const string YellowCode = "\u001b[93m";
-    public const string OrangeCode = "\u001b[38;2;253;151;13m";
-    public const string BlueCode = "\u001b[34m";
-    public const string MagentaCode = "\u001b[35m";
-    public const string CyanCode = "\u001b[36m";
-    public const string BorderBlueCode = "\u001b[38;2;49;103;204m";
+    public static string Reset(string text) => $"{ResetCode}{text}{ResetCode}";
 
+    public const string RedCode = "\u001b[31m";
     public static string Red(string text) => Apply(text, RedCode);
+
+    public const string GreenCode = "\u001b[32m";
     public static string Green(string text) => Apply(text, GreenCode);
+
+    public const string YellowCode = "\u001b[93m";
     public static string Yellow(string text) => Apply(text, YellowCode);
+
+    public const string OrangeCode = "\u001b[38;2;253;151;13m";
     public static string Orange(string text) => Apply(text, OrangeCode);
+
+    public const string BlueCode = "\u001b[34m";
     public static string Blue(string text) => Apply(text, BlueCode);
+
+    public const string MagentaCode = "\u001b[35m";
     public static string Magenta(string text) => Apply(text, MagentaCode);
+
+    public const string CyanCode = "\u001b[36m";
     public static string Cyan(string text) => Apply(text, CyanCode);
-    public static string BorderBlue(string text) => Apply(text, BorderBlueCode); // Intentionally not in color rotation
+
+
+    // Colors not in color rotation
+    public const string BorderBlueCode = "\u001b[38;2;49;103;204m";
+    public static string BorderBlue(string text) => Apply(text, BorderBlueCode);
+
+    public const string GrayCode = "\u001b[90m";
+    public static string Gray(string text) => Apply(text, GrayCode);
 
     public static string Apply(string text, string colorCode)
         => $"{colorCode}{text}{ResetCode}";
