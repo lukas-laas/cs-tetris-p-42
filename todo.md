@@ -48,3 +48,6 @@
 - Donut (3x3 emptpty middle)
 - . (1x1)
 - ArchBTW (1,1,1; 1,0,1)
+
+## IDEAS
+- Blackjack in shop
