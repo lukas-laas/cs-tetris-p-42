@@ -33,6 +33,7 @@
 ### Timed
 - Tax with brackets
 - Communism (share income)
+- Give opponent second board with shared inputs but different pieces and faster dt
 
 ### Abilities
 - Skip piece
