@@ -76,6 +76,21 @@ class Board
             }
         }
 
+        int filledSlot = 0;
+        for (int y = 0; y < Height; y++)
+        {
+            filledSlot = 0;
+            for (int x = 0; x < Width; x++)
+            {
+                if (collisionGrid[y][x] == true) filledSlot++;
+                if (filledSlot == Width)
+                {
+                    // TODO: implement, if this is not the right place I'm sorry Vena..
+                    // Board.clearRow(y);
+                }
+            }
+        }
+
         UpdateCollisionGrid();
     }
 }
