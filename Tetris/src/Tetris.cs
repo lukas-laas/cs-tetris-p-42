@@ -39,16 +39,16 @@ class Tetris
             switch (direction)
             {
                 case Input.Left:
-                    tetromino.X--;
+                    if (tetromino.CanMove(-1, 0, Board)) tetromino.X--;
                     break;
                 case Input.Right:
-                    tetromino.X++;
+                    if (tetromino.CanMove(1, 0, Board)) tetromino.X++;
                     break;
                 case Input.SoftDrop:
-                    tetromino.Y++;
+                    if (tetromino.CanMove(0, 1, Board)) tetromino.Y++;
                     break;
                 case Input.Rotate:
-                    tetromino.Rotate();
+                    tetromino.Rotate(); // TODO superrotations
                     break;
                 default:
                     throw new Exception("WTF!");
