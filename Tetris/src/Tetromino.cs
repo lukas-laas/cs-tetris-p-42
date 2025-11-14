@@ -55,6 +55,10 @@ class Tetromino(int[,] shape) : ITetromino
         Y = y;
     }
 
+    public bool CanMove(int deltaX, int deltaY, Board board)
+    {
+        return CanMove(deltaX, deltaY, board.CollisionGrid, board.Width, board.Height);
+    }
     public bool CanMove(int deltaX, int deltaY, CollisionGrid collisionGrid, int boardWidth, int boardHeight)
     {
         foreach ((int x, int y) in GetTileCoords())
@@ -119,7 +123,7 @@ class TetrominoO : Tetromino
             { 0, 1, 1, 0},
             { 0, 0, 0, 0},
         })
-    { 
+    {
         Color = AnsiColor.YellowCode;
     }
 
