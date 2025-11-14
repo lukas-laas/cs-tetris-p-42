@@ -66,25 +66,28 @@ class Renderer
         }
 
         // Boards
-        // for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
-        // {
-        //     int canvasWidth = canvasWidths[boardIndex];
-        //     buffer += $"{AnsiColor.BorderBlue($"╭{new string('─', canvasWidth)}╮")}"; // top border
-        // }
-        // buffer += "\n";
-
         int highest = boards.Select(b => b.Height).Max();
-        int highestVisible = boards.Select(b => b.VisibleHeight).Max();
+        int highestVisible = boards.Select(b => b.Height - b.VisibleHeight).Min();
 
         for (int y = 0; y < highest; y++)
         {
-            if (y < highestVisible) continue;
-            buffer += y;
+            if (y < highestVisible) continue; // Skip if all are none visible
+
+            // Line number
+            buffer += AnsiColor.Gray(y.ToString());
 
             for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
             {
                 Board board = boards[boardIndex];
                 string[,] colorGrid = colorGrids[boardIndex];
+
+                // If before first visible row, draw empty space, no wall
+                if (y < board.Height - board.VisibleHeight)
+                {
+                    int canvasWidth = canvasWidths[boardIndex];
+                    buffer += new string(' ', canvasWidth + 2);
+                    continue;
+                }
 
                 // If this is the first row above the visible area, draw a roof
                 if (y == board.Height - board.VisibleHeight)
@@ -94,18 +97,21 @@ class Renderer
                     continue;
                 }
 
-                buffer += $"{AnsiColor.BorderBlue("│")}"; // Left border
+                string row = "";
                 for (int x = 0; x < board.Width; x++)
                 {
-                    buffer += colorGrid[y, x] != null ?
+                    row += colorGrid[y, x] != null ?
                         AnsiColor.Apply(new string('▓', 2), colorGrid[y, x])
                         :
                         new string(' ', 2);
                 }
-                buffer += $"{AnsiColor.BorderBlue("│")}"; // Right border
+                buffer += boardWall(row);
             }
             buffer += "\n";
         }
+
+        // Line number padding adjustment
+        buffer += AnsiColor.Gray("  ");
 
         for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
         {

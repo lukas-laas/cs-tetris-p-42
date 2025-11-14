@@ -7,7 +7,7 @@ class Board
 
     public int Width { get; private set; } = 10;
     public int Height { get; private set; } = 40;
-    public int VisibleHeight { get; private set; } = 20;
+    public int VisibleHeight { get; set; } = 20;
 
     private CollisionGrid collisionGrid = [];
     private List<Tetromino> settledTetrominoes = []; // Settled tetrominoes on the board, to keep track of colors and for updating collision grid
