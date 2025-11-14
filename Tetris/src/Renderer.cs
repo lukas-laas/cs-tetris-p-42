@@ -1,10 +1,11 @@
 
 class Renderer
 {
-    private readonly Board board;
-    public Renderer(Board board)
+    private readonly Games games;
+
+    public Renderer(Games games)
     {
-        this.board = board;
+        this.games = games;
 
         if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
         if (Console.WindowHeight == 0) throw new Exception("Console window height is 0. Cannot render.");
@@ -14,10 +15,14 @@ class Renderer
         Console.CursorVisible = false;
     }
 
-    public void RenderBoard()
+    public void Render()
     {
         const int AspectRatioCorrection = 2; // Console characters are taller than they are wide
-        int CanvasWidth = board.Width * AspectRatioCorrection;
+
+        List<Board> boards = games.GetAllBoards();
+
+        List<int> canvasWidths = [.. boards.Select(b => b.Width * AspectRatioCorrection)];
+        List<string[,]> colorGrids = [];
 
         string buffer = "";
 
@@ -36,45 +41,75 @@ class Renderer
         """;
 
         // Debug info
-        buffer += $"  Current settled:{board.SettledTetrominoes.Count}  Current falling:{board.FallingTetrominoes.Count}\n";
+        for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
+        {
+            Board board = boards[boardIndex];
+            buffer += $"   Settled:{board.SettledTetrominoes.Count}  Falling:{board.FallingTetrominoes.Count}";
+        }
+        buffer += "\n";
 
         // Color extraction
-        List<Tetromino> tetrominoes = board.GetAllTetrominoes();
-        string[,] colorGrid = new string[board.Height, board.Width];
-        foreach (Tetromino tetromino in tetrominoes)
+        for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
         {
-            foreach ((int x, int y) in tetromino.GetTileCoords())
+            Board board = boards[boardIndex];
+            string[,] colorGrid = new string[board.Height, board.Width];
+            List<Tetromino> tetrominoes = board.GetAllTetrominoes();
+            foreach (Tetromino tetromino in tetrominoes)
             {
-                if (x >= 0 && x < board.Width && y >= 0 && y < board.Height)
-                    colorGrid[y, x] = tetromino.Color;
+                foreach ((int x, int y) in tetromino.GetTileCoords())
+                {
+                    if (x >= 0 && x < board.Width && y >= 0 && y < board.Height)
+                        colorGrid[y, x] = tetromino.Color;
+                }
             }
+            colorGrids.Add(colorGrid);
         }
 
-        // Board
-        string boardPadLeft = new(' ', 8);
-        buffer += $"{boardPadLeft}{AnsiColor.BorderBlue($"╭{new string('─', CanvasWidth)}╮")}\n"; // top border
-        for (int y = 0; y < board.Height; y++)
+        // Boards
+        for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
         {
-            if (y < board.Height - board.VisibleHeight) continue; // Skip hidden rows
+            int canvasWidth = canvasWidths[boardIndex];
+            buffer += $"{AnsiColor.BorderBlue($"╭{new string('─', canvasWidth)}╮")}"; // top border
+        }
+        buffer += "\n";
 
-            buffer += $"{boardPadLeft}{AnsiColor.BorderBlue("│")}"; // Left border
+        int highest = boards.Select(b => b.Height).Max();
+        int highestVisible = boards.Select(b => b.VisibleHeight).Max();
 
-            for (int x = 0; x < board.Width; x++)
+        for (int y = 0; y < highest; y++)
+        {
+            for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
             {
-                // 
-                buffer += colorGrid[y, x] != null ?
-                    AnsiColor.Apply(new string('▓', 2), colorGrid[y, x])
-                    :
-                    new string(' ', 2);
-                // buffer += board.CollisionGrid[y][x] ?
-                //     AnsiColor.Apply(new string('▓', 2), colorGrid[y, x])
-                //     :
-                //     new string(' ', 2);
+                Board board = boards[boardIndex];
+                string[,] colorGrid = colorGrids[boardIndex];
+
+                // Only render visible area and only pad with empty space if another board is taller
+                if (y < board.Height - board.VisibleHeight)
+                {
+                    buffer += $"{AnsiColor.BorderBlue("│")}{new string(' ', canvasWidths[boardIndex])}{AnsiColor.BorderBlue("│")}";
+                    continue;
+                }
+
+                buffer += $"{AnsiColor.BorderBlue("│")}"; // Left border
+                for (int x = 0; x < board.Width; x++)
+                {
+                    // 
+                    buffer += colorGrid[y, x] != null ?
+                        AnsiColor.Apply(new string('▓', 2), colorGrid[y, x])
+                        :
+                        new string(' ', 2);
+                }
+                buffer += $"{AnsiColor.BorderBlue("│")}"; // Right border
             }
-            buffer += $"{AnsiColor.BorderBlue("│")}\n"; // Right border
+            buffer += "\n";
         }
 
-        buffer += $"{boardPadLeft}{AnsiColor.BorderBlue($"▀{new string('▀', CanvasWidth)}▀")}\n"; // Bottom border
+        for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
+        {
+            int canvasWidth = canvasWidths[boardIndex];
+            buffer += $"{AnsiColor.BorderBlue($"▀{new string('▀', canvasWidth)}▀")}"; // bottom border
+        }
+        buffer += "\n";
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
