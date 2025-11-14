@@ -1,7 +1,16 @@
 
 class Renderer
 {
-    public static void RenderBoard(Board board)
+    private readonly Board board;
+    public Renderer(Board board)
+    {
+        this.board = board;
+
+        if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
+        if (Console.WindowHeight == 0) throw new Exception("Console window height is 0. Cannot render.");
+    }
+
+    public void RenderBoard()
     {
         const int AspectRatioCorrection = 2; // Console characters are taller than they are wide
         int CanvasWidth = board.Width * AspectRatioCorrection;
@@ -35,12 +44,12 @@ class Renderer
 
         // Board
         string boardPadLeft = new(' ', 8);
-        buffer += $"{boardPadLeft}{AnsiColor.Blue($"╭{new string('─', CanvasWidth)}╮")}\n"; // top border
+        buffer += $"{boardPadLeft}{AnsiColor.BorderBlue($"╭{new string('─', CanvasWidth)}╮")}\n"; // top border
         for (int y = 0; y < board.Height; y++)
         {
             if (y < board.Height - board.VisibleHeight) continue; // Skip hidden rows
 
-            buffer += $"{boardPadLeft}{AnsiColor.Blue("│")}"; // Left border
+            buffer += $"{boardPadLeft}{AnsiColor.BorderBlue("│")}"; // Left border
 
             for (int x = 0; x < board.Width; x++)
             {
