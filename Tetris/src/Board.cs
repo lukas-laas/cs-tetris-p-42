@@ -63,10 +63,17 @@ class Board
 
     public void Tick()
     {
-        // Move falling tetrominoes down by one
-        foreach (Tetromino tetromino in fallingTetrominoes)
+        // Move falling tetrominoes down by one if possible
+        List<Tetromino> iterableTetrominoes = [.. fallingTetrominoes];
+        foreach (Tetromino tetromino in iterableTetrominoes)
         {
-            tetromino.SetPosition(tetromino.X, tetromino.Y + 1);
+            if (tetromino.CanMove(0, -1, collisionGrid, Width, Height))
+                tetromino.SetPosition(tetromino.X, tetromino.Y + 1);
+            else // Cannot move down, settle the tetromino
+            {
+                tetrominoes.Add(tetromino);
+                fallingTetrominoes.Remove(tetromino);
+            }
         }
 
         UpdateCollisionGrid();
