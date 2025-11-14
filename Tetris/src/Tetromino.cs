@@ -29,7 +29,7 @@ class Tetromino : ITetromino
     /// </summary>
     public List<(int, int)> GetTileCoords()
     {
-        List<(int X, int Y)> blocks = [];
+        List<(int, int)> blocks = [];
         int rows = Shape.GetLength(0);
         int cols = Shape.GetLength(1);
 
@@ -39,7 +39,7 @@ class Tetromino : ITetromino
             {
                 if (Shape[y, x] != 0)
                 {
-                    blocks.Add((x, y));
+                    blocks.Add((X + x, Y + y));
                 }
             }
         }
