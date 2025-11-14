@@ -15,6 +15,7 @@ class AnsiColor
     public const string BlueCode = "\u001b[34m";
     public const string MagentaCode = "\u001b[35m";
     public const string CyanCode = "\u001b[36m";
+    public const string BorderBlueCode = "\u001b[38;2;49;103;204m";
 
     public static string Red(string text) => Apply(text, RedCode);
     public static string Green(string text) => Apply(text, GreenCode);
@@ -23,6 +24,7 @@ class AnsiColor
     public static string Blue(string text) => Apply(text, BlueCode);
     public static string Magenta(string text) => Apply(text, MagentaCode);
     public static string Cyan(string text) => Apply(text, CyanCode);
+    public static string BorderBlue(string text) => Apply(text, BorderBlueCode); // Intentionally not in color rotation
 
     public static string Apply(string text, string colorCode)
     {
@@ -30,10 +32,10 @@ class AnsiColor
     }
 
     // Very OOP... :eyes:
-    private static readonly string[] order = [RedCode, GreenCode, YellowCode, BlueCode, MagentaCode, CyanCode];
+    private static readonly string[] colorRotation = [RedCode, GreenCode, OrangeCode, YellowCode, BlueCode, MagentaCode, CyanCode];
     static private int nextColorIndex = 0;
     public static string GetNextColor()
     {
-        return order[nextColorIndex++ % order.Length];
+        return colorRotation[Math.Abs(nextColorIndex++) % colorRotation.Length];
     }
 }

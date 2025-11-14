@@ -13,12 +13,12 @@ class Renderer
         string titlePadLeft = new(' ', Math.Max(Console.WindowWidth - TitleWidth, 0) / 2);
         buffer += $"""
 
-        {titlePadLeft}{AnsiColor.Blue("╔══════════════════════════╗")}
-        {titlePadLeft}{AnsiColor.Blue("║")} {AnsiColor.Red(("▄▄▄▄"))} {AnsiColor.Orange(("▄▄▄"))} {AnsiColor.Yellow(("▄▄▄▄"))} {AnsiColor.Green(("▄▄▖"))} {AnsiColor.Cyan(("▗▖"))} {AnsiColor.Magenta(("▗▄▖"))} {AnsiColor.Blue("║")}
-        {titlePadLeft}{AnsiColor.Blue("║")} {AnsiColor.Red((" ▐▌ "))} {AnsiColor.Orange(("█▄ "))} {AnsiColor.Yellow((" ▐▌ "))} {AnsiColor.Green(("█▂█"))} {AnsiColor.Cyan(("▐▌"))} {AnsiColor.Magenta(("▀▙▝"))} {AnsiColor.Blue("║")}
-        {titlePadLeft}{AnsiColor.Blue("║")} {AnsiColor.Red((" ▐▌ "))} {AnsiColor.Orange(("█▄▄"))} {AnsiColor.Yellow((" ▐▌ "))} {AnsiColor.Green(("█▀▙"))} {AnsiColor.Cyan(("▐▌"))} {AnsiColor.Magenta(("▜▄▛"))} {AnsiColor.Blue("║")}
-        {titlePadLeft}{AnsiColor.Blue("║                          ║")}
-        {titlePadLeft}{AnsiColor.Blue("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀")}
+        {titlePadLeft}{AnsiColor.BorderBlue("╔══════════════════════════╗")}
+        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red("▄▄▄▄")} {AnsiColor.Orange("▄▄▄")} {AnsiColor.Yellow("▄▄▄▄")} {AnsiColor.Green("▄▄▖")} {AnsiColor.Cyan("▗▖")} {AnsiColor.Magenta("▗▄▖")} {AnsiColor.BorderBlue("║")}
+        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄ ")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▂█")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▀▙▝")} {AnsiColor.BorderBlue("║")}
+        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄▄")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▀▙")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▜▄▛")} {AnsiColor.BorderBlue("║")}
+        {titlePadLeft}{AnsiColor.BorderBlue("║")}                          {AnsiColor.BorderBlue("║")}
+        {titlePadLeft}{AnsiColor.BorderBlue("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀")}
 
         """;
 
@@ -49,11 +49,10 @@ class Renderer
                     :
                     new string(' ', 2);
             }
-            buffer += $"{AnsiColor.Blue("│")}\n"; // Right border
+            buffer += $"{AnsiColor.BorderBlue("│")}\n"; // Right border
         }
 
-        // buffer += $"{boardPadLeft}{AnsiColor.Blue($"╰{new string('─', CanvasWidth)}╯")}\n"; // Bottom border
-        buffer += $"{boardPadLeft}{AnsiColor.Blue($"▀{new string('▀', CanvasWidth)}▀")}\n"; // Bottom border
+        buffer += $"{boardPadLeft}{AnsiColor.BorderBlue($"▀{new string('▀', CanvasWidth)}▀")}\n"; // Bottom border
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
