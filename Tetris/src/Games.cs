@@ -37,7 +37,7 @@ class Games
 
                 if (control2.TryGetValue(key, out direction2))
                 {
-                    tetrises[1].Move(direction1);
+                    tetrises[1].Move(direction2);
                 }
             }
             tetrises[0].Tick();

@@ -34,7 +34,26 @@ class Tetris
 
     public void Move(Input direction)
     {
-        // Move block
+        foreach (Tetromino tetromino in Board.FallingTetrominoes)
+        {
+            switch (direction)
+            {
+                case Input.Left:
+                    tetromino.X--;
+                    break;
+                case Input.Right:
+                    tetromino.X++;
+                    break;
+                case Input.SoftDrop:
+                    tetromino.Y++;
+                    break;
+                case Input.Rotate:
+                    tetromino.Rotate();
+                    break;
+                default:
+                    throw new Exception("WTF!");
+            }
+        }
     }
     public void AddToQueue()
     {

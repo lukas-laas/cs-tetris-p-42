@@ -22,8 +22,20 @@ class Tetromino(int[,] shape) : ITetromino
 
     public void Rotate()
     {
-        int[,] rotationMatrix = new int[,] { { 0, -1 }, { 1, 0 } };
-        // Do rotaty stuff
+        int rows = Shape.GetLength(0);
+        int cols = Shape.GetLength(1);
+
+        int[,] rotated = new int[cols, rows];
+
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                rotated[x, rows - 1 - y] = Shape[y, x];
+            }
+        }
+
+        Shape = rotated;
     }
 
     /// <summary>

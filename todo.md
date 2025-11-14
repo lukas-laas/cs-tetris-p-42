@@ -20,6 +20,7 @@
 - More I pieces (can result in funny I's)
 - Candy crush
 - Communism (share income)
+- Nuclear drop (disables loosened y-axis block collision)
 
 ### Abilities
 - Slow motion
