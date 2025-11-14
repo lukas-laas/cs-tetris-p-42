@@ -23,7 +23,6 @@ class Renderer
         """;
 
         string boardPadLeft = new(' ', 8);
-
         buffer += $"{boardPadLeft}╭{new string('─', CanvasWidth)}╮\n"; // top border
 
         // For each row
@@ -34,13 +33,9 @@ class Renderer
 
             buffer += $"{boardPadLeft}│"; // Left border
 
-            List<bool> row = board.CollisionGrid[y];
-            bool anythingOnThisRow = row.Any(cell => cell);
-
             // For each column within the row
             for (int x = 0; x < board.Width; x++)
             {
-                Console.WriteLine(row);
                 buffer += board.CollisionGrid[y][x] ? new string('▓', 2) : new string(' ', 2);
             }
             buffer += "│"; // Right border
