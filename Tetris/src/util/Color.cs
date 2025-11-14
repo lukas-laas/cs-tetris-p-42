@@ -27,9 +27,10 @@ class AnsiColor
     public static string BorderBlue(string text) => Apply(text, BorderBlueCode); // Intentionally not in color rotation
 
     public static string Apply(string text, string colorCode)
-    {
-        return $"{colorCode}{text}{ResetCode}";
-    }
+        => $"{colorCode}{text}{ResetCode}";
+
+    public static string Apply(string text, int r, int g, int b)
+        => Apply(text, $"\u001b[38;2;{Math.Clamp(r, 0, 255)};{Math.Clamp(g, 0, 255)};{Math.Clamp(b, 0, 255)}m");
 
     // Very OOP... :eyes:
     private static readonly string[] colorRotation = [RedCode, GreenCode, OrangeCode, YellowCode, BlueCode, MagentaCode, CyanCode];
