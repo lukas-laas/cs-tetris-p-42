@@ -10,12 +10,13 @@
         board.AddTetromino(new TetrominoJ(), yPosition: 16);
         board.AddTetromino(new TetrominoS(), xPosition: 7);
 
-        board.Tick();
-        board.Tick();
-        board.Tick();
-        board.Tick();
-        board.Tick();
-
         renderer.RenderBoard();
+
+        while (true)
+        {
+            board.Tick();
+            renderer.RenderBoard();
+            Thread.Sleep(400);
+        }
     }
 }

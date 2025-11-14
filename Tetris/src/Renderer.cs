@@ -8,6 +8,10 @@ class Renderer
 
         if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
         if (Console.WindowHeight == 0) throw new Exception("Console window height is 0. Cannot render.");
+
+        Console.CursorLeft = 0;
+        Console.CursorTop = 0;
+        Console.CursorVisible = false;
     }
 
     public void RenderBoard()
