@@ -24,10 +24,21 @@ class Games
         Input direction2;
 
         Renderer renderer = new(this);
+        bool gaming = true;
 
-        long globalTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        while (true)
+        long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        int shopTime = 500 * 20 * 5; // Temporary value, Probably around ~5 default tetrominoe spawn
+
+        // TODO: Switch case to switch between menu, game and shop, might want to live in Program, not sure
+        while (gaming)
         {
+            long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            if (currentTime - lastTick > shopTime)
+            {
+                lastTick = currentTime;
+                gaming = false;
+            }
+
             string key = KeyInput.Read() ?? "";
             {
                 if (control1.TryGetValue(key, out direction1))
