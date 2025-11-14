@@ -3,7 +3,7 @@ class Tetris
     // Next block(s) and such
     private List<Tetromino> queue = [];
     // board
-    private Board board = new();
+    public Board Board { get; } = new();
 
     // Buffs and debuffs
     public int Dt;
@@ -14,7 +14,7 @@ class Tetris
     {
         if (Dt < 0)
         {
-            board.Tick();
+            Board.Tick();
         }
     }
 

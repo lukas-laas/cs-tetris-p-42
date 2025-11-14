@@ -1,13 +1,11 @@
-using System.Xml;
 
 class Games
 {
+    private List<Tetris> tetrises = [new Tetris(), new Tetris()];
+
     // overarching game state
     public Games()
     {
-        const int players = 2;
-        List<Tetris> tetrises = new(players);
-
         // Game controls
         var control1 = new Dictionary<string, Input> {
             { "A", Input.Left },
@@ -18,12 +16,14 @@ class Games
 
         var control2 = new Dictionary<string, Input> {
             { "LeftArrow", Input.Left },
-            { "RightArror", Input.Right },
+            { "RightArrow", Input.Right },
             { "UpArrow", Input.Rotate },
             { "DownArrow", Input.SoftDrop }
         };
         Input direction1;
         Input direction2;
+
+        Renderer renderer = new(this);
 
         long globalTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         while (true)
@@ -40,6 +40,12 @@ class Games
                     tetrises[1].Move(direction1);
                 }
             }
+
+            renderer.Render();
+            Thread.Sleep(400);
         }
     }
+
+    public List<Board> GetAllBoards()
+      => [.. tetrises.Select(t => t.Board)];
 }

@@ -66,15 +66,17 @@ class Renderer
         }
 
         // Boards
-        for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
-        {
-            int canvasWidth = canvasWidths[boardIndex];
-            buffer += $"{AnsiColor.BorderBlue($"╭{new string('─', canvasWidth)}╮")}"; // top border
-        }
-        buffer += "\n";
+        // for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
+        // {
+        //     int canvasWidth = canvasWidths[boardIndex];
+        //     buffer += $"{AnsiColor.BorderBlue($"╭{new string('─', canvasWidth)}╮")}"; // top border
+        // }
+        // buffer += "\n";
 
         int highest = boards.Select(b => b.Height).Max();
         int highestVisible = boards.Select(b => b.VisibleHeight).Max();
+
+        // Make first roof
 
         for (int y = 0; y < highest; y++)
         {
@@ -84,11 +86,12 @@ class Renderer
                 string[,] colorGrid = colorGrids[boardIndex];
 
                 // Only render visible area and only pad with empty space if another board is taller
-                if (y < board.Height - board.VisibleHeight)
-                {
-                    buffer += $"{AnsiColor.BorderBlue("│")}{new string(' ', canvasWidths[boardIndex])}{AnsiColor.BorderBlue("│")}";
-                    continue;
-                }
+                // if (y < board.Height - board.VisibleHeight && y < highest - highestVisible)
+                // {
+                //     // buffer += $"{AnsiColor.BorderBlue("│")}{new string(' ', canvasWidths[boardIndex])}{AnsiColor.BorderBlue("│")}";
+                //     buffer += new string(' ', canvasWidths[boardIndex] + 2);
+                //     continue;
+                // }
 
                 buffer += $"{AnsiColor.BorderBlue("│")}"; // Left border
                 for (int x = 0; x < board.Width; x++)
@@ -107,11 +110,23 @@ class Renderer
         for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
         {
             int canvasWidth = canvasWidths[boardIndex];
-            buffer += $"{AnsiColor.BorderBlue($"▀{new string('▀', canvasWidth)}▀")}"; // bottom border
+            buffer += boardFloor(canvasWidth);
         }
         buffer += "\n";
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
     }
+
+    private string boardRoof(int width)
+        => AnsiColor.BorderBlue($"╭{new string('─', width)}╮");
+
+    private string boardWall(int width)
+        => AnsiColor.BorderBlue("│") + new string(' ', width) + AnsiColor.BorderBlue("│");
+
+    private string boardWall(string content)
+        => AnsiColor.BorderBlue("│") + content + AnsiColor.BorderBlue("│");
+
+    private string boardFloor(int width)
+        => AnsiColor.BorderBlue($"▀{new string('▀', width)}▀");
 }
