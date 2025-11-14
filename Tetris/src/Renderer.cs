@@ -35,6 +35,9 @@ class Renderer
 
         """;
 
+        // Debug info
+        buffer += $"  Current settled:{board.SettledTetrominoes.Count}  Current falling:{board.FallingTetrominoes.Count}\n";
+
         // Color extraction
         List<Tetromino> tetrominoes = board.GetAllTetrominoes();
         string[,] colorGrid = new string[board.Height, board.Width];
@@ -42,7 +45,8 @@ class Renderer
         {
             foreach ((int x, int y) in tetromino.GetTileCoords())
             {
-                colorGrid[y, x] = tetromino.Color;
+                if (x >= 0 && x < board.Width && y >= 0 && y < board.Height)
+                    colorGrid[y, x] = tetromino.Color;
             }
         }
 
@@ -57,10 +61,15 @@ class Renderer
 
             for (int x = 0; x < board.Width; x++)
             {
-                buffer += board.CollisionGrid[y][x] ?
+                // 
+                buffer += colorGrid[y, x] != null ?
                     AnsiColor.Apply(new string('▓', 2), colorGrid[y, x])
                     :
                     new string(' ', 2);
+                // buffer += board.CollisionGrid[y][x] ?
+                //     AnsiColor.Apply(new string('▓', 2), colorGrid[y, x])
+                //     :
+                //     new string(' ', 2);
             }
             buffer += $"{AnsiColor.BorderBlue("│")}\n"; // Right border
         }
