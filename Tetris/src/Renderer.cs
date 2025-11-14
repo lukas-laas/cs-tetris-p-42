@@ -22,6 +22,17 @@ class Renderer
 
         """;
 
+        // Extract color data from tetrominoes on the board
+        List<Tetromino> tetrominoes = board.GetAllTetrominoes();
+        string[,] colorGrid = new string[board.Height, board.Width];
+        foreach (Tetromino tetromino in tetrominoes)
+        {
+            foreach ((int x, int y) in tetromino.GetTileCoords())
+            {
+                colorGrid[y, x] = tetromino.Color;
+            }
+        }
+
         string boardPadLeft = new(' ', 8);
         buffer += $"{boardPadLeft}╭{new string('─', CanvasWidth)}╮\n"; // top border
 
@@ -36,10 +47,9 @@ class Renderer
             // For each column within the row
             for (int x = 0; x < board.Width; x++)
             {
-                buffer += board.CollisionGrid[y][x] ? new string('▓', 2) : new string(' ', 2);
+                buffer += board.CollisionGrid[y][x] ? AnsiColor.Apply(new string('▓', 2), colorGrid[y,x]) : new string(' ', 2);
             }
-            buffer += "│"; // Right border
-            buffer += "\n";
+            buffer += "│\n"; // Right border
         }
 
         buffer += $"{boardPadLeft}╰{new string('─', CanvasWidth)}╯\n"; // Bottom border

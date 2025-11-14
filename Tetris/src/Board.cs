@@ -25,6 +25,11 @@ class Board
         }
     }
 
+    public List<Tetromino> GetAllTetrominoes()
+    {
+        return [.. tetrominoes, .. fallingTetrominoes];
+    }
+
     public void UpdateCollisionGrid()
     {
         // Clear grid
@@ -37,8 +42,7 @@ class Board
         }
 
         // Set occupied cells
-        List<Tetromino> allTetrominoes = [.. tetrominoes, .. fallingTetrominoes];
-        foreach (Tetromino tetromino in allTetrominoes)
+        foreach (Tetromino tetromino in GetAllTetrominoes())
         {
             foreach ((int x, int y) in tetromino.GetTileCoords())
             {
