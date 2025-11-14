@@ -8,6 +8,8 @@ interface ITetromino
     void Rotate();
     List<(int, int)> GetTileCoords();
     void SetPosition(int x, int y);
+
+    bool CanMove(int deltaX, int deltaY, CollisionGrid collisionGrid, int boardWidth, int boardHeight);
 }
 
 class Tetromino(int[,] shape) : ITetromino
@@ -52,6 +54,25 @@ class Tetromino(int[,] shape) : ITetromino
         X = x;
         Y = y;
     }
+
+    public bool CanMove(int deltaX, int deltaY, CollisionGrid collisionGrid, int boardWidth, int boardHeight)
+    {
+        foreach ((int x, int y) in GetTileCoords())
+        {
+            int newX = x + deltaX;
+            int newY = y + deltaY;
+
+            // Check boundaries
+            if (newX < 0 || newX >= boardWidth || newY < 0 || newY >= boardHeight)
+                return false;
+
+            // Check collision grid
+            if (collisionGrid[newY][newX])
+                return false;
+        }
+
+        return true;
+    }
 }
 
 class TetrominoI : Tetromino
@@ -94,7 +115,7 @@ class TetrominoO : Tetromino
         })
     { }
 
-    new public static void Rotate()
+    public new static void Rotate()
     {
         // O Tetromino does not rotate}
     }
