@@ -1,4 +1,4 @@
-class Input
+class KeyInput
 {
     public static string? Read()
     {
