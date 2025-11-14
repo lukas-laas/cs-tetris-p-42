@@ -8,6 +8,7 @@
         board.AddTetromino(new TetrominoI());
         board.AddTetromino(new TetrominoJ());
         board.AddTetromino(new TetrominoS());
+
         board.Tick();
         board.Tick();
         board.Tick();

@@ -3,7 +3,7 @@ class Renderer
 {
     public static void RenderBoard(Board board)
     {
-        const int AspectRatioCorrection = 2; // console characters are taller than they are wide
+        const int AspectRatioCorrection = 2; // Console characters are taller than they are wide
         int CanvasWidth = board.Width * AspectRatioCorrection;
 
         string buffer = "";
@@ -25,24 +25,30 @@ class Renderer
         buffer += $"╭{new string('─', CanvasWidth)}╮\n"; // top border
 
         // For each row
-        for (int y = board.VisibleHeight; y < board.Height; y++)
+        for (int y = 0; y < board.Height; y++)
         {
-            buffer += "│"; // left border
+            // Skip hidden rows
+            if (y < board.Height - board.VisibleHeight) continue;
+
+
+            buffer += "│"; // Left border
+
+            List<bool> row = board.CollisionGrid[y];
+            bool anythingOnThisRow = row.Any(cell => cell);
 
             // For each column within the row
-            List<bool> row = board.CollisionGrid[y];
             for (int x = 0; x < board.Width; x++)
             {
                 Console.WriteLine(row);
-                buffer += board.CollisionGrid[y][x] ? "▓▓" : "  ";
+                buffer += board.CollisionGrid[y][x] ? new string('▓', 2) : new string(' ', 2);
             }
-            buffer += "│"; // right border
+            buffer += "│"; // Right border
             buffer += "\n";
         }
 
-        buffer += $"╰{new string('─', CanvasWidth)}╯\n"; // bottom border
+        buffer += $"╰{new string('─', CanvasWidth)}╯\n"; // Bottom border
 
-        Console.Clear(); // clear and draw to mitigate stutter and general unpleasantries
+        Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
     }
 }

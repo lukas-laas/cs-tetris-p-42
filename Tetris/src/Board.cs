@@ -40,7 +40,7 @@ class Board
         List<Tetromino> allTetrominoes = [.. tetrominoes, .. fallingTetrominoes];
         foreach (Tetromino tetromino in allTetrominoes)
         {
-            foreach ((int x, int y) in tetromino.GetBlocks())
+            foreach ((int x, int y) in tetromino.GetTileCoords())
             {
                 if (y >= 0 && y < Height && x >= 0 && x < Width)
                 {
@@ -62,7 +62,7 @@ class Board
         // Move falling tetrominoes down by one
         foreach (Tetromino tetromino in fallingTetrominoes)
         {
-            tetromino.SetPosition(tetromino.X, tetromino.Y - 1);
+            tetromino.SetPosition(tetromino.X, tetromino.Y + 1);
         }
 
         UpdateCollisionGrid();

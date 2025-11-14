@@ -21,13 +21,13 @@ class Tetromino : ITetromino
     public void Rotate()
     {
         int[,] rotationMatrix = new int[,] { { 0, -1 }, { 1, 0 } };
-        // Do rotatey stuff
+        // Do rotaty stuff
     }
 
     /// <summary>
     /// Returns list of block positions relative to tetromino position
     /// </summary>
-    public List<(int, int)> GetBlocks()
+    public List<(int, int)> GetTileCoords()
     {
         List<(int X, int Y)> blocks = [];
         int rows = Shape.GetLength(0);
