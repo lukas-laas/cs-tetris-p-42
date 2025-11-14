@@ -1,22 +1,22 @@
 
 interface ITetromino
 {
-    int X { get; }
-    int Y { get; }
+    int X { get; set; }
+    int Y { get; set; }
     int[,] Shape { get; }
+    string Color { get; init; }
     void Rotate();
+    List<(int, int)> GetTileCoords();
+    void SetPosition(int x, int y);
 }
 
-class Tetromino : ITetromino
+class Tetromino(int[,] shape) : ITetromino
 {
     public int X { get; set; }
     public int Y { get; set; }
-    public int[,] Shape { get; private set; }
+    public int[,] Shape { get; private set; } = shape;
 
-    public Tetromino(int[,] shape)
-    {
-        Shape = shape;
-    }
+    public string Color { get; init; } = AnsiColor.GetRandomColor();
 
     public void Rotate()
     {
