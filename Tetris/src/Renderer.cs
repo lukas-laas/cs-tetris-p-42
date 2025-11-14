@@ -22,7 +22,9 @@ class Renderer
 
         """;
 
-        buffer += $"╭{new string('─', CanvasWidth)}╮\n"; // top border
+        string boardPadLeft = new(' ', 8);
+
+        buffer += $"{boardPadLeft}╭{new string('─', CanvasWidth)}╮\n"; // top border
 
         // For each row
         for (int y = 0; y < board.Height; y++)
@@ -30,8 +32,7 @@ class Renderer
             // Skip hidden rows
             if (y < board.Height - board.VisibleHeight) continue;
 
-
-            buffer += "│"; // Left border
+            buffer += $"{boardPadLeft}│"; // Left border
 
             List<bool> row = board.CollisionGrid[y];
             bool anythingOnThisRow = row.Any(cell => cell);
@@ -46,7 +47,7 @@ class Renderer
             buffer += "\n";
         }
 
-        buffer += $"╰{new string('─', CanvasWidth)}╯\n"; // Bottom border
+        buffer += $"{boardPadLeft}╰{new string('─', CanvasWidth)}╯\n"; // Bottom border
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
