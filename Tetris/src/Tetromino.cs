@@ -20,7 +20,7 @@ class Tetromino(int[,] shape) : ITetromino
 
     public string Color { get; init; } = AnsiColor.GetNextColor();
 
-    public void Rotate()
+    public virtual void Rotate()
     {
         int rows = Shape.GetLength(0);
         int cols = Shape.GetLength(1);
@@ -139,7 +139,7 @@ class TetrominoO : Tetromino
         Color = AnsiColor.YellowCode;
     }
 
-    public new static void Rotate()
+    public override void Rotate()
     {
         // O Tetromino does not rotate}
     }
@@ -238,7 +238,8 @@ class TetrominoBlocc : Tetromino
             { 0, 0, 0, 0, 0 },
         })
     { }
-    new public static void Rotate()
+
+    public override void Rotate()
     {
         // Blocc Tetromino does not rotate}
     }
@@ -253,7 +254,8 @@ class TetrominoDonut : Tetromino
             { 0, 0, 0, 0, 0 },
         })
     { }
-    new public static void Rotate()
+
+    public override void Rotate()
     {
         // Donut Tetromino does not rotate}
     }
@@ -266,7 +268,8 @@ class TetrominoDot : Tetromino
             { 0, 0, 0},
         })
     { }
-    new public static void Rotate()
+
+    public override void Rotate()
     {
         // Dot Tetromino does not rotate}
     }
