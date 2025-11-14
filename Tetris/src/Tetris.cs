@@ -17,6 +17,7 @@ class Tetris
     {
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         if (currentTime - lastTick < dt) return;
+        lastTick = currentTime;
 
         if (Board.FallingTetrominoes.Count == 0)
         {

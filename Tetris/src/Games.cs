@@ -43,7 +43,7 @@ class Games
             tetrises[0].Tick();
             tetrises[1].Tick();
             renderer.Render();
-            Thread.Sleep(400);
+            Thread.Sleep(20);
         }
     }
 
