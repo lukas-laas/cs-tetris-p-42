@@ -16,7 +16,7 @@ class Tetromino(int[,] shape) : ITetromino
     public int Y { get; set; }
     public int[,] Shape { get; private set; } = shape;
 
-    public string Color { get; init; } = AnsiColor.GetRandomColor();
+    public string Color { get; init; } = AnsiColor.GetNextColor();
 
     public void Rotate()
     {

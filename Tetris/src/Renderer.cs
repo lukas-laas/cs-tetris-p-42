@@ -13,16 +13,16 @@ class Renderer
         string titlePadLeft = new(' ', Math.Max(Console.WindowWidth - TitleWidth, 0) / 2);
         buffer += $"""
 
-        {titlePadLeft}╔══════════════════════════╗
-        {titlePadLeft}║ ▄▄▄▄ ▄▄▄ ▄▄▄▄ ▄▄▖ ▗▖ ▗▄▖ ║
-        {titlePadLeft}║  ▐▌  █▄   ▐▌  █▂█ ▐▌ ▀▙▝ ║
-        {titlePadLeft}║  ▐▌  █▄▄  ▐▌  █▀▙ ▐▌ ▜▄▛ ║
-        {titlePadLeft}║                          ║
-        {titlePadLeft}▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+        {titlePadLeft}{AnsiColor.Blue("╔══════════════════════════╗")}
+        {titlePadLeft}{AnsiColor.Blue("║")} {AnsiColor.Red(("▄▄▄▄"))} {AnsiColor.Orange(("▄▄▄"))} {AnsiColor.Yellow(("▄▄▄▄"))} {AnsiColor.Green(("▄▄▖"))} {AnsiColor.Cyan(("▗▖"))} {AnsiColor.Magenta(("▗▄▖"))} {AnsiColor.Blue("║")}
+        {titlePadLeft}{AnsiColor.Blue("║")} {AnsiColor.Red((" ▐▌ "))} {AnsiColor.Orange(("█▄ "))} {AnsiColor.Yellow((" ▐▌ "))} {AnsiColor.Green(("█▂█"))} {AnsiColor.Cyan(("▐▌"))} {AnsiColor.Magenta(("▀▙▝"))} {AnsiColor.Blue("║")}
+        {titlePadLeft}{AnsiColor.Blue("║")} {AnsiColor.Red((" ▐▌ "))} {AnsiColor.Orange(("█▄▄"))} {AnsiColor.Yellow((" ▐▌ "))} {AnsiColor.Green(("█▀▙"))} {AnsiColor.Cyan(("▐▌"))} {AnsiColor.Magenta(("▜▄▛"))} {AnsiColor.Blue("║")}
+        {titlePadLeft}{AnsiColor.Blue("║                          ║")}
+        {titlePadLeft}{AnsiColor.Blue("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀")}
 
         """;
 
-        // Extract color data from tetrominoes on the board
+        // Color extraction
         List<Tetromino> tetrominoes = board.GetAllTetrominoes();
         string[,] colorGrid = new string[board.Height, board.Width];
         foreach (Tetromino tetromino in tetrominoes)
@@ -33,26 +33,27 @@ class Renderer
             }
         }
 
+        // Board
         string boardPadLeft = new(' ', 8);
-        buffer += $"{boardPadLeft}╭{new string('─', CanvasWidth)}╮\n"; // top border
-
-        // For each row
+        buffer += $"{boardPadLeft}{AnsiColor.Blue($"╭{new string('─', CanvasWidth)}╮")}\n"; // top border
         for (int y = 0; y < board.Height; y++)
         {
-            // Skip hidden rows
-            if (y < board.Height - board.VisibleHeight) continue;
+            if (y < board.Height - board.VisibleHeight) continue; // Skip hidden rows
 
-            buffer += $"{boardPadLeft}│"; // Left border
+            buffer += $"{boardPadLeft}{AnsiColor.Blue("│")}"; // Left border
 
-            // For each column within the row
             for (int x = 0; x < board.Width; x++)
             {
-                buffer += board.CollisionGrid[y][x] ? AnsiColor.Apply(new string('▓', 2), colorGrid[y,x]) : new string(' ', 2);
+                buffer += board.CollisionGrid[y][x] ?
+                    AnsiColor.Apply(new string('▓', 2), colorGrid[y, x])
+                    :
+                    new string(' ', 2);
             }
-            buffer += "│\n"; // Right border
+            buffer += $"{AnsiColor.Blue("│")}\n"; // Right border
         }
 
-        buffer += $"{boardPadLeft}╰{new string('─', CanvasWidth)}╯\n"; // Bottom border
+        // buffer += $"{boardPadLeft}{AnsiColor.Blue($"╰{new string('─', CanvasWidth)}╯")}\n"; // Bottom border
+        buffer += $"{boardPadLeft}{AnsiColor.Blue($"▀{new string('▀', CanvasWidth)}▀")}\n"; // Bottom border
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
