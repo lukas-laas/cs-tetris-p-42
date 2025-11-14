@@ -76,22 +76,15 @@ class Renderer
         int highest = boards.Select(b => b.Height).Max();
         int highestVisible = boards.Select(b => b.VisibleHeight).Max();
 
-        // Make first roof
-
         for (int y = 0; y < highest; y++)
         {
+            
+            if (y < highestVisible) continue;
+
             for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
             {
                 Board board = boards[boardIndex];
                 string[,] colorGrid = colorGrids[boardIndex];
-
-                // Only render visible area and only pad with empty space if another board is taller
-                // if (y < board.Height - board.VisibleHeight && y < highest - highestVisible)
-                // {
-                //     // buffer += $"{AnsiColor.BorderBlue("│")}{new string(' ', canvasWidths[boardIndex])}{AnsiColor.BorderBlue("│")}";
-                //     buffer += new string(' ', canvasWidths[boardIndex] + 2);
-                //     continue;
-                // }
 
                 buffer += $"{AnsiColor.BorderBlue("│")}"; // Left border
                 for (int x = 0; x < board.Width; x++)
