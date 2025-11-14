@@ -129,3 +129,106 @@ class TetrominoZ : Tetromino
         })
     { }
 }
+
+// Custom tetrominoes goes hard 
+// TODO: Make sure rotation works correctly
+class TetrominoThiccI : Tetromino
+{
+    public TetrominoThiccI() : base(new int[,] {
+            { 0, 0, 0, 0 },
+            { 1, 1, 1, 1 },
+            { 1, 1, 1, 1 },
+            { 0, 0, 0, 0 },
+        })
+    { }
+}
+
+class TetrominoSmallI : Tetromino
+{
+    public TetrominoSmallI() : base(new int[,] {
+            { 0, 0, 0 },
+            { 0, 1, 1 },
+            { 0, 0, 0 },
+
+        })
+    { }
+}
+
+class TetrominoLowerI : Tetromino
+{
+    public TetrominoLowerI() : base(new int[,] {
+            { 0, 0, 0, 0 },
+            { 1, 1, 0, 1 },
+            { 0, 0, 0, 0 },
+            { 0, 0, 0, 0 },
+        })
+    { }
+}
+
+class TetrominoIII : Tetromino
+{
+    public TetrominoIII() : base(new int[,] {
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 1, 1, 1, 1, 1 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+        })
+    { }
+}
+
+class TetrominoBlocc : Tetromino
+{
+    public TetrominoBlocc() : base(new int[,] {
+            { 0, 1, 1, 1, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 0, 0, 0, 0 },
+        })
+    { }
+    new public static void Rotate()
+    {
+        // Blocc Tetromino does not rotate}
+    }
+}
+
+class TetrominoDonut : Tetromino
+{
+    public TetrominoDonut() : base(new int[,] {
+            { 0, 1, 1, 1, 0 },
+            { 0, 1, 0, 1, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 0, 0, 0, 0 },
+        })
+    { }
+    new public static void Rotate()
+    {
+        // Donut Tetromino does not rotate}
+    }
+}
+
+class TetrominoDot : Tetromino
+{
+    public TetrominoDot() : base(new int[,] {
+            { 0, 1, 0},
+            { 0, 0, 0},
+        })
+    { }
+    new public static void Rotate()
+    {
+        // Dot Tetromino does not rotate}
+    }
+}
+
+class TetrominoArch : Tetromino
+{
+    public TetrominoArch() : base(new int[,] {
+            { 0, 1, 0, 1, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 0, 0, 0, 0 },
+        })
+    { }
+}
