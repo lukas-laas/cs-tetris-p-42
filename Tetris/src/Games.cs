@@ -40,7 +40,8 @@ class Games
                     tetrises[1].Move(direction1);
                 }
             }
-
+            tetrises[0].Tick();
+            tetrises[1].Tick();
             renderer.Render();
             Thread.Sleep(400);
         }

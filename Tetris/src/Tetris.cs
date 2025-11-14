@@ -1,7 +1,7 @@
 class Tetris
 {
     // Next block(s) and such
-    private List<Tetromino> queue = [];
+    private Queue<Tetromino> queue = [];
     // board
     public Board Board { get; } = new();
 
@@ -16,10 +16,14 @@ class Tetris
     public void Tick()
     {
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        if (currentTime - lastTick > dt)
+        if (currentTime - lastTick < dt) return;
+
+        if (Board.FallingTetrominoes.Count == 0)
         {
-            Board.Tick();
+            AddToQueue();
+            Board.AddTetromino(queue.Dequeue());
         }
+        Board.Tick();
     }
 
     public void SetDt(int dt)
@@ -30,5 +34,21 @@ class Tetris
     public void Move(Input direction)
     {
         // Move block
+    }
+    public void AddToQueue()
+    {
+        Random rng = new();
+        queue.Enqueue(
+        rng.Next(7) switch
+        {
+            0 => new TetrominoI(),
+            1 => new TetrominoJ(),
+            2 => new TetrominoL(),
+            3 => new TetrominoO(),
+            4 => new TetrominoS(),
+            5 => new TetrominoT(),
+            6 => new TetrominoZ(),
+            _ => new TetrominoThiccI(), // IMPOSSIBLE
+        });
     }
 }
