@@ -44,7 +44,7 @@ class Renderer
         buffer += $" {DebugLine("Falling", (b) => b.FallingTetrominoes.Count.ToString())}\n";
         buffer += $" {DebugLine("Settled", (b) => b.SettledTetrominoes.Count.ToString())}\n";
 
-        // Color extraction
+        // Color extraction from the tetrominoes on each board
         List<string[,]> colorGrids = [];
         for (int boardIndex = 0; boardIndex < Boards.Count; boardIndex++)
         {
@@ -65,14 +65,14 @@ class Renderer
         // Boards
         int highest = Boards.Select(b => b.Height).Max();
         int highestVisible = Boards.Select(b => b.Height - b.VisibleHeight).Min();
-
         for (int y = 0; y < highest; y++)
         {
             if (y < highestVisible) continue; // Skip if all are none visible
 
             // Line number
-            buffer += AnsiColor.Gray(y.ToString() + " ");
+            buffer += AnsiColor.Gray(y.ToString()) + " ";
 
+            // Bodies of boards
             for (int boardIndex = 0; boardIndex < Boards.Count; boardIndex++)
             {
                 Board board = Boards[boardIndex];
@@ -106,10 +106,8 @@ class Renderer
             }
             buffer += "\n";
         }
-
-        // Line number padding adjustment
-        buffer += AnsiColor.Gray("   ");
-
+        buffer += "   "; // Line number padding adjustment
+        // Floors 
         for (int boardIndex = 0; boardIndex < Boards.Count; boardIndex++)
         {
             int canvasWidth = CanvasWidths[boardIndex];
@@ -142,7 +140,7 @@ class Renderer
         for (int boardIndex = 0; boardIndex < Boards.Count; boardIndex++)
         {
             int canvasWidth = CanvasWidths[boardIndex];
-            line += AnsiColor.Gray($"{label}:{valueGetter(Boards[boardIndex])}".PadRight(canvasWidth + 2 + boardSpacing));
+            line += AnsiColor.Gray($"{label}:{valueGetter(Boards[boardIndex])}").PadRight(canvasWidth + 2 + boardSpacing);
         }
         return line;
     }
