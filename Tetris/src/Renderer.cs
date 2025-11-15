@@ -22,13 +22,21 @@ class Renderer
         Console.CursorVisible = false;
     }
 
+
+
     public void Render()
     {
         string buffer = "";
 
+        int totalCanvasesWidth = CanvasWidths.Count * 2 // Walls
+            + CanvasWidths.Sum() // Canvases
+            + (boardSpacing * (Boards.Count - 1)) // Spacing in-between
+            + 5; // Line number area
+        int boardPadLeftSize = (Console.WindowWidth - totalCanvasesWidth) / 2;
+
         // Title
         const int TitleWidth = 24;
-        string titlePadLeft = new(' ', Math.Max(Console.WindowWidth - TitleWidth, 0) / 2);
+        string titlePadLeft = new(' ', (totalCanvasesWidth - TitleWidth) / 2 - 1);
         buffer += $"""
 
         {titlePadLeft}{AnsiColor.BorderBlue("╔══════════════════════════╗")}
@@ -83,6 +91,7 @@ class Renderer
                 {
                     int canvasWidth = CanvasWidths[boardIndex];
                     buffer += new string(' ', canvasWidth + 2);
+                    buffer += new string(' ', boardSpacing);
                     continue;
                 }
 
@@ -91,6 +100,7 @@ class Renderer
                 {
                     int canvasWidth = CanvasWidths[boardIndex];
                     buffer += BoardRoof(canvasWidth);
+                    buffer += new string(' ', boardSpacing);
                     continue;
                 }
 
@@ -103,17 +113,22 @@ class Renderer
                         new string(' ', 2);
                 }
                 buffer += BoardWall(row);
+                buffer += new string(' ', boardSpacing);
             }
             buffer += "\n";
         }
         buffer += "   "; // Line number padding adjustment
-        // Floors 
+        // Floors
         for (int boardIndex = 0; boardIndex < Boards.Count; boardIndex++)
         {
             int canvasWidth = CanvasWidths[boardIndex];
             buffer += BoardFloor(canvasWidth);
+            buffer += new string(' ', boardSpacing);
         }
         buffer += "\n";
+
+        // Adjust final padding to fill the console width
+        buffer = buffer.Replace("\n", $"\n{new string(' ', boardPadLeftSize)}");
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
@@ -140,7 +155,8 @@ class Renderer
         for (int boardIndex = 0; boardIndex < Boards.Count; boardIndex++)
         {
             int canvasWidth = CanvasWidths[boardIndex];
-            line += AnsiColor.Gray($"{label}:{valueGetter(Boards[boardIndex])}").PadRight(canvasWidth + 2 + boardSpacing);
+            line += AnsiColor.Gray($"{label}:{valueGetter(Boards[boardIndex])}".PadRight(canvasWidth + 2));
+            line += new string(' ', boardSpacing);
         }
         return line;
     }
