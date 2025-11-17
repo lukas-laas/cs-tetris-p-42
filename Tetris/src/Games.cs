@@ -61,4 +61,6 @@ class Games
 
     public List<Board> GetAllBoards()
       => [.. tetrises.Select(t => t.Board)];
+    public List<Tetris> GetAllTetrises()
+      => tetrises;
 }
