@@ -73,6 +73,18 @@ class Board
             {
                 settledTetrominoes.Add(tetromino);
                 fallingTetrominoes.Remove(tetromino);
+                // Check rows for clear
+                // Update collision
+                UpdateCollisionGrid();
+                // Check rows for full row
+                for (int y = 0; y < collisionGrid.Count; y++)
+                {
+                    if (collisionGrid[y].All((b) => b == true))
+                    {
+                        collisionGrid.RemoveAt(y);
+                    }
+                }
+                // Add empty to top
             }
         }
 
