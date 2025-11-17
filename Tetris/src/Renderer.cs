@@ -48,9 +48,10 @@ class Renderer
 
         """;
 
-        // Debug info above each board
-        buffer += $" {DebugLine("Falling", (b) => b.FallingTetrominoes.Count.ToString())}\n";
-        buffer += $" {DebugLine("Settled tiles", (b) => b.SettledTiles.Count.ToString())}\n";
+        // Info lines
+        buffer += $" {InfoLine("Score", t => t.Score)}\n";
+        buffer += $" {InfoLine("Falling", b => b.FallingTetrominoes.Count.ToString())}\n";
+        buffer += $" {InfoLine("Settled tiles", b => b.SettledTiles.Count.ToString())}\n";
 
         // Color extraction from the tetrominoes on each board
         List<string[,]> colorGrids = [];
@@ -151,7 +152,7 @@ class Renderer
         => AnsiColor.BorderBlue($"▀{new string('▀', width)}▀");
 
     /** Value getter runs on a Board */
-    private string DebugLine(string label, Func<Board, string> valueGetter)
+    private string InfoLine(string label, Func<Board, string> valueGetter)
     {
         string line = "   "; // Line number padding
         for (int boardIndex = 0; boardIndex < Boards.Count; boardIndex++)
@@ -162,4 +163,19 @@ class Renderer
         }
         return line;
     }
+    private string InfoLine(string label, Func<Board, int> valueGetter)
+        => InfoLine(label, (b) => valueGetter(b).ToString());
+    private string InfoLine(string label, Func<Tetris, string> valueGetter)
+    {
+        string line = "   "; // Line number padding
+        for (int tetrisIndex = 0; tetrisIndex < Boards.Count; tetrisIndex++)
+        {
+            int canvasWidth = CanvasWidths[tetrisIndex];
+            line += AnsiColor.Gray($"{label}:{valueGetter(games.Tetrises[tetrisIndex])}".PadRight(canvasWidth + 2));
+            line += new string(' ', boardSpacing);
+        }
+        return line;
+    }
+    private string InfoLine(string label, Func<Tetris, int> valueGetter)
+        => InfoLine(label, (t) => valueGetter(t).ToString());
 }
