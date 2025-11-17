@@ -1,4 +1,6 @@
 
+using System.Text.RegularExpressions;
+
 class Renderer
 {
     private readonly Games games;
@@ -6,6 +8,7 @@ class Renderer
     private List<Tetris> tetrises;
     private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
     private static readonly int boardSpacing = 16;
+    private static readonly Regex ansiRegex = new("\u001b\\[[0-9;]*m");
 
     private static readonly Dictionary<string, string> boardBorder = new()
     {
@@ -135,8 +138,8 @@ class Renderer
         // Normalize line lengths with trailing spaces to groups widest line
         linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup =>
         {
-            int maxLength = lineGroup.Select(l => l.Length).Max();
-            return lineGroup.Select(line => line.PadRight(maxLength)).ToList();
+            int maxVisibleLength = lineGroup.Select(GetVisibleLength).Max();
+            return lineGroup.Select(line => PadRightVisible(line, maxVisibleLength)).ToList();
         })];
 
         // Merge line by line
@@ -151,6 +154,17 @@ class Renderer
             buffer += line.TrimEnd() + "\n"; // Trim trailing spaces
         }
         return buffer;
+    }
+
+    private static int GetVisibleLength(string text)
+        => ansiRegex.Replace(text, string.Empty).Length;
+
+    private static string PadRightVisible(string text, int targetVisibleLength)
+    {
+        int currentVisibleLength = GetVisibleLength(text);
+        if (currentVisibleLength >= targetVisibleLength) return text;
+
+        return text + new string(' ', targetVisibleLength - currentVisibleLength);
     }
 
     private static string MakeBoardRoof(int width)
