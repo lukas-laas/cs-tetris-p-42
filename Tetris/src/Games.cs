@@ -2,6 +2,7 @@
 class Games
 {
     private List<Tetris> tetrises = [new Tetris(), new Tetris()];
+    public List<Tetris> Tetrises => tetrises;
 
     // overarching game state
     public Games()

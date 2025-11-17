@@ -9,7 +9,9 @@ class Tetris
 
     // score
     private int score;
+    public int Score => score;
     private int money;
+    public int Money => money;
     private int dt = 500;
 
     private long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -54,7 +56,7 @@ class Tetris
                     if (tetromino.CanMove(0, 1, Board)) tetromino.Y++;
                     break;
                 case Input.Rotate:
-                    tetromino.Rotate(); // TODO superrotations
+                    tetromino.Rotate(); // TODO super rotations
                     break;
                 default:
                     throw new Exception("WTF!");
