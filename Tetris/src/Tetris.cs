@@ -13,6 +13,12 @@ class Tetris
     private int dt = 500;
 
     private long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+    public Tetris()
+    {
+        AddToQueue(4);
+    }
+
     public void Tick()
     {
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -70,5 +76,12 @@ class Tetris
             6 => new TetrominoZ(),
             _ => new TetrominoThiccI(), // IMPOSSIBLE
         });
+    }
+    public void AddToQueue(int Count)
+    {
+        for (int i = 0; i < Count; i++)
+        {
+            AddToQueue();
+        }
     }
 }

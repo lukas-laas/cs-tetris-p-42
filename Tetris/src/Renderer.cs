@@ -6,7 +6,7 @@ class Renderer
     private List<Board> Boards { get; set; }
     private List<int> CanvasWidths { get; set; }
     private readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
-    private readonly int boardSpacing = 4;
+    private readonly int boardSpacing = 32;
 
     public Renderer(Games games)
     {
