@@ -5,8 +5,21 @@ class Renderer
 
     private List<Board> Boards { get; set; }
     private List<int> CanvasWidths { get; set; }
-    private readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
-    private readonly int boardSpacing = 32;
+    private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
+    private static readonly int boardSpacing = 32;
+
+    private static readonly Dictionary<string, string> boardBorder = new()
+    {
+        {"topLeft",          "╭"},
+        {"topRight",         "╮"},
+        {"topHorizontal",    "─"},
+        {"side",             "│"},
+        {"bottomLeft",       "▀"}, // Alt ╰
+        {"bottomRight",      "▀"}, // Alt ╯
+        {"bottomHorizontal", "▀"}, // Alt ─
+    };
+    private static readonly char occupiedTileChar = '▓';
+    private static readonly char emptyTileChar = ' ';
 
     public Renderer(Games games)
     {
@@ -22,8 +35,6 @@ class Renderer
         Console.CursorVisible = false;
     }
 
-
-
     public void Render()
     {
         string buffer = "";
@@ -35,45 +46,20 @@ class Renderer
         int boardPadLeftSize = (Console.WindowWidth - totalCanvasesWidth) / 2;
 
         // Title
-        const int TitleWidth = 24;
-        string titlePadLeft = new(' ', (totalCanvasesWidth - TitleWidth) / 2 - 1);
-        buffer += $"""
-
-        {titlePadLeft}{AnsiColor.BorderBlue("╔══════════════════════════╗")}
-        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red("▄▄▄▄")} {AnsiColor.Orange("▄▄▄")} {AnsiColor.Yellow("▄▄▄▄")} {AnsiColor.Green("▄▄▖")} {AnsiColor.Cyan("▗▖")} {AnsiColor.Magenta("▗▄▖")} {AnsiColor.BorderBlue("║")}
-        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄ ")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▂█")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▀▙▝")} {AnsiColor.BorderBlue("║")}
-        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄▄")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▀▙")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▜▄▛")} {AnsiColor.BorderBlue("║")}
-        {titlePadLeft}{AnsiColor.BorderBlue("║")}                          {AnsiColor.BorderBlue("║")}
-        {titlePadLeft}{AnsiColor.BorderBlue("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀")}
-
-        """;
+        buffer += MakeTitle(totalCanvasesWidth);
 
         // Info lines
         buffer += $" {InfoLine("Score", t => t.Score)}\n";
         buffer += $" {InfoLine("Falling", b => b.FallingTetrominoes.Count.ToString())}\n";
         buffer += $" {InfoLine("Settled tiles", b => b.SettledTiles.Count.ToString())}\n";
 
-        // Color extraction from the tetrominoes on each board
-        List<string[,]> colorGrids = [];
-        for (int boardIndex = 0; boardIndex < Boards.Count; boardIndex++)
-        {
-            Board board = Boards[boardIndex];
-            string[,] colorGrid = new string[board.Height, board.Width];
-            foreach (Tile tile in board.GetAllTiles())
-            {
-                if (tile.X < 0 || tile.X >= board.Width || tile.Y < 0 || tile.Y >= board.Height)
-                {
-                    throw new Exception($"Tile out of bounds: ({tile.X}, {tile.Y}) on board of size ({board.Width}, {board.Height})");
-                }
-                colorGrid[tile.Y, tile.X] = tile.Color;
-            }
-            colorGrids.Add(colorGrid);
-        }
+        // Color extraction
+        List<string[,]> colorGrids = MakeColorGrids(Boards);
 
         // Boards
-        int highest = Boards.Select(b => b.Height).Max();
+        int tallestHeight = Boards.Select(b => b.Height).Max();
         int highestVisible = Boards.Select(b => b.Height - b.VisibleHeight).Min();
-        for (int y = 0; y < highest; y++)
+        for (int y = 0; y < tallestHeight; y++)
         {
             if (y < highestVisible) continue; // Skip if all are none visible
 
@@ -99,7 +85,7 @@ class Renderer
                 if (y == board.Height - board.VisibleHeight)
                 {
                     int canvasWidth = CanvasWidths[boardIndex];
-                    buffer += BoardRoof(canvasWidth);
+                    buffer += MakeBoardRoof(canvasWidth);
                     buffer += new string(' ', boardSpacing);
                     continue;
                 }
@@ -108,11 +94,11 @@ class Renderer
                 for (int x = 0; x < board.Width; x++)
                 {
                     row += colorGrid[y, x] != null ?
-                        AnsiColor.Apply(new string('▓', 2), colorGrid[y, x])
+                        AnsiColor.Apply(new string(occupiedTileChar, 2), colorGrid[y, x])
                         :
-                        new string(' ', 2);
+                        new string(emptyTileChar, 2);
                 }
-                buffer += BoardWall(row);
+                buffer += MakeBoardWall(row);
                 buffer += new string(' ', boardSpacing);
             }
             buffer += "\n";
@@ -122,7 +108,7 @@ class Renderer
         for (int boardIndex = 0; boardIndex < Boards.Count; boardIndex++)
         {
             int canvasWidth = CanvasWidths[boardIndex];
-            buffer += BoardFloor(canvasWidth);
+            buffer += MakeBoardFloor(canvasWidth);
             buffer += new string(' ', boardSpacing);
         }
         buffer += "\n";
@@ -137,21 +123,52 @@ class Renderer
         Console.WriteLine(buffer);
     }
 
-    public void RefetchBoards()
+    private static string MakeTitle(int totalCanvasesWidth)
     {
-        this.Boards = games.GetAllBoards();
+        // Title
+        const int TitleWidth = 24;
+        string titlePadLeft = new(' ', (totalCanvasesWidth - TitleWidth) / 2 - 1);
+        return $"""
+
+        {titlePadLeft}{AnsiColor.BorderBlue("╔══════════════════════════╗")}
+        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red("▄▄▄▄")} {AnsiColor.Orange("▄▄▄")} {AnsiColor.Yellow("▄▄▄▄")} {AnsiColor.Green("▄▄▖")} {AnsiColor.Cyan("▗▖")} {AnsiColor.Magenta("▗▄▖")} {AnsiColor.BorderBlue("║")}
+        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄ ")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▂█")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▀▙▝")} {AnsiColor.BorderBlue("║")}
+        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄▄")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▀▙")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▜▄▛")} {AnsiColor.BorderBlue("║")}
+        {titlePadLeft}{AnsiColor.BorderBlue("║")}                          {AnsiColor.BorderBlue("║")}
+        {titlePadLeft}{AnsiColor.BorderBlue("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀")}
+
+        """;
     }
 
-    private static string BoardRoof(int width)
-        => AnsiColor.BorderBlue($"╭{new string('─', width)}╮");
+    private static List<string[,]> MakeColorGrids(List<Board> boards)
+    {
+        List<string[,]> colorGrids = [];
+        for (int boardIndex = 0; boardIndex < boards.Count; boardIndex++)
+        {
+            Board board = boards[boardIndex];
+            string[,] colorGrid = new string[board.Height, board.Width];
+            foreach (Tile tile in board.GetAllTiles())
+            {
+                if (tile.X < 0 || tile.X >= board.Width || tile.Y < 0 || tile.Y >= board.Height)
+                {
+                    throw new Exception($"Tile out of bounds: ({tile.X}, {tile.Y}) on board of size ({board.Width}, {board.Height})");
+                }
+                colorGrid[tile.Y, tile.X] = tile.Color;
+            }
+            colorGrids.Add(colorGrid);
+        }
+        return colorGrids;
+    }
 
-    private static string BoardWall(string content)
-        => AnsiColor.BorderBlue("│") + content + AnsiColor.BorderBlue("│");
+    private static string MakeBoardRoof(int width)
+        => AnsiColor.BorderBlue($"{boardBorder["topLeft"]}{new string(boardBorder["topHorizontal"][0], width)}{boardBorder["topRight"]}");
 
-    private static string BoardFloor(int width)
-        => AnsiColor.BorderBlue($"▀{new string('▀', width)}▀");
+    private static string MakeBoardWall(string content)
+        => $"{AnsiColor.BorderBlue(boardBorder["side"])}{content}{AnsiColor.BorderBlue(boardBorder["side"])}";
 
-    /** Value getter runs on a Board */
+    private static string MakeBoardFloor(int width)
+        => AnsiColor.BorderBlue($"{boardBorder["bottomLeft"]}{new string(boardBorder["bottomHorizontal"][0], width)}{boardBorder["bottomRight"]}");
+
     private string InfoLine(string label, Func<Board, string> valueGetter)
     {
         string line = "   "; // Line number padding
