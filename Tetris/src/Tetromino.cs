@@ -61,6 +61,16 @@ class Tetromino(int[,] shape) : ITetromino
         return blocks;
     }
 
+    public List<Tile> GetTiles()
+    {
+        List<Tile> tiles = [];
+        foreach ((int x, int y) in GetTileCoords())
+        {
+            tiles.Add(new Tile(x, y, Color));
+        }
+        return tiles;
+    }
+
     public void SetPosition(int x, int y)
     {
         X = x;

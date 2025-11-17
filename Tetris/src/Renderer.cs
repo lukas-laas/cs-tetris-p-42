@@ -50,7 +50,7 @@ class Renderer
 
         // Debug info above each board
         buffer += $" {DebugLine("Falling", (b) => b.FallingTetrominoes.Count.ToString())}\n";
-        buffer += $" {DebugLine("Settled", (b) => b.SettledTetrominoes.Count.ToString())}\n";
+        buffer += $" {DebugLine("Settled tiles", (b) => b.SettledTiles.Count.ToString())}\n";
 
         // Color extraction from the tetrominoes on each board
         List<string[,]> colorGrids = [];
@@ -58,14 +58,13 @@ class Renderer
         {
             Board board = Boards[boardIndex];
             string[,] colorGrid = new string[board.Height, board.Width];
-            List<Tetromino> tetrominoes = board.GetAllTetrominoes();
-            foreach (Tetromino tetromino in tetrominoes)
+            foreach (Tile tile in board.GetAllTiles())
             {
-                foreach ((int x, int y) in tetromino.GetTileCoords())
+                if (tile.X < 0 || tile.X >= board.Width || tile.Y < 0 || tile.Y >= board.Height)
                 {
-                    if (x >= 0 && x < board.Width && y >= 0 && y < board.Height)
-                        colorGrid[y, x] = tetromino.Color;
+                    throw new Exception($"Tile out of bounds: ({tile.X}, {tile.Y}) on board of size ({board.Width}, {board.Height})");
                 }
+                colorGrid[tile.Y, tile.X] = tile.Color;
             }
             colorGrids.Add(colorGrid);
         }

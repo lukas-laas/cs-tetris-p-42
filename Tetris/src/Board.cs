@@ -10,11 +10,11 @@ class Board
     public int VisibleHeight { get; set; } = 20;
 
     private CollisionGrid collisionGrid = [];
-    private List<Tetromino> settledTetrominoes = []; // Settled tetrominoes on the board, to keep track of colors and for updating collision grid
+    private List<Tile> settledTiles = [];
     private List<Tetromino> fallingTetrominoes = []; // usually just one but debuffs might change that
 
     public CollisionGrid CollisionGrid => collisionGrid;
-    public List<Tetromino> SettledTetrominoes => settledTetrominoes;
+    public List<Tile> SettledTiles => settledTiles;
     public List<Tetromino> FallingTetrominoes => fallingTetrominoes;
 
     public Board()
@@ -25,10 +25,16 @@ class Board
         }
     }
 
-    public List<Tetromino> GetAllTetrominoes()
+    public List<Tile> GetAllTiles()
     {
-        return [.. settledTetrominoes, .. fallingTetrominoes];
-    }
+        List<Tile> allTiles = [];
+        allTiles.AddRange(settledTiles);
+        foreach (Tetromino tetromino in fallingTetrominoes)
+        {
+            allTiles.AddRange(tetromino.GetTiles());
+        }
+        return allTiles;
+    }   
 
     public void UpdateCollisionGrid()
     {
@@ -42,14 +48,13 @@ class Board
         }
 
         // Set occupied cells
-        foreach (Tetromino tetromino in settledTetrominoes)
+        foreach (Tile tile in settledTiles)
         {
-            foreach ((int x, int y) in tetromino.GetTileCoords())
+            int y = tile.Y;
+            int x = tile.X;
+            if (y >= 0 && y < Height && x >= 0 && x < Width)
             {
-                if (y >= 0 && y < Height && x >= 0 && x < Width)
-                {
-                    collisionGrid[y][x] = true;
-                }
+                collisionGrid[y][x] = true;
             }
         }
     }
@@ -71,7 +76,7 @@ class Board
                 tetromino.SetPosition(tetromino.X, tetromino.Y + 1);
             else // Cannot move down, settle the tetromino
             {
-                settledTetrominoes.Add(tetromino);
+                settledTiles.AddRange(tetromino.GetTiles());
                 fallingTetrominoes.Remove(tetromino);
                 // Check rows for clear
                 // Update collision
