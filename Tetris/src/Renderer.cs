@@ -129,6 +129,9 @@ class Renderer
         // Adjust final padding to fill the console width
         buffer = buffer.Replace("\n", $"\n{new string(' ', boardPadLeftSize)}");
 
+        // Remove trailing spaces on each line for a cleaner look
+        buffer = string.Join('\n', buffer.Split('\n').Select(line => line.TrimEnd()));
+
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
     }
