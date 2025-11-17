@@ -9,9 +9,9 @@ class Board
     public int Height { get; private set; } = 40;
     public int VisibleHeight { get; set; } = 20;
 
-    private CollisionGrid collisionGrid = [];
-    private List<Tile> settledTiles = [];
-    private List<Tetromino> fallingTetrominoes = []; // usually just one but debuffs might change that
+    private CollisionGrid collisionGrid = new CollisionGrid();
+    private List<Tile> settledTiles = new List<Tile>();
+    private List<Tetromino> fallingTetrominoes = new List<Tetromino>(); // usually just one but debuffs might change that
 
     public CollisionGrid CollisionGrid => collisionGrid;
     public List<Tile> SettledTiles => settledTiles;
@@ -21,20 +21,21 @@ class Board
     {
         for (int y = 0; y < Height; y++)
         {
-            collisionGrid.Add([.. new bool[Width]]);
+            collisionGrid.Add(new List<bool>(new bool[Width]));
         }
     }
 
     public List<Tile> GetAllTiles()
     {
-        List<Tile> allTiles = [];
+        List<Tile> allTiles = new List<Tile>();
         allTiles.AddRange(settledTiles);
         foreach (Tetromino tetromino in fallingTetrominoes)
         {
             allTiles.AddRange(tetromino.GetTiles());
         }
+
         return allTiles;
-    }   
+    }
 
     public void UpdateCollisionGrid()
     {
@@ -69,45 +70,37 @@ class Board
     public void Tick()
     {
         // Move falling tetrominoes down by one if possible
-        List<Tetromino> iterableTetrominoes = [.. fallingTetrominoes];
+        List<Tetromino> iterableTetrominoes = new List<Tetromino>(fallingTetrominoes);
         foreach (Tetromino tetromino in iterableTetrominoes)
         {
             if (tetromino.CanMove(0, 1, collisionGrid, Width, Height))
+            {
                 tetromino.SetPosition(tetromino.X, tetromino.Y + 1);
-            else // Cannot move down, settle the tetromino
+                continue;
+            }
+
+            // Cannot move down, settle the tetromino
+            settledTiles.AddRange(tetromino.GetTiles());
+            fallingTetrominoes.Remove(tetromino);
+
+            UpdateCollisionGrid();
+            for (int y = 0; y < collisionGrid.Count; y++)
             {
-                settledTiles.AddRange(tetromino.GetTiles());
-                fallingTetrominoes.Remove(tetromino);
-                // Check rows for clear
-                // Update collision
+                if (!collisionGrid[y].All((b) => b == true)) continue;
+
+                // Remove tiles on the cleared row
+                settledTiles.RemoveAll((tile) => tile.Y == y);
+
+                // Move all tiles above the cleared row down by 1
+                foreach (var tile in settledTiles)
+                {
+                    if (tile.Y < y)
+                        tile.Y += 1;
+                }
+
                 UpdateCollisionGrid();
-                // Check rows for full row
-                for (int y = 0; y < collisionGrid.Count; y++)
-                {
-                    if (collisionGrid[y].All((b) => b == true))
-                    {
-                        collisionGrid.RemoveAt(y);
-                    }
-                }
-                // Add empty to top
+                y -= 1; // Recheck line in case resettled tiles clear for sanity
             }
         }
-
-        int filledSlot = 0;
-        for (int y = 0; y < Height; y++)
-        {
-            filledSlot = 0;
-            for (int x = 0; x < Width; x++)
-            {
-                if (collisionGrid[y][x] == true) filledSlot++;
-                if (filledSlot == Width)
-                {
-                    // TODO: implement, if this is not the right place I'm sorry Vena..
-                    // Board.clearRow(y);
-                }
-            }
-        }
-
-        UpdateCollisionGrid();
     }
 }

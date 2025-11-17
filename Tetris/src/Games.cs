@@ -33,11 +33,11 @@ class Games
         while (gaming)
         {
             long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            if (currentTime - lastTick > shopTime)
-            {
-                lastTick = currentTime;
-                gaming = false;
-            }
+            // if (currentTime - lastTick > shopTime)
+            // {
+            //     lastTick = currentTime;
+            //     gaming = false;
+            // }
 
             string key = KeyInput.Read() ?? "";
             {
