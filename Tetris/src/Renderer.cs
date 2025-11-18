@@ -165,6 +165,7 @@ class Renderer
             + queueBorder["topRight"]
             + "\n"
         );
+
         // Body
         foreach (Tetromino tetromino in queue)
         {
@@ -188,6 +189,7 @@ class Renderer
                     }
                 }
 
+                // Content line
                 buffer += AnsiColor.BorderBlue(queueBorder["side"])
                     + $" {row} "
                     + AnsiColor.BorderBlue(queueBorder["side"])
@@ -195,12 +197,14 @@ class Renderer
 
                 row = ""; // Reset for reuse
             }
+
             // Empty lines between tetrominoes
             buffer += AnsiColor.BorderBlue(queueBorder["side"])
                 + $"{new string(emptyTileChar, queueWidth)}"
                 + AnsiColor.BorderBlue(queueBorder["side"])
                 + "\n";
         }
+
         // Bottom border
         buffer += AnsiColor.BorderBlue(
             queueBorder["bottomLeft"]
