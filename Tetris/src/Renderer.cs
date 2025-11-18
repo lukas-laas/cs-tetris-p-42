@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 class Renderer
 {
-    private readonly Games games;
+    private readonly GameState games;
 
     private readonly List<Tetris> tetrises;
     private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
@@ -33,7 +33,7 @@ class Renderer
         {"bottomHorizontal", "═"},
     };
 
-    public Renderer(Games games)
+    public Renderer(GameState games)
     {
         this.games = games;
         this.tetrises = games.Tetrises;

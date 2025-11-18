@@ -1,11 +1,11 @@
 
-class Games
+class GameState
 {
     private readonly List<Tetris> tetrises = [new Tetris(), new Tetris()];
     public List<Tetris> Tetrises => tetrises;
 
     // overarching game state
-    public Games()
+    public GameState()
     {
         // Game controls
         var control1 = new Dictionary<string, Input> {

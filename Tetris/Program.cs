@@ -4,6 +4,6 @@
     {
         // https://tetris.wiki/Tetris_Guideline
 
-        _ = new Games();
+        _ = new GameState();
     }
 }
