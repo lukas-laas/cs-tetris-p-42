@@ -94,9 +94,10 @@ class Renderer
     private static string MakeBoard(Tetris tetris)
     {
         Board board = tetris.Board;
+        int innerCanvasWidth = board.Width * aspectRatioCorrection;
 
+        // Info lines (prepended later)
         string infoLines = "";
-        // Info lines
         infoLines += InfoLine("Score", tetris.Score);
         infoLines += InfoLine("Falling", board.FallingTetrominoes.Count);
         infoLines += InfoLine("Settled tiles", board.SettledTiles.Count);
@@ -104,7 +105,13 @@ class Renderer
         string buffer = "";
 
         // Top border
-        buffer += AnsiColor.BorderBlue($"{boardBorder["topLeft"]}{new string(boardBorder["topHorizontal"][0], board.Width * aspectRatioCorrection)}{boardBorder["topRight"]}\n");
+        buffer += AnsiColor.BorderBlue(
+            boardBorder["topLeft"]
+            + new string(boardBorder["topHorizontal"][0], innerCanvasWidth)
+            + boardBorder["topRight"]
+            + "\n"
+        );
+
         // Body
         string[,] colorGrid = MakeColorGrid(board);
         for (int y = 0; y < board.Height; y++)
@@ -120,10 +127,19 @@ class Renderer
                     :
                     new string(emptyTileChar, 2);
             }
-            buffer += $"{AnsiColor.BorderBlue(boardBorder["side"])}{row}{AnsiColor.BorderBlue(boardBorder["side"])}\n";
+            buffer += AnsiColor.BorderBlue(boardBorder["side"])
+                + $"{row}"
+                + AnsiColor.BorderBlue(boardBorder["side"])
+                + "\n";
         }
+
         // Bottom border
-        buffer += AnsiColor.BorderBlue($"{boardBorder["bottomLeft"]}{new string(boardBorder["bottomHorizontal"][0], board.Width * aspectRatioCorrection)}{boardBorder["bottomRight"]}\n");
+        buffer += AnsiColor.BorderBlue(
+            boardBorder["bottomLeft"]
+            + new string(boardBorder["bottomHorizontal"][0], innerCanvasWidth)
+            + boardBorder["bottomRight"]
+            + "\n"
+        );
 
         // Add queue
         string queueString = MakeQueue(tetris);
@@ -143,15 +159,24 @@ class Renderer
         string buffer = "";
 
         // Top border
-        buffer += AnsiColor.BorderBlue($"{queueBorder["topLeft"]}{new string(queueBorder["topHorizontal"][0], queueWidth)}{queueBorder["topRight"]}\n");
+        buffer += AnsiColor.BorderBlue(
+            queueBorder["topLeft"]
+            + new string(queueBorder["topHorizontal"][0], queueWidth)
+            + queueBorder["topRight"]
+            + "\n"
+        );
         // Body
         foreach (Tetromino tetromino in queue)
         {
             List<(int, int)> coords = tetromino.GetTileCoords();
+
+            const int width = 4;
+            int height = tetromino.GetHeight();
+
             string row = "";
-            for (int y = 0; y < 3; y++)
+            for (int y = 0; y < Math.Clamp(height, 2, 5); y++)
             {
-                for (int x = 0; x < 4; x++)
+                for (int x = 0; x < width; x++)
                 {
                     if (coords.Contains((tetromino.X + x, tetromino.Y + y)))
                     {
@@ -162,12 +187,27 @@ class Renderer
                         row += new string(emptyTileChar, 2);
                     }
                 }
-                buffer += $"{AnsiColor.BorderBlue(queueBorder["side"])} {row} {AnsiColor.BorderBlue(queueBorder["side"])}\n";
-                row = "";
+
+                buffer += AnsiColor.BorderBlue(queueBorder["side"])
+                    + $" {row} "
+                    + AnsiColor.BorderBlue(queueBorder["side"])
+                    + "\n";
+
+                row = ""; // Reset for reuse
             }
+            // Empty lines between tetrominoes
+            buffer += AnsiColor.BorderBlue(queueBorder["side"])
+                + $"{new string(emptyTileChar, queueWidth)}"
+                + AnsiColor.BorderBlue(queueBorder["side"])
+                + "\n";
         }
         // Bottom border
-        buffer += AnsiColor.BorderBlue($"{queueBorder["bottomLeft"]}{new string(queueBorder["bottomHorizontal"][0], queueWidth)}{queueBorder["bottomRight"]}\n");
+        buffer += AnsiColor.BorderBlue(
+            queueBorder["bottomLeft"]
+            + new string(queueBorder["bottomHorizontal"][0], queueWidth)
+            + queueBorder["bottomRight"]
+            + "\n"
+        );
         return buffer;
     }
 
