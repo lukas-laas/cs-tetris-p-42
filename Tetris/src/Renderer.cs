@@ -56,7 +56,7 @@ class Renderer
         buffer += "\n";
 
         // Boards
-        buffer += Merge2DStrings([.. tetrises.Select(MakeBoard)], boardSpacing);
+        buffer += Center2DString(Merge2DStrings([.. tetrises.Select(MakeBoard)], boardSpacing));
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
@@ -64,19 +64,18 @@ class Renderer
 
     private static string MakeTitle()
     {
-        // Title
-        const int TitleWidth = 24;
-        string titlePadLeft = new(' ', (Console.WindowWidth - TitleWidth) / 2 - 1);
-        return $"""
+        string title = $"""
 
-        {titlePadLeft}{AnsiColor.BorderBlue("╔══════════════════════════╗")}
-        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red("▄▄▄▄")} {AnsiColor.Orange("▄▄▄")} {AnsiColor.Yellow("▄▄▄▄")} {AnsiColor.Green("▄▄▖")} {AnsiColor.Cyan("▗▖")} {AnsiColor.Magenta("▗▄▖")} {AnsiColor.BorderBlue("║")}
-        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄ ")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▂█")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▀▙▝")} {AnsiColor.BorderBlue("║")}
-        {titlePadLeft}{AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄▄")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▀▙")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▜▄▛")} {AnsiColor.BorderBlue("║")}
-        {titlePadLeft}{AnsiColor.BorderBlue("║")}                          {AnsiColor.BorderBlue("║")}
-        {titlePadLeft}{AnsiColor.BorderBlue("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀")}
+        {AnsiColor.BorderBlue("╔══════════════════════════╗")}
+        {AnsiColor.BorderBlue("║")} {AnsiColor.Red("▄▄▄▄")} {AnsiColor.Orange("▄▄▄")} {AnsiColor.Yellow("▄▄▄▄")} {AnsiColor.Green("▄▄▖")} {AnsiColor.Cyan("▗▖")} {AnsiColor.Magenta("▗▄▖")} {AnsiColor.BorderBlue("║")}
+        {AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄ ")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▂█")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▀▙▝")} {AnsiColor.BorderBlue("║")}
+        {AnsiColor.BorderBlue("║")} {AnsiColor.Red(" ▐▌ ")} {AnsiColor.Orange("█▄▄")} {AnsiColor.Yellow(" ▐▌ ")} {AnsiColor.Green("█▀▙")} {AnsiColor.Cyan("▐▌")} {AnsiColor.Magenta("▜▄▛")} {AnsiColor.BorderBlue("║")}
+        {AnsiColor.BorderBlue("║")}                          {AnsiColor.BorderBlue("║")}
+        {AnsiColor.BorderBlue("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀")}
 
         """;
+
+        return Center2DString(title);
     }
 
     private static string[,] MakeColorGrid(Board board)
@@ -156,6 +155,17 @@ class Renderer
         return buffer;
     }
 
+    private static string Center2DString(string input2d)
+    {
+        int consoleWidth = Console.WindowWidth;
+        int visibleWidth = input2d.Split('\n').Max(GetVisibleLength);
+        if (visibleWidth >= consoleWidth) return input2d;
+
+        int paddingLeft = (consoleWidth - visibleWidth) / 2;
+        string padding = new(' ', paddingLeft);
+        return padding + input2d.Replace("\n", "\n" + padding);
+    }
+
     private static int GetVisibleLength(string text)
         => ansiRegex.Replace(text, string.Empty).Length;
 
@@ -177,7 +187,7 @@ class Renderer
         => AnsiColor.BorderBlue($"{boardBorder["bottomLeft"]}{new string(boardBorder["bottomHorizontal"][0], width * aspectRatioCorrection)}{boardBorder["bottomRight"]}\n");
 
     private static string InfoLine(string label, string value)
-        => AnsiColor.Gray($"{label}:{value}\n");
+        => AnsiColor.Gray($" {label}:{value}\n");
 
     private static string InfoLine(string label, int value)
         => InfoLine(label, value.ToString());
