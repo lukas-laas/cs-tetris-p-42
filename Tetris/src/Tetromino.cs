@@ -285,7 +285,7 @@ class TetrominoIII : Tetromino
         }, AnsiColor.WhiteCode)
     {
         SpawnXOffset = -2;
-        SpawnYOffset = -3;
+        SpawnYOffset = -2;
     }
 }
 
