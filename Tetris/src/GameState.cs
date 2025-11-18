@@ -28,7 +28,7 @@ class GameState
         bool gaming = true;
 
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        int shopTime = 500 * 20 * 5; // Temporary value, Probably around ~5 default tetromino spawn
+        int shopTime = 500 * 20 * 5; // Temporary value, Probably around ~5 default polyomino spawn
 
         // TODO: Switch case to switch between menu, game and shop, might want to live in Program, not sure
         while (gaming)

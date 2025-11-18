@@ -28,10 +28,10 @@ class Tetris
         if (currentTime - lastTick < dt) return;
         lastTick = currentTime;
 
-        if (Board.FallingTetrominoes.Count == 0)
+        if (Board.FallingPolyominoes.Count == 0)
         {
             AddToQueue();
-            Board.AddTetromino(queue.Dequeue());
+            Board.AddPolyomino(queue.Dequeue());
         }
         Board.Tick();
     }
@@ -43,21 +43,21 @@ class Tetris
 
     public void Move(Input direction)
     {
-        foreach (Polyomino tetromino in Board.FallingTetrominoes)
+        foreach (Polyomino polyomino in Board.FallingPolyominoes)
         {
             switch (direction)
             {
                 case Input.Left:
-                    if (tetromino.CanMove(-1, 0, Board)) tetromino.X--;
+                    if (polyomino.CanMove(-1, 0, Board)) polyomino.X--;
                     break;
                 case Input.Right:
-                    if (tetromino.CanMove(1, 0, Board)) tetromino.X++;
+                    if (polyomino.CanMove(1, 0, Board)) polyomino.X++;
                     break;
                 case Input.SoftDrop:
-                    if (tetromino.CanMove(0, 1, Board)) tetromino.Y++;
+                    if (polyomino.CanMove(0, 1, Board)) polyomino.Y++;
                     break;
                 case Input.Rotate:
-                    tetromino.Rotate(); // TODO super rotations
+                    polyomino.Rotate(); // TODO super rotations
                     break;
                 default:
                     throw new Exception("WTF!");

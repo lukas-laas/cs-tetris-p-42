@@ -40,7 +40,7 @@ class Polyomino
     }
 
     /// <summary>
-    /// Returns list of block positions relative to tetromino position
+    /// Returns list of block positions relative to polyomino position
     /// </summary>
     public List<(int, int)> GetTileCoords()
     {
@@ -102,7 +102,7 @@ class Polyomino
     }
 
     /// <summary>
-    /// Gets the height of the tetromino shape not counting empty rows in the definition matrix
+    /// Gets the height of the polyomino shape not counting empty rows in the definition matrix
     /// </summary>
     /// <returns></returns>
     public int GetHeight()
@@ -131,7 +131,7 @@ class Polyomino
     }
 
     /// <summary>
-    /// Gets the width of the tetromino shape not counting empty columns in the definition matrix
+    /// Gets the width of the polyomino shape not counting empty columns in the definition matrix
     /// </summary>
     /// <returns></returns>
     public int GetWidth()
@@ -301,7 +301,7 @@ class NonominoBlocc : Polyomino
 
     public override void Rotate()
     {
-        // Blocc Tetromino does not rotate}
+        // Blocc does not rotate}
     }
 }
 
@@ -317,7 +317,7 @@ class OctominoDonut : Polyomino
 
     public override void Rotate()
     {
-        // Donut Tetromino does not rotate}
+        // Donut does not rotate}
     }
 }
 
@@ -331,7 +331,7 @@ class MonominoDot : Polyomino
 
     public override void Rotate()
     {
-        // Dot Tetromino does not rotate}
+        // Dot does not rotate}
     }
 }
 

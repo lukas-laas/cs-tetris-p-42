@@ -9,13 +9,13 @@ class Board
     public int Height { get; private set; } = 40;
     public int VisibleHeight { get; set; } = 20;
 
-    private CollisionGrid collisionGrid = new CollisionGrid();
-    private List<Tile> settledTiles = new List<Tile>();
-    private List<Polyomino> fallingTetrominoes = new List<Polyomino>(); // usually just one but debuffs might change that
+    private CollisionGrid collisionGrid = [];
+    private List<Tile> settledTiles = [];
+    private List<Polyomino> fallingPolyominoes = []; // usually just one but debuffs might change that
 
     public CollisionGrid CollisionGrid => collisionGrid;
     public List<Tile> SettledTiles => settledTiles;
-    public List<Polyomino> FallingTetrominoes => fallingTetrominoes;
+    public List<Polyomino> FallingPolyominoes => fallingPolyominoes;
 
     public Board()
     {
@@ -28,9 +28,9 @@ class Board
     public List<Tile> GetAllTiles()
     {
         List<Tile> allTiles = [.. settledTiles];
-        foreach (Polyomino tetromino in fallingTetrominoes)
+        foreach (Polyomino polyomino in fallingPolyominoes)
         {
-            allTiles.AddRange(tetromino.GetTiles());
+            allTiles.AddRange(polyomino.GetTiles());
         }
 
         return allTiles;
@@ -59,31 +59,31 @@ class Board
         }
     }
 
-    public void AddTetromino(Polyomino tetromino, int? xPosition = null, int? yPosition = null)
+    public void AddPolyomino(Polyomino polyomino, int? xPosition = null, int? yPosition = null)
     {
-        int x = xPosition ?? (Width / 2 - 2) + tetromino.SpawnXOffset;
-        int y = yPosition ?? Height - VisibleHeight - 2 + tetromino.SpawnYOffset;
+        int x = xPosition ?? (Width / 2 - 2) + polyomino.SpawnXOffset;
+        int y = yPosition ?? Height - VisibleHeight - 2 + polyomino.SpawnYOffset;
 
-        fallingTetrominoes.Add(tetromino);
-        tetromino.SetPosition(x, y);
+        fallingPolyominoes.Add(polyomino);
+        polyomino.SetPosition(x, y);
         UpdateCollisionGrid();
     }
 
     public void Tick()
     {
-        // Move falling tetrominoes down by one if possible
-        List<Polyomino> iterableTetrominoes = new List<Polyomino>(fallingTetrominoes);
-        foreach (Polyomino tetromino in iterableTetrominoes)
+        // Move falling polyominoes down by one if possible
+        List<Polyomino> iterablePolyominoes = new List<Polyomino>(fallingPolyominoes);
+        foreach (Polyomino polyomino in iterablePolyominoes)
         {
-            if (tetromino.CanMove(0, 1, collisionGrid, Width, Height))
+            if (polyomino.CanMove(0, 1, collisionGrid, Width, Height))
             {
-                tetromino.SetPosition(tetromino.X, tetromino.Y + 1);
+                polyomino.SetPosition(polyomino.X, polyomino.Y + 1);
                 continue;
             }
 
-            // Cannot move down, settle the tetromino
-            settledTiles.AddRange(tetromino.GetTiles());
-            fallingTetrominoes.Remove(tetromino);
+            // Cannot move down, settle the polyomino
+            settledTiles.AddRange(polyomino.GetTiles());
+            fallingPolyominoes.Remove(polyomino);
 
             UpdateCollisionGrid();
             for (int y = 0; y < collisionGrid.Count; y++)

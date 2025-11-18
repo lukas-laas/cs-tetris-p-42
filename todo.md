@@ -8,7 +8,7 @@
 
 ## Buffs
 ### Static
-- Add . tetromino to spawn pool
+- Add dot monomino to spawn pool
 - Lower dt
 - Score mult
 - £ multiplier

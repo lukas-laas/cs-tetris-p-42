@@ -99,7 +99,7 @@ class Renderer
         // Info lines (prepended later)
         string infoLines = "";
         infoLines += InfoLine("Score", tetris.Score);
-        infoLines += InfoLine("Falling", board.FallingTetrominoes.Count);
+        infoLines += InfoLine("Falling", board.FallingPolyominoes.Count);
         infoLines += InfoLine("Settled tiles", board.SettledTiles.Count);
 
         string buffer = "";
@@ -167,23 +167,23 @@ class Renderer
         );
 
         // Body
-        foreach (Polyomino tetromino in queue)
+        foreach (Polyomino polyomino in queue)
         {
-            List<(int, int)> coords = tetromino.GetTileCoords();
+            List<(int, int)> coords = polyomino.GetTileCoords();
 
             const int width = 4;
-            int height = tetromino.GetHeight();
+            int height = polyomino.GetHeight();
 
-            int startY = tetromino.GetTileCoords().Min(coord => coord.Item2);
+            int startY = polyomino.GetTileCoords().Min(coord => coord.Item2);
 
             string row = "";
             for (int y = 0; y < Math.Clamp(height, 2, 5); y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (coords.Contains((tetromino.X + x, tetromino.Y + y + startY)))
+                    if (coords.Contains((polyomino.X + x, polyomino.Y + y + startY)))
                     {
-                        row += AnsiColor.Apply(new string(occupiedTileChar, 2), tetromino.Color);
+                        row += AnsiColor.Apply(new string(occupiedTileChar, 2), polyomino.Color);
                     }
                     else
                     {
@@ -200,7 +200,7 @@ class Renderer
                 row = ""; // Reset for reuse
             }
 
-            // Empty lines between tetrominoes
+            // Empty lines between polyominoes
             buffer += AnsiColor.BorderBlue(queueBorder["side"])
                 + $"{new string(emptyTileChar, queueWidth)}"
                 + AnsiColor.BorderBlue(queueBorder["side"])
