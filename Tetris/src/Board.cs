@@ -21,14 +21,13 @@ class Board
     {
         for (int y = 0; y < Height; y++)
         {
-            collisionGrid.Add(new List<bool>(new bool[Width]));
+            collisionGrid.Add([.. new bool[Width]]);
         }
     }
 
     public List<Tile> GetAllTiles()
     {
-        List<Tile> allTiles = new List<Tile>();
-        allTiles.AddRange(settledTiles);
+        List<Tile> allTiles = [.. settledTiles];
         foreach (Tetromino tetromino in fallingTetrominoes)
         {
             allTiles.AddRange(tetromino.GetTiles());
@@ -62,8 +61,11 @@ class Board
 
     public void AddTetromino(Tetromino tetromino, int? xPosition = null, int? yPosition = null)
     {
+        int x = xPosition ?? (Width / 2 - 2) + tetromino.SpawnXOffset;
+        int y = yPosition ?? Height - VisibleHeight - 2 + tetromino.SpawnYOffset;
+
         fallingTetrominoes.Add(tetromino);
-        tetromino.SetPosition(xPosition ?? (Width / 2 - 2), yPosition ?? Height - VisibleHeight - 2);
+        tetromino.SetPosition(x, y);
         UpdateCollisionGrid();
     }
 

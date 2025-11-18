@@ -5,6 +5,9 @@ class Tetromino
     public int Y { get; set; }
     public int[,] Shape { get; private set; }
 
+    public int SpawnXOffset { get; set; } = 0;
+    public int SpawnYOffset { get; set; } = 0;
+
     public string Color { get; private set; }
 
     public Tetromino(int[,] shape)
@@ -96,6 +99,64 @@ class Tetromino
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Gets the height of the tetromino shape not counting empty rows in the definition matrix
+    /// </summary>
+    /// <returns></returns>
+    public int GetHeight()
+    {
+        int rows = Shape.GetLength(0);
+        int cols = Shape.GetLength(1);
+
+        int minY = rows;
+        int maxY = -1;
+
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                if (Shape[y, x] != 0)
+                {
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                }
+            }
+        }
+
+        if (maxY == -1) return 0; // No blocks found
+
+        return maxY - minY + 1;
+    }
+
+    /// <summary>
+    /// Gets the width of the tetromino shape not counting empty columns in the definition matrix
+    /// </summary>
+    /// <returns></returns>
+    public int GetWidth()
+    {
+        int rows = Shape.GetLength(0);
+        int cols = Shape.GetLength(1);
+
+        int minX = cols;
+        int maxX = -1;
+
+        for (int y = 0; y < rows; y++)
+        {
+            for (int x = 0; x < cols; x++)
+            {
+                if (Shape[y, x] != 0)
+                {
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                }
+            }
+        }
+
+        if (maxX == -1) return 0; // No blocks found
+
+        return maxX - minX + 1;
     }
 }
 
@@ -221,8 +282,11 @@ class TetrominoIII : Tetromino
             { 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0 },
-        })
-    { }
+        }, AnsiColor.WhiteCode)
+    {
+        SpawnXOffset = -2;
+        SpawnYOffset = -3;
+    }
 }
 
 class TetrominoBlocc : Tetromino

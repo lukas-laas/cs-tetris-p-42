@@ -31,6 +31,9 @@ class AnsiColor
     public const string CyanCode = "\u001b[36m";
     public static string Cyan(string text) => Apply(text, CyanCode);
 
+    public const string WhiteCode = "\u001b[37m";
+    public static string White(string text) => Apply(text, WhiteCode);
+
 
     // Colors not in color rotation
     public const string BorderBlueCode = "\u001b[38;2;49;103;204m";
@@ -46,7 +49,7 @@ class AnsiColor
         => Apply(text, $"\u001b[38;2;{Math.Clamp(r, 0, 255)};{Math.Clamp(g, 0, 255)};{Math.Clamp(b, 0, 255)}m");
 
     // Very OOP... :eyes:
-    private static readonly string[] colorRotation = [RedCode, GreenCode, OrangeCode, YellowCode, BlueCode, MagentaCode, CyanCode];
+    private static readonly string[] colorRotation = [RedCode, GreenCode, OrangeCode, YellowCode, BlueCode, MagentaCode, CyanCode, WhiteCode];
     static private int nextColorIndex = 0;
     public static string GetNextColor()
     {
