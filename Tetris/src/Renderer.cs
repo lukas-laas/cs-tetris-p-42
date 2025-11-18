@@ -152,7 +152,7 @@ class Renderer
 
     private static string MakeQueue(Tetris tetris)
     {
-        Queue<Tetromino> queue = tetris.Queue;
+        Queue<Polyomino> queue = tetris.Queue;
 
         int queueWidth = 5 * aspectRatioCorrection;
 
@@ -167,7 +167,7 @@ class Renderer
         );
 
         // Body
-        foreach (Tetromino tetromino in queue)
+        foreach (Polyomino tetromino in queue)
         {
             List<(int, int)> coords = tetromino.GetTileCoords();
 

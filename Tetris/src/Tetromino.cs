@@ -1,5 +1,5 @@
 
-class Tetromino
+class Polyomino
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -10,12 +10,12 @@ class Tetromino
 
     public string Color { get; private set; }
 
-    public Tetromino(int[,] shape)
+    public Polyomino(int[,] shape)
     {
         Shape = shape;
         Color = AnsiColor.GetNextColor();
     }
-    public Tetromino(int[,] shape, string color)
+    public Polyomino(int[,] shape, string color)
     {
         Shape = shape;
         Color = color;
@@ -160,7 +160,7 @@ class Tetromino
     }
 }
 
-class TetrominoI : Tetromino
+class TetrominoI : Polyomino
 {
     public TetrominoI() : base(new int[,] {
             { 0, 0, 0, 0},
@@ -171,7 +171,7 @@ class TetrominoI : Tetromino
     { }
 }
 
-class TetrominoJ : Tetromino
+class TetrominoJ : Polyomino
 {
     public TetrominoJ() : base(new int[,] {
             { 1, 0, 0},
@@ -181,7 +181,7 @@ class TetrominoJ : Tetromino
     { }
 }
 
-class TetrominoL : Tetromino
+class TetrominoL : Polyomino
 {
     public TetrominoL() : base(new int[,] {
             { 0, 0, 1},
@@ -191,7 +191,7 @@ class TetrominoL : Tetromino
     { }
 }
 
-class TetrominoO : Tetromino
+class TetrominoO : Polyomino
 {
     public TetrominoO() : base(new int[,] {
             { 0, 1, 1, 0},
@@ -206,7 +206,7 @@ class TetrominoO : Tetromino
     }
 }
 
-class TetrominoS : Tetromino
+class TetrominoS : Polyomino
 {
     public TetrominoS() : base(new int[,] {
             { 0, 1, 1},
@@ -216,7 +216,7 @@ class TetrominoS : Tetromino
     { }
 }
 
-class TetrominoT : Tetromino
+class TetrominoT : Polyomino
 {
     public TetrominoT() : base(new int[,] {
             { 0, 1, 0},
@@ -226,7 +226,7 @@ class TetrominoT : Tetromino
     { }
 }
 
-class TetrominoZ : Tetromino
+class TetrominoZ : Polyomino
 {
     public TetrominoZ() : base(new int[,] {
             { 1, 1, 0},
@@ -236,11 +236,11 @@ class TetrominoZ : Tetromino
     { }
 }
 
-// Custom tetrominoes goes hard 
+// Custom polyominoes goes hard 
 // TODO: Make sure rotation works correctly
-class TetrominoThiccI : Tetromino
+class OctominoThiccI : Polyomino
 {
-    public TetrominoThiccI() : base(new int[,] {
+    public OctominoThiccI() : base(new int[,] {
             { 0, 0, 0, 0 },
             { 1, 1, 1, 1 },
             { 1, 1, 1, 1 },
@@ -249,9 +249,9 @@ class TetrominoThiccI : Tetromino
     { }
 }
 
-class TetrominoSmallI : Tetromino
+class DominoSmallI : Polyomino
 {
-    public TetrominoSmallI() : base(new int[,] {
+    public DominoSmallI() : base(new int[,] {
             { 0, 0, 0 },
             { 0, 1, 1 },
             { 0, 0, 0 },
@@ -260,9 +260,9 @@ class TetrominoSmallI : Tetromino
     { }
 }
 
-class TetrominoLowerI : Tetromino
+class TrominoLowerI : Polyomino
 {
-    public TetrominoLowerI() : base(new int[,] {
+    public TrominoLowerI() : base(new int[,] {
             { 0, 0, 0, 0 },
             { 1, 1, 0, 1 },
             { 0, 0, 0, 0 },
@@ -271,9 +271,9 @@ class TetrominoLowerI : Tetromino
     { }
 }
 
-class TetrominoIII : Tetromino
+class OctominoIII : Polyomino
 {
-    public TetrominoIII() : base(new int[,] {
+    public OctominoIII() : base(new int[,] {
             { 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -289,9 +289,9 @@ class TetrominoIII : Tetromino
     }
 }
 
-class TetrominoBlocc : Tetromino
+class NonominoBlocc : Polyomino
 {
-    public TetrominoBlocc() : base(new int[,] {
+    public NonominoBlocc() : base(new int[,] {
             { 0, 1, 1, 1, 0 },
             { 0, 1, 1, 1, 0 },
             { 0, 1, 1, 1, 0 },
@@ -305,9 +305,9 @@ class TetrominoBlocc : Tetromino
     }
 }
 
-class TetrominoDonut : Tetromino
+class OctominoDonut : Polyomino
 {
-    public TetrominoDonut() : base(new int[,] {
+    public OctominoDonut() : base(new int[,] {
             { 0, 1, 1, 1, 0 },
             { 0, 1, 0, 1, 0 },
             { 0, 1, 1, 1, 0 },
@@ -321,9 +321,9 @@ class TetrominoDonut : Tetromino
     }
 }
 
-class TetrominoDot : Tetromino
+class MonominoDot : Polyomino
 {
-    public TetrominoDot() : base(new int[,] {
+    public MonominoDot() : base(new int[,] {
             { 0, 1, 0},
             { 0, 0, 0},
         })
@@ -335,9 +335,9 @@ class TetrominoDot : Tetromino
     }
 }
 
-class TetrominoArch : Tetromino
+class PentominoArch : Polyomino
 {
-    public TetrominoArch() : base(new int[,] {
+    public PentominoArch() : base(new int[,] {
             { 0, 1, 0, 1, 0 },
             { 0, 1, 1, 1, 0 },
             { 0, 0, 0, 0, 0 },
@@ -345,9 +345,9 @@ class TetrominoArch : Tetromino
     { }
 }
 
-class TetrominoX : Tetromino
+class PentominoX : Polyomino
 {
-    public TetrominoX() : base(new int[,] {
+    public PentominoX() : base(new int[,] {
         { 1, 0, 1 },
         { 0, 1, 0 },
         { 1, 0, 1 },

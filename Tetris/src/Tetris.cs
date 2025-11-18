@@ -1,8 +1,8 @@
 class Tetris
 {
     // Next block(s) and such
-    private Queue<Tetromino> queue = [];
-    public Queue<Tetromino> Queue => queue;
+    private Queue<Polyomino> queue = [];
+    public Queue<Polyomino> Queue => queue;
     // board
     public Board Board { get; } = new();
 
@@ -43,7 +43,7 @@ class Tetris
 
     public void Move(Input direction)
     {
-        foreach (Tetromino tetromino in Board.FallingTetrominoes)
+        foreach (Polyomino tetromino in Board.FallingTetrominoes)
         {
             switch (direction)
             {
@@ -77,7 +77,7 @@ class Tetris
             4 => new TetrominoS(),
             5 => new TetrominoT(),
             6 => new TetrominoZ(),
-            _ => new TetrominoThiccI(), // IMPOSSIBLE
+            _ => new OctominoThiccI(), // IMPOSSIBLE
         });
     }
     public void AddToQueue(int Count)

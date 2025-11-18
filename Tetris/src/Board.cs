@@ -11,11 +11,11 @@ class Board
 
     private CollisionGrid collisionGrid = new CollisionGrid();
     private List<Tile> settledTiles = new List<Tile>();
-    private List<Tetromino> fallingTetrominoes = new List<Tetromino>(); // usually just one but debuffs might change that
+    private List<Polyomino> fallingTetrominoes = new List<Polyomino>(); // usually just one but debuffs might change that
 
     public CollisionGrid CollisionGrid => collisionGrid;
     public List<Tile> SettledTiles => settledTiles;
-    public List<Tetromino> FallingTetrominoes => fallingTetrominoes;
+    public List<Polyomino> FallingTetrominoes => fallingTetrominoes;
 
     public Board()
     {
@@ -28,7 +28,7 @@ class Board
     public List<Tile> GetAllTiles()
     {
         List<Tile> allTiles = [.. settledTiles];
-        foreach (Tetromino tetromino in fallingTetrominoes)
+        foreach (Polyomino tetromino in fallingTetrominoes)
         {
             allTiles.AddRange(tetromino.GetTiles());
         }
@@ -59,7 +59,7 @@ class Board
         }
     }
 
-    public void AddTetromino(Tetromino tetromino, int? xPosition = null, int? yPosition = null)
+    public void AddTetromino(Polyomino tetromino, int? xPosition = null, int? yPosition = null)
     {
         int x = xPosition ?? (Width / 2 - 2) + tetromino.SpawnXOffset;
         int y = yPosition ?? Height - VisibleHeight - 2 + tetromino.SpawnYOffset;
@@ -72,8 +72,8 @@ class Board
     public void Tick()
     {
         // Move falling tetrominoes down by one if possible
-        List<Tetromino> iterableTetrominoes = new List<Tetromino>(fallingTetrominoes);
-        foreach (Tetromino tetromino in iterableTetrominoes)
+        List<Polyomino> iterableTetrominoes = new List<Polyomino>(fallingTetrominoes);
+        foreach (Polyomino tetromino in iterableTetrominoes)
         {
             if (tetromino.CanMove(0, 1, collisionGrid, Width, Height))
             {
