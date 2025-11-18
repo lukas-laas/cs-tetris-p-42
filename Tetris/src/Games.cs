@@ -1,7 +1,7 @@
 
 class Games
 {
-    private List<Tetris> tetrises = [new Tetris(), new Tetris()];
+    private readonly List<Tetris> tetrises = [new Tetris(), new Tetris()];
     public List<Tetris> Tetrises => tetrises;
 
     // overarching game state
@@ -28,7 +28,7 @@ class Games
         bool gaming = true;
 
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        int shopTime = 500 * 20 * 5; // Temporary value, Probably around ~5 default tetrominoe spawn
+        int shopTime = 500 * 20 * 5; // Temporary value, Probably around ~5 default tetromino spawn
 
         // TODO: Switch case to switch between menu, game and shop, might want to live in Program, not sure
         while (gaming)
@@ -52,8 +52,7 @@ class Games
                     tetrises[1].Move(direction2);
                 }
             }
-            tetrises[0].Tick();
-            tetrises[1].Tick();
+            tetrises.ForEach(t => t.Tick());
             renderer.Render();
             Thread.Sleep(20);
         }
