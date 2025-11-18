@@ -56,7 +56,7 @@ class Renderer
         buffer += "\n";
 
         // Boards
-        buffer += Center2DString(Merge2DStrings([.. tetrises.Select(MakeBoard), MakeQueue(tetrises[1])], boardSpacing));
+        buffer += Center2DString(Merge2DStrings([.. tetrises.Select(MakeBoard),], boardSpacing));
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
@@ -123,6 +123,9 @@ class Renderer
         }
         // Bottom border
         buffer += AnsiColor.BorderBlue($"{boardBorder["bottomLeft"]}{new string(boardBorder["bottomHorizontal"][0], board.Width * aspectRatioCorrection)}{boardBorder["bottomRight"]}\n");
+
+        string queueString = MakeQueue(tetris);
+        buffer = Merge2DStrings([buffer, queueString], 2, false);
         return buffer;
     }
 
@@ -163,13 +166,25 @@ class Renderer
         return buffer;
     }
 
-    private static string Merge2DStrings(List<string> parts, int spacing = 16)
+    private static string Merge2DStrings(List<string> parts, int spacing = 16, bool bottomAlign = true)
     {
         List<List<string>> linesGroupedByPart = [.. parts.Select(part => part.Split('\n').ToList())];
 
         // Normalize line counts with leading empty lines
         int largestHeight = linesGroupedByPart.Max(part => part.Count);
-        linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup => Enumerable.Repeat(string.Empty, largestHeight - lineGroup.Count).Concat(lineGroup).ToList())];
+        // linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup => Enumerable.Repeat(string.Empty, largestHeight - lineGroup.Count).Concat(lineGroup).ToList())];
+        if (bottomAlign)
+        {
+            linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup =>
+                Enumerable.Repeat(string.Empty, largestHeight - lineGroup.Count).Concat(lineGroup).ToList()
+            )];
+        }
+        else
+        {
+            linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup =>
+                lineGroup.Concat(Enumerable.Repeat(string.Empty, largestHeight - lineGroup.Count)).ToList()
+            )];
+        }
 
         // Normalize line lengths with trailing spaces to groups widest line
         linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup =>
