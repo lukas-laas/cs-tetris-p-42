@@ -96,12 +96,13 @@ class Renderer
     {
         Board board = tetris.Board;
 
-        string buffer = "";
-
+        string infoLines = "";
         // Info lines
-        buffer += InfoLine("Score", tetris.Score);
-        buffer += InfoLine("Falling", board.FallingTetrominoes.Count);
-        buffer += InfoLine("Settled tiles", board.SettledTiles.Count);
+        infoLines += InfoLine("Score", tetris.Score);
+        infoLines += InfoLine("Falling", board.FallingTetrominoes.Count);
+        infoLines += InfoLine("Settled tiles", board.SettledTiles.Count);
+
+        string buffer = "";
 
         // Top border
         buffer += AnsiColor.BorderBlue($"{boardBorder["topLeft"]}{new string(boardBorder["topHorizontal"][0], board.Width * aspectRatioCorrection)}{boardBorder["topRight"]}\n");
@@ -124,8 +125,12 @@ class Renderer
         // Bottom border
         buffer += AnsiColor.BorderBlue($"{boardBorder["bottomLeft"]}{new string(boardBorder["bottomHorizontal"][0], board.Width * aspectRatioCorrection)}{boardBorder["bottomRight"]}\n");
 
+        // Add queue
         string queueString = MakeQueue(tetris);
         buffer = Merge2DStrings([buffer, queueString], 2, false);
+
+// Prepend info lines at the end
+        buffer = infoLines + buffer;
         return buffer;
     }
 
