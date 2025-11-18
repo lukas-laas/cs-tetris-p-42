@@ -2,6 +2,7 @@ class Tetris
 {
     // Next block(s) and such
     private Queue<Tetromino> queue = [];
+    public Queue<Tetromino> Queue => queue;
     // board
     public Board Board { get; } = new();
 

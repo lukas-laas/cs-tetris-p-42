@@ -5,7 +5,7 @@ class Renderer
 {
     private readonly Games games;
 
-    private List<Tetris> tetrises;
+    private readonly List<Tetris> tetrises;
     private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
     private static readonly int boardSpacing = 16;
     private static readonly Regex ansiRegex = new("\u001b\\[[0-9;]*m");
@@ -56,7 +56,7 @@ class Renderer
         buffer += "\n";
 
         // Boards
-        buffer += Center2DString(Merge2DStrings([.. tetrises.Select(MakeBoard)], boardSpacing));
+        buffer += Center2DString(Merge2DStrings([.. tetrises.Select(MakeBoard), MakeQueue(tetrises[1])], boardSpacing));
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
@@ -104,7 +104,7 @@ class Renderer
         buffer += InfoLine("Settled tiles", board.SettledTiles.Count);
 
         // Top border
-        buffer += MakeBoardRoof(board.Width);
+        buffer += AnsiColor.BorderBlue($"{boardBorder["topLeft"]}{new string(boardBorder["topHorizontal"][0], board.Width * aspectRatioCorrection)}{boardBorder["topRight"]}\n");
         // Body
         string[,] colorGrid = MakeColorGrid(board);
         for (int y = 0; y < board.Height; y++)
@@ -119,10 +119,47 @@ class Renderer
                     :
                     new string(emptyTileChar, 2);
             }
-            buffer += MakeBoardWall(row);
+            buffer += $"{AnsiColor.BorderBlue(boardBorder["side"])}{row}{AnsiColor.BorderBlue(boardBorder["side"])}\n";
         }
         // Bottom border
-        buffer += MakeBoardFloor(board.Width);
+        buffer += AnsiColor.BorderBlue($"{boardBorder["bottomLeft"]}{new string(boardBorder["bottomHorizontal"][0], board.Width * aspectRatioCorrection)}{boardBorder["bottomRight"]}\n");
+        return buffer;
+    }
+
+    private static string MakeQueue(Tetris tetris)
+    {
+        Queue<Tetromino> queue = tetris.Queue;
+
+        int queueWidth = 5 * aspectRatioCorrection;
+
+        string buffer = "";
+
+        // Top border
+        buffer += AnsiColor.BorderBlue($"{queueBorder["topLeft"]}{new string(queueBorder["topHorizontal"][0], queueWidth)}{queueBorder["topRight"]}\n");
+        // Body
+        foreach (Tetromino tetromino in queue)
+        {
+            List<(int, int)> coords = tetromino.GetTileCoords();
+            string row = "";
+            for (int y = 0; y < 3; y++)
+            {
+                for (int x = 0; x < 4; x++)
+                {
+                    if (coords.Contains((tetromino.X + x, tetromino.Y + y)))
+                    {
+                        row += AnsiColor.Apply(new string(occupiedTileChar, 2), tetromino.Color);
+                    }
+                    else
+                    {
+                        row += new string(emptyTileChar, 2);
+                    }
+                }
+                buffer += $"{AnsiColor.BorderBlue(queueBorder["side"])} {row} {AnsiColor.BorderBlue(queueBorder["side"])}\n";
+                row = "";
+            }
+        }
+        // Bottom border
+        buffer += AnsiColor.BorderBlue($"{queueBorder["bottomLeft"]}{new string(queueBorder["bottomHorizontal"][0], queueWidth)}{queueBorder["bottomRight"]}\n");
         return buffer;
     }
 
@@ -176,15 +213,6 @@ class Renderer
 
         return text + new string(' ', targetVisibleLength - currentVisibleLength);
     }
-
-    private static string MakeBoardRoof(int width)
-        => AnsiColor.BorderBlue($"{boardBorder["topLeft"]}{new string(boardBorder["topHorizontal"][0], width * aspectRatioCorrection)}{boardBorder["topRight"]}\n");
-
-    private static string MakeBoardWall(string content)
-        => $"{AnsiColor.BorderBlue(boardBorder["side"])}{content}{AnsiColor.BorderBlue(boardBorder["side"])}\n";
-
-    private static string MakeBoardFloor(int width)
-        => AnsiColor.BorderBlue($"{boardBorder["bottomLeft"]}{new string(boardBorder["bottomHorizontal"][0], width * aspectRatioCorrection)}{boardBorder["bottomRight"]}\n");
 
     private static string InfoLine(string label, string value)
         => AnsiColor.Gray($" {label}:{value}\n");
