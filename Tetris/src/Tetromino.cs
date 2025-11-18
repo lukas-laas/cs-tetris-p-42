@@ -1,18 +1,5 @@
 
-interface ITetromino
-{
-    int X { get; set; }
-    int Y { get; set; }
-    int[,] Shape { get; }
-    string Color { get; }
-    void Rotate();
-    List<(int, int)> GetTileCoords();
-    void SetPosition(int x, int y);
-
-    bool CanMove(int deltaX, int deltaY, CollisionGrid collisionGrid, int boardWidth, int boardHeight);
-}
-
-class Tetromino : ITetromino
+class Tetromino
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -20,12 +7,12 @@ class Tetromino : ITetromino
 
     public string Color { get; private set; }
 
-    public Tetromino(int[,] shape) : base()
+    public Tetromino(int[,] shape)
     {
         Shape = shape;
         Color = AnsiColor.GetNextColor();
     }
-    public Tetromino(int[,] shape, string color) : base()
+    public Tetromino(int[,] shape, string color)
     {
         Shape = shape;
         Color = color;
