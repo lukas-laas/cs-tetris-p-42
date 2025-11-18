@@ -344,3 +344,13 @@ class TetrominoArch : Tetromino
         })
     { }
 }
+
+class TetrominoX : Tetromino
+{
+    public TetrominoX() : base(new int[,] {
+        { 1, 0, 1 },
+        { 0, 1, 0 },
+        { 1, 0, 1 },
+    })
+    { }
+}
