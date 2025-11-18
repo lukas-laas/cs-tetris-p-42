@@ -174,12 +174,14 @@ class Renderer
             const int width = 4;
             int height = tetromino.GetHeight();
 
+            int startY = tetromino.GetTileCoords().Min(coord => coord.Item2);
+
             string row = "";
             for (int y = 0; y < Math.Clamp(height, 2, 5); y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (coords.Contains((tetromino.X + x, tetromino.Y + y)))
+                    if (coords.Contains((tetromino.X + x, tetromino.Y + y + startY)))
                     {
                         row += AnsiColor.Apply(new string(occupiedTileChar, 2), tetromino.Color);
                     }
