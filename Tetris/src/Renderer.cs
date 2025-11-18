@@ -52,11 +52,10 @@ class Renderer
 
         // Title
         buffer += MakeTitle();
-
         buffer += "\n";
 
         // Boards
-        buffer += Center2DString(Merge2DStrings([.. tetrises.Select(MakeBoard),], boardSpacing));
+        buffer += Center2DString(Merge2DStrings([.. tetrises.Select(MakeBoard)], boardSpacing));
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
@@ -117,6 +116,7 @@ class Renderer
             {
                 row += colorGrid[y, x] != null ?
                     AnsiColor.Apply(new string(occupiedTileChar, 2), colorGrid[y, x])
+                    // AnsiColor.Apply("[]", colorGrid[y, x])
                     :
                     new string(emptyTileChar, 2);
             }
@@ -129,7 +129,7 @@ class Renderer
         string queueString = MakeQueue(tetris);
         buffer = Merge2DStrings([buffer, queueString], 2, false);
 
-// Prepend info lines at the end
+        // Prepend info lines at the end
         buffer = infoLines + buffer;
         return buffer;
     }
