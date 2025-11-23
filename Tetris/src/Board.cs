@@ -79,6 +79,8 @@ class Board
 
     public void Tick(string keyString)
     {
+        Move(keyString); // Uncapped movement speed
+
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         if (currentTime - lastTick < Dt) return;
         lastTick = currentTime;
@@ -89,7 +91,6 @@ class Board
             SpawnPolyomino(Queue.Dequeue());
         }
 
-        Move(keyString);
         PhysicsTick();
     }
 
