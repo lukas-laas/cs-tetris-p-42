@@ -16,7 +16,7 @@ class Board
     public int Dt { get; set; } = 500; // Delta time between ticks in ms
     private long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-    private ControlScheme controlScheme;
+    private readonly ControlScheme controlScheme;
     private string[] ValidKeys => [.. controlScheme.Keys];
 
     public Board(ControlScheme controlScheme)
@@ -102,13 +102,15 @@ class Board
         {
             if (polyomino.CanMove(0, 1, CollisionGrid, Width, Height))
             {
-                polyomino.SetPosition(polyomino.X, polyomino.Y + 1);
+                polyomino.Y += 1;
                 continue;
             }
 
             // Cannot move down, settle the polyomino
             SettledTiles.AddRange(polyomino.GetTiles());
             FallingPolyominoes.Remove(polyomino);
+
+            int linesCleared = 0;
 
             UpdateCollisionGrid();
             for (int y = 0; y < CollisionGrid.Count; y++)
@@ -117,6 +119,7 @@ class Board
 
                 // Remove tiles on the cleared row
                 SettledTiles.RemoveAll((tile) => tile.Y == y);
+                linesCleared += 1;
 
                 // Move all tiles above the cleared row down by 1
                 foreach (var tile in SettledTiles)
@@ -127,6 +130,17 @@ class Board
                 UpdateCollisionGrid();
                 y -= 1; // Recheck line in case resettled tiles clear for sanity
             }
+
+            // Update score based on lines cleared
+            Score += linesCleared switch
+            {
+                0 => 0,
+                1 => 100,
+                2 => 300,
+                3 => 500,
+                4 => 800,
+                _ => linesCleared * 200,
+            };
         }
     }
 

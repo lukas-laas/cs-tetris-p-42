@@ -98,8 +98,10 @@ class Renderer
         // Info lines (prepended later)
         string infoLines = "";
         infoLines += InfoLine("Score", board.Score);
-        infoLines += InfoLine("Falling", board.FallingPolyominoes.Count);
-        infoLines += InfoLine("Settled tiles", board.SettledTiles.Count);
+        infoLines += InfoLine("Money", board.Money);
+        // TODO - remove these
+        // infoLines += InfoLine("Falling", board.FallingPolyominoes.Count);
+        // infoLines += InfoLine("Settled tiles", board.SettledTiles.Count);
 
         string buffer = "";
 
