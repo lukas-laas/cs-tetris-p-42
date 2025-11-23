@@ -29,6 +29,7 @@ class GameState
             long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             string key = KeyInput.Read() ?? "";
+            
             Games.ForEach(board => board.Tick(key));
 
             renderer.Render();
