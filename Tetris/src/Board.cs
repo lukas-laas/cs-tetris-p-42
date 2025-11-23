@@ -1,34 +1,42 @@
 
 class Board
 {
-    // Handles "physics" of pieces on the board
-
-    // Color info (affected by buffs/debuffs)
-
-    public int Width { get; private set; } = 10;
-    public int Height { get; private set; } = 40;
+    public int Width { get; } = 10;
+    public int Height { get; } = 40;
     public int VisibleHeight { get; set; } = 20;
 
-    private CollisionGrid collisionGrid = [];
-    private List<Tile> settledTiles = [];
-    private List<Polyomino> fallingPolyominoes = []; // usually just one but debuffs might change that
+    public Queue<Polyomino> Queue { get; private set; } = [];
+    public CollisionGrid CollisionGrid { get; private set; } = [];
+    public List<Tile> SettledTiles { get; private set; } = [];
+    public List<Polyomino> FallingPolyominoes { get; private set; } = []; // usually just one but debuffs might change that
 
-    public CollisionGrid CollisionGrid => collisionGrid;
-    public List<Tile> SettledTiles => settledTiles;
-    public List<Polyomino> FallingPolyominoes => fallingPolyominoes;
+    public int Score { get; set; } = 0;
+    public int Money { get; set; } = 0;
 
-    public Board()
+    public int Dt { get; set; } = 500; // Delta time between ticks in ms
+    private long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+    private ControlScheme controlScheme;
+    private string[] ValidKeys => [.. controlScheme.Keys];
+
+    public Board(ControlScheme controlScheme)
     {
+        this.controlScheme = controlScheme;
+
+        // Initialize collision grid
         for (int y = 0; y < Height; y++)
         {
-            collisionGrid.Add([.. new bool[Width]]);
+            CollisionGrid.Add([.. new bool[Width]]);
         }
+
+        // Fill the queue with initial polyominoes
+        AddToQueue(4);
     }
 
     public List<Tile> GetAllTiles()
     {
-        List<Tile> allTiles = [.. settledTiles];
-        foreach (Polyomino polyomino in fallingPolyominoes)
+        List<Tile> allTiles = [.. SettledTiles];
+        foreach (Polyomino polyomino in FallingPolyominoes)
         {
             allTiles.AddRange(polyomino.GetTiles());
         }
@@ -36,73 +44,141 @@ class Board
         return allTiles;
     }
 
-    public void UpdateCollisionGrid()
+    private void UpdateCollisionGrid()
     {
         // Clear grid
         for (int y = 0; y < Height; y++)
         {
             for (int x = 0; x < Width; x++)
             {
-                collisionGrid[y][x] = false;
+                CollisionGrid[y][x] = false;
             }
         }
 
         // Set occupied cells
-        foreach (Tile tile in settledTiles)
+        foreach (Tile tile in SettledTiles)
         {
             int y = tile.Y;
             int x = tile.X;
             if (y >= 0 && y < Height && x >= 0 && x < Width)
             {
-                collisionGrid[y][x] = true;
+                CollisionGrid[y][x] = true;
             }
         }
     }
 
-    public void AddPolyomino(Polyomino polyomino, int? xPosition = null, int? yPosition = null)
+    private void SpawnPolyomino(Polyomino polyomino, int? xPosition = null, int? yPosition = null)
     {
-        int x = xPosition ?? (Width / 2 - 2) + polyomino.SpawnXOffset;
+        int x = xPosition ?? Width / 2 - 2 + polyomino.SpawnXOffset;
         int y = yPosition ?? Height - VisibleHeight - 2 + polyomino.SpawnYOffset;
 
-        fallingPolyominoes.Add(polyomino);
+        FallingPolyominoes.Add(polyomino);
         polyomino.SetPosition(x, y);
         UpdateCollisionGrid();
     }
 
-    public void Tick()
+    public void Tick(string keyString)
+    {
+        long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        if (currentTime - lastTick < Dt) return;
+        lastTick = currentTime;
+
+        if (FallingPolyominoes.Count == 0)
+        {
+            AddToQueue();
+            SpawnPolyomino(Queue.Dequeue());
+        }
+
+        Move(keyString);
+        PhysicsTick();
+    }
+
+    private void PhysicsTick()
     {
         // Move falling polyominoes down by one if possible
-        List<Polyomino> iterablePolyominoes = new List<Polyomino>(fallingPolyominoes);
+        List<Polyomino> iterablePolyominoes = [.. FallingPolyominoes]; // Copy to avoid modification during iteration
         foreach (Polyomino polyomino in iterablePolyominoes)
         {
-            if (polyomino.CanMove(0, 1, collisionGrid, Width, Height))
+            if (polyomino.CanMove(0, 1, CollisionGrid, Width, Height))
             {
                 polyomino.SetPosition(polyomino.X, polyomino.Y + 1);
                 continue;
             }
 
             // Cannot move down, settle the polyomino
-            settledTiles.AddRange(polyomino.GetTiles());
-            fallingPolyominoes.Remove(polyomino);
+            SettledTiles.AddRange(polyomino.GetTiles());
+            FallingPolyominoes.Remove(polyomino);
 
             UpdateCollisionGrid();
-            for (int y = 0; y < collisionGrid.Count; y++)
+            for (int y = 0; y < CollisionGrid.Count; y++)
             {
-                if (!collisionGrid[y].All((b) => b == true)) continue;
+                if (!CollisionGrid[y].All((b) => b == true)) continue;
 
                 // Remove tiles on the cleared row
-                settledTiles.RemoveAll((tile) => tile.Y == y);
+                SettledTiles.RemoveAll((tile) => tile.Y == y);
 
                 // Move all tiles above the cleared row down by 1
-                foreach (var tile in settledTiles)
+                foreach (var tile in SettledTiles)
                 {
-                    if (tile.Y < y)
-                        tile.Y += 1;
+                    if (tile.Y < y) tile.Y += 1;
                 }
 
                 UpdateCollisionGrid();
                 y -= 1; // Recheck line in case resettled tiles clear for sanity
             }
         }
+    }
+
+    private void Move(string keyString)
+    {
+        if (!ValidKeys.Contains(keyString)) return;
+
+        Input selectedInput = controlScheme[keyString]; // Not sure if a copy is necessary TODO - look into it
+
+        foreach (Polyomino polyomino in FallingPolyominoes)
+        {
+            switch (selectedInput)
+            {
+                case Input.Left:
+                    if (polyomino.CanMove(-1, 0, this)) polyomino.X--;
+                    break;
+                case Input.Right:
+                    if (polyomino.CanMove(1, 0, this)) polyomino.X++;
+                    break;
+                case Input.SoftDrop:
+                    if (polyomino.CanMove(0, 1, this)) polyomino.Y++;
+                    break;
+                case Input.Rotate:
+                    polyomino.Rotate(); // TODO super rotations
+                    break;
+                default:
+                    throw new Exception("Unrecognized input");
+            }
+        }
+    }
+
+    private void AddToQueue(int Count)
+    {
+        for (int i = 0; i < Count; i++) AddToQueue();
+    }
+    private void AddToQueue()
+    {
+        Queue.Enqueue(GetPolyomino());
+    }
+
+    private static Polyomino GetPolyomino()
+    {
+        Random rng = new();
+        return rng.Next(7) switch
+        {
+            0 => new TetrominoI(),
+            1 => new TetrominoJ(),
+            2 => new TetrominoL(),
+            3 => new TetrominoO(),
+            4 => new TetrominoS(),
+            5 => new TetrominoT(),
+            6 => new TetrominoZ(),
+            _ => new OctominoThiccI(), // IMPOSSIBLE
+        };
     }
 }

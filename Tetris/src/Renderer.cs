@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 class Renderer
 {
-    private readonly GameState games;
+    private readonly GameState gameState;
+    private readonly List<Board> boards;
 
-    private readonly List<Tetris> tetrises;
     private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
     private static readonly int boardSpacing = 16;
     private static readonly Regex ansiRegex = new("\u001b\\[[0-9;]*m");
@@ -33,17 +33,17 @@ class Renderer
         {"bottomHorizontal", "═"},
     };
 
-    public Renderer(GameState games)
+    public Renderer(GameState gameState)
     {
-        this.games = games;
-        this.tetrises = games.Tetrises;
+        this.gameState = gameState;
+        this.boards = gameState.Games;
 
         if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
         if (Console.WindowHeight == 0) throw new Exception("Console window height is 0. Cannot render.");
 
         Console.CursorLeft = 0;
         Console.CursorTop = 0;
-        Console.CursorVisible = false;
+        Console.CursorVisible = false; // Will not restore on exit, but oh well
     }
 
     public void Render()
@@ -55,7 +55,7 @@ class Renderer
         buffer += "\n";
 
         // Boards
-        buffer += Center2DString(Merge2DStrings([.. tetrises.Select(MakeBoard)], boardSpacing));
+        buffer += Center2DString(Merge2DStrings([.. boards.Select(MakeBoard)], boardSpacing));
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
@@ -91,14 +91,13 @@ class Renderer
         return colorGrid;
     }
 
-    private static string MakeBoard(Tetris tetris)
+    private static string MakeBoard(Board board)
     {
-        Board board = tetris.Board;
         int innerCanvasWidth = board.Width * aspectRatioCorrection;
 
         // Info lines (prepended later)
         string infoLines = "";
-        infoLines += InfoLine("Score", tetris.Score);
+        infoLines += InfoLine("Score", board.Score);
         infoLines += InfoLine("Falling", board.FallingPolyominoes.Count);
         infoLines += InfoLine("Settled tiles", board.SettledTiles.Count);
 
@@ -142,7 +141,7 @@ class Renderer
         );
 
         // Add queue
-        string queueString = MakeQueue(tetris);
+        string queueString = MakeQueue(board);
         buffer = Merge2DStrings([buffer, queueString], 2, false);
 
         // Prepend info lines at the end
@@ -150,9 +149,9 @@ class Renderer
         return buffer;
     }
 
-    private static string MakeQueue(Tetris tetris)
+    private static string MakeQueue(Board board)
     {
-        Queue<Polyomino> queue = tetris.Queue;
+        Queue<Polyomino> queue = board.Queue;
 
         int queueWidth = 5 * aspectRatioCorrection;
 
