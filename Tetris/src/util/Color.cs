@@ -7,9 +7,6 @@
 /// </summary>
 class AnsiColor
 {
-    public const string ResetCode = "\u001b[0m";
-    public static string Reset(string text) => $"{ResetCode}{text}{ResetCode}";
-
     public const string RedCode = "\u001b[31m";
     public static string Red(string text) => Apply(text, RedCode);
 
@@ -36,11 +33,21 @@ class AnsiColor
 
 
     // Colors not in color rotation
+    public const string PinkCode = "\u001b[38;2;255;105;180m";
+    public static string Pink(string text) => Apply(text, PinkCode);
+
+    public const string ArchBlueCode = "\u001b[38;2;22;145;207m";
+    public static string ArchBlue(string text) => Apply(text, ArchBlueCode);
+
     public const string BorderBlueCode = "\u001b[38;2;49;103;204m";
     public static string BorderBlue(string text) => Apply(text, BorderBlueCode);
 
     public const string GrayCode = "\u001b[90m";
     public static string Gray(string text) => Apply(text, GrayCode);
+
+    public const string ResetCode = "\u001b[0m";
+    public static string Reset(string text) => $"{ResetCode}{text}{ResetCode}";
+
 
     public static string Apply(string text, string colorCode)
         => $"{colorCode}{text}{ResetCode}";

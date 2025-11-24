@@ -216,12 +216,15 @@ class Polyomino
 
 class TetrominoI : Polyomino
 {
-    public TetrominoI() : base(new int[,] {
-        { 0, 0, 0, 0 },
-        { 1, 1, 1, 1 },
-        { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 },
-    }, AnsiColor.CyanCode)
+    public TetrominoI() : base(
+        new int[,] {
+            { 0, 0, 0, 0 },
+            { 1, 1, 1, 1 },
+            { 0, 0, 0, 0 },
+            { 0, 0, 0, 0 },
+        },
+        AnsiColor.CyanCode
+    )
     {
         WallKickOffsets = WallKickTable.Make_I_Table();
     }
@@ -229,31 +232,39 @@ class TetrominoI : Polyomino
 
 class TetrominoJ : Polyomino
 {
-    public TetrominoJ() : base(new int[,] {
-        { 1, 0, 0 },
-        { 1, 1, 1 },
-        { 0, 0, 0 },
-    }, AnsiColor.BlueCode)
+    public TetrominoJ() : base(
+        new int[,] {
+            { 1, 0, 0 },
+            { 1, 1, 1 },
+            { 0, 0, 0 },
+        },
+        AnsiColor.BlueCode
+    )
     { }
 }
 
 class TetrominoL : Polyomino
 {
-    public TetrominoL() : base(new int[,] {
-        { 0, 0, 1 },
-        { 1, 1, 1 },
-        { 0, 0, 0 },
-    }, AnsiColor.OrangeCode)
+    public TetrominoL() : base(
+        new int[,] {
+            { 0, 0, 1 },
+            { 1, 1, 1 },
+            { 0, 0, 0 },
+        },
+        AnsiColor.OrangeCode)
     { }
 }
 
 class TetrominoO : Polyomino
 {
-    public TetrominoO() : base(new int[,] {
-        { 0, 1, 1, 0 },
-        { 0, 1, 1, 0 },
-        { 0, 0, 0, 0 },
-    }, AnsiColor.YellowCode)
+    public TetrominoO() : base(
+        new int[,] {
+            { 0, 1, 1, 0 },
+            { 0, 1, 1, 0 },
+            { 0, 0, 0, 0 },
+        },
+        AnsiColor.YellowCode
+    )
     { }
 
     public override void Rotate(Board board)
@@ -264,31 +275,40 @@ class TetrominoO : Polyomino
 
 class TetrominoS : Polyomino
 {
-    public TetrominoS() : base(new int[,] {
-        { 0, 1, 1 },
-        { 1, 1, 0 },
-        { 0, 0, 0 },
-    }, AnsiColor.GreenCode)
+    public TetrominoS() : base(
+        new int[,] {
+            { 0, 1, 1 },
+            { 1, 1, 0 },
+            { 0, 0, 0 },
+        },
+        AnsiColor.GreenCode
+    )
     { }
 }
 
 class TetrominoT : Polyomino
 {
-    public TetrominoT() : base(new int[,] {
-        { 0, 1, 0 },
-        { 1, 1, 1 },
-        { 0, 0, 0 },
-    }, AnsiColor.MagentaCode)
+    public TetrominoT() : base(
+        new int[,] {
+            { 0, 1, 0 },
+            { 1, 1, 1 },
+            { 0, 0, 0 },
+        },
+        AnsiColor.MagentaCode
+    )
     { }
 }
 
 class TetrominoZ : Polyomino
 {
-    public TetrominoZ() : base(new int[,] {
-        { 1, 1, 0 },
-        { 0, 1, 1 },
-        { 0, 0, 0 },
-    }, AnsiColor.RedCode)
+    public TetrominoZ() : base(
+        new int[,] {
+            { 1, 1, 0 },
+            { 0, 1, 1 },
+            { 0, 0, 0 },
+        },
+        AnsiColor.RedCode
+    )
     { }
 }
 
@@ -298,12 +318,14 @@ class TetrominoZ : Polyomino
  */
 class OctominoThiccI : Polyomino
 {
-    public OctominoThiccI() : base(new int[,] {
-        { 0, 0, 0, 0 },
-        { 1, 1, 1, 1 },
-        { 1, 1, 1, 1 },
-        { 0, 0, 0, 0 },
-    })
+    public OctominoThiccI() : base(
+        new int[,] {
+            { 0, 0, 0, 0 },
+            { 1, 1, 1, 1 },
+            { 1, 1, 1, 1 },
+            { 0, 0, 0, 0 },
+        }
+    )
     {
         WallKickOffsets = WallKickTable.Make_ThiccI_Table();
     }
@@ -311,7 +333,8 @@ class OctominoThiccI : Polyomino
 
 class DominoSmallI : Polyomino
 {
-    public DominoSmallI() : base(new int[,] {
+    public DominoSmallI() : base(
+        new int[,] {
         { 0, 0, 0 },
         { 0, 1, 1 },
         { 0, 0, 0 },
@@ -321,7 +344,8 @@ class DominoSmallI : Polyomino
 
 class TrominoLowerI : Polyomino
 {
-    public TrominoLowerI() : base(new int[,] {
+    public TrominoLowerI() : base(
+        new int[,] {
         { 0, 0, 0, 0 },
         { 1, 1, 0, 1 },
         { 0, 0, 0, 0 },
@@ -334,7 +358,8 @@ class TrominoLowerI : Polyomino
 
 class OctominoIII : Polyomino
 {
-    public OctominoIII() : base(new int[,] {
+    public OctominoIII() : base(
+        new int[,] {
         { 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0 },
         { 1, 1, 1, 1, 1, 1, 1, 1 },
@@ -351,7 +376,8 @@ class OctominoIII : Polyomino
 
 class NonominoBlocc : Polyomino
 {
-    public NonominoBlocc() : base(new int[,] {
+    public NonominoBlocc() : base(
+        new int[,] {
         { 0, 1, 1, 1, 0 },
         { 0, 1, 1, 1, 0 },
         { 0, 1, 1, 1, 0 },
@@ -367,12 +393,15 @@ class NonominoBlocc : Polyomino
 
 class OctominoDonut : Polyomino
 {
-    public OctominoDonut() : base(new int[,] {
+    public OctominoDonut() : base(
+        new int[,] {
         { 0, 1, 1, 1, 0 },
         { 0, 1, 0, 1, 0 },
         { 0, 1, 1, 1, 0 },
         { 0, 0, 0, 0, 0 },
-    })
+    },
+        AnsiColor.PinkCode
+    )
     { }
 
     public override void Rotate(Board board)
@@ -383,7 +412,8 @@ class OctominoDonut : Polyomino
 
 class MonominoDot : Polyomino
 {
-    public MonominoDot() : base(new int[,] {
+    public MonominoDot() : base(
+        new int[,] {
         { 0, 1, 0 },
         { 0, 0, 0 },
     })
@@ -397,17 +427,19 @@ class MonominoDot : Polyomino
 
 class PentominoArch : Polyomino
 {
-    public PentominoArch() : base(new int[,] {
+    public PentominoArch() : base(
+        new int[,] {
         { 0, 1, 0, 1, 0 },
         { 0, 1, 1, 1, 0 },
         { 0, 0, 0, 0, 0 },
-    }, AnsiColor.GreenCode)
+    })
     { }
 }
 
 class PentominoX : Polyomino
 {
-    public PentominoX() : base(new int[,] {
+    public PentominoX() : base(
+        new int[,] {
         { 1, 0, 1 },
         { 0, 1, 0 },
         { 1, 0, 1 },
