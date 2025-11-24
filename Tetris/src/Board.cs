@@ -165,7 +165,7 @@ class Board
                     if (polyomino.CanMove(0, 1, this)) polyomino.Y++;
                     break;
                 case Input.Rotate:
-                    polyomino.Rotate(this); // TODO super rotations
+                    polyomino.Rotate(this);
                     break;
                 default:
                     throw new Exception("Unrecognized input");
