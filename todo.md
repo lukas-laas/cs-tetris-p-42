@@ -54,3 +54,7 @@
 
 ## IDEAS
 - Blackjack in shop
+- Board has bool for warning mode which makes the renderer flash something :thumbsup:
+
+## ~~BUGS~~
+- we have no bugs

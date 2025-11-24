@@ -20,7 +20,7 @@ class Board
         () => new NonominoBlocc(),
         () => new OctominoDonut(),
         () => new MonominoDot(),
-        () => new PentominoArch(),
+        () => new PentominoArchBTW(),
         () => new PentominoX(),
         () => new TetrominoO(),
     ];

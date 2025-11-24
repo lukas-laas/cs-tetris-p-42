@@ -335,10 +335,11 @@ class DominoSmallI : Polyomino
 {
     public DominoSmallI() : base(
         new int[,] {
-        { 0, 0, 0 },
-        { 0, 1, 1 },
-        { 0, 0, 0 },
-    })
+            { 0, 0, 0 },
+            { 0, 1, 1 },
+            { 0, 0, 0 },
+        }
+    )
     { }
 }
 
@@ -346,11 +347,12 @@ class TrominoLowerI : Polyomino
 {
     public TrominoLowerI() : base(
         new int[,] {
-        { 0, 0, 0, 0 },
-        { 1, 1, 0, 1 },
-        { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 },
-    })
+            { 0, 0, 0, 0 },
+            { 1, 1, 0, 1 },
+            { 0, 0, 0, 0 },
+            { 0, 0, 0, 0 },
+        }
+    )
     {
         WallKickOffsets = WallKickTable.Make_I_Table();
     }
@@ -360,13 +362,15 @@ class OctominoIII : Polyomino
 {
     public OctominoIII() : base(
         new int[,] {
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
-    }, AnsiColor.WhiteCode)
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 1, 1, 1, 1, 1 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0 },
+        }, 
+        AnsiColor.WhiteCode
+    )
     {
         SpawnXOffset = -2;
         SpawnYOffset = -2;
@@ -378,11 +382,12 @@ class NonominoBlocc : Polyomino
 {
     public NonominoBlocc() : base(
         new int[,] {
-        { 0, 1, 1, 1, 0 },
-        { 0, 1, 1, 1, 0 },
-        { 0, 1, 1, 1, 0 },
-        { 0, 0, 0, 0, 0 },
-    })
+            { 0, 1, 1, 1, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 0, 0, 0, 0 },
+        }
+    )
     { }
 
     public override void Rotate(Board board)
@@ -395,11 +400,11 @@ class OctominoDonut : Polyomino
 {
     public OctominoDonut() : base(
         new int[,] {
-        { 0, 1, 1, 1, 0 },
-        { 0, 1, 0, 1, 0 },
-        { 0, 1, 1, 1, 0 },
-        { 0, 0, 0, 0, 0 },
-    },
+            { 0, 1, 1, 1, 0 },
+            { 0, 1, 0, 1, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 0, 0, 0, 0 },
+        },
         AnsiColor.PinkCode
     )
     { }
@@ -414,9 +419,10 @@ class MonominoDot : Polyomino
 {
     public MonominoDot() : base(
         new int[,] {
-        { 0, 1, 0 },
-        { 0, 0, 0 },
-    })
+            { 0, 1, 0 },
+            { 0, 0, 0 },
+        }
+    )
     { }
 
     public override void Rotate(Board board)
@@ -425,14 +431,15 @@ class MonominoDot : Polyomino
     }
 }
 
-class PentominoArch : Polyomino
+class PentominoArchBTW : Polyomino
 {
-    public PentominoArch() : base(
+    public PentominoArchBTW() : base(
         new int[,] {
-        { 0, 1, 0, 1, 0 },
-        { 0, 1, 1, 1, 0 },
-        { 0, 0, 0, 0, 0 },
-    })
+            { 0, 1, 0, 1, 0 },
+            { 0, 1, 1, 1, 0 },
+            { 0, 0, 0, 0, 0 },
+        }
+    )
     { }
 }
 
@@ -440,9 +447,10 @@ class PentominoX : Polyomino
 {
     public PentominoX() : base(
         new int[,] {
-        { 1, 0, 1 },
-        { 0, 1, 0 },
-        { 1, 0, 1 },
-    }, AnsiColor.RedCode)
+            { 1, 0, 1 },
+            { 0, 1, 0 },
+            { 1, 0, 1 },
+        }, AnsiColor.XRedCode
+    )
     { }
 }
