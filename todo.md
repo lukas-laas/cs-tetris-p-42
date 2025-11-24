@@ -41,6 +41,7 @@
 - Skip piece
 - Disable quick drop
 - Freeze input
+- Make falling piece invisible
 
 ## Custom pieces
 - Thicc I (2x4)

@@ -20,7 +20,7 @@ class Renderer
         {"bottomRight",      "▀"}, // Alt ╯
         {"bottomHorizontal", "▀"}, // Alt ─
     };
-    private static readonly char occupiedTileChar = '▓';
+    private static readonly char occupiedTileChar = '▓'; // Alt '▓' '█'
     private static readonly char emptyTileChar = ' ';
     private static readonly Dictionary<string, string> queueBorder = new()
     {
