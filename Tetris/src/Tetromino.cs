@@ -38,7 +38,7 @@ class WallKickTable
             throw new ArgumentException("Invalid rotation states");
     }
 
-    public static WallKickTable MakeJLSTZTable()
+    public static WallKickTable Make_JLSTZ_Table()
     {
         // https://tetris.wiki/Super_Rotation_System#Wall_Kicks
         return new WallKickTable()
@@ -54,7 +54,7 @@ class WallKickTable
         };
     }
 
-    public static WallKickTable MakeITable()
+    public static WallKickTable Make_I_Table()
     {
         // https://tetris.wiki/Super_Rotation_System#Wall_Kicks
         return new WallKickTable()
@@ -75,14 +75,12 @@ class Polyomino
 {
     public int X { get; set; }
     public int Y { get; set; }
+    public string Color { get; private set; }
     public int[,] Shape { get; private set; }
-
     public int SpawnXOffset { get; set; } = 0;
     public int SpawnYOffset { get; set; } = 0;
 
-    public string Color { get; private set; }
-
-    public WallKickTable WallKickOffsets = WallKickTable.MakeJLSTZTable();
+    public WallKickTable WallKickOffsets = WallKickTable.Make_JLSTZ_Table();
     private int rotationState = 0;
 
     public Polyomino(int[,] shape)
@@ -96,7 +94,7 @@ class Polyomino
         Color = color;
     }
 
-    public virtual void Rotate()
+    public virtual void Rotate(Board board)
     {
         // Inspired by https://tetris.wiki/Super_Rotation_System
 
@@ -113,7 +111,58 @@ class Polyomino
             }
         }
 
+        // Try wall kicks if rotated shape collides
+        for (int testIndex = 0; testIndex < WallKickOffsets.row0R.Count; testIndex++)
+        {
+            // Define test position with wall kick offset and polyomino position TODO - is this origin good? can it mess up certain tests on certain shapes?
+            (int offsetX, int offsetY) = WallKickOffsets.GetOffset(rotationState, testIndex);
+            int testX = X + offsetX;
+            int testY = Y + offsetY;
+
+            // Check collision
+            bool collision = false;
+            int rotatedRows = rotated.GetLength(0);
+            int rotatedCols = rotated.GetLength(1);
+            for (int y = 0; y < rotatedRows; y++)
+            {
+                for (int x = 0; x < rotatedCols; x++)
+                {
+                    if (rotated[y, x] != 0)
+                    {
+                        int boardX = testX + x;
+                        int boardY = testY + y;
+
+                        // Check boundaries
+                        if (boardX < 0 || boardX >= board.Width || boardY < 0 || boardY >= board.Height) // Top bound may be unnecessary since it's way out of the visible height
+                        {
+                            collision = true;
+                            break;
+                        }
+
+                        // Check collision grid
+                        if (board.CollisionGrid[boardY][boardX])
+                        {
+                            collision = true;
+                            break;
+                        }
+                    }
+                }
+                if (collision) break;
+            }
+            if (!collision)
+            {
+                // Successful rotation with wall kick
+                Shape = rotated;
+                rotationState = (rotationState + 1) % 4;
+                X = testX;
+                Y = testY;
+                return;
+            }
+        }
+
+
         Shape = rotated;
+        rotationState = (rotationState + 1) % 4;
     }
 
     /// <summary>
@@ -249,7 +298,7 @@ class TetrominoI : Polyomino
             { 0, 0, 0, 0},
         }, AnsiColor.CyanCode)
     {
-        WallKickOffsets = WallKickTable.MakeITable();
+        WallKickOffsets = WallKickTable.Make_I_Table();
     }
 }
 
@@ -282,7 +331,7 @@ class TetrominoO : Polyomino
         }, AnsiColor.YellowCode)
     { }
 
-    public override void Rotate()
+    public override void Rotate(Board board)
     {
         // O Tetromino does not rotate}
     }
@@ -384,7 +433,7 @@ class NonominoBlocc : Polyomino
         })
     { }
 
-    public override void Rotate()
+    public override void Rotate(Board board)
     {
         // Blocc does not rotate}
     }
@@ -400,7 +449,7 @@ class OctominoDonut : Polyomino
         })
     { }
 
-    public override void Rotate()
+    public override void Rotate(Board board)
     {
         // Donut does not rotate}
     }
@@ -414,7 +463,7 @@ class MonominoDot : Polyomino
         })
     { }
 
-    public override void Rotate()
+    public override void Rotate(Board board)
     {
         // Dot does not rotate}
     }
