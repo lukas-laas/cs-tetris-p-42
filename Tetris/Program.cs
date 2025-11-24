@@ -4,11 +4,15 @@
     {
         // Rough guidelines followed:
         // https://tetris.wiki/Tetris_Guideline
-
-        Log.Add("Game started.");
-
         // Game entry point
-        _ = new GameState();
+        try
+        {
+            _ = new GameState();
+        }
+        catch (Exception e)
+        {
+            Log.Add(e.ToString());
+        }
     }
 
 }
