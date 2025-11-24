@@ -29,13 +29,13 @@ interface IStaticProduct : IProduct
 interface ITemporaryProduct : IProduct
 {
     // Active for set amount of time / rounds
-    int lifetime { get; }
+    int LifeTime { get; }
 }
 
 interface IAbilityProduct : IProduct
 {
-    // Can be activated any time but has cooldown
-    int cooldown { get; }
+    // Can be activated any time but has Cooldown
+    int Cooldown { get; }
 }
 
 class Communism : ITemporaryProduct
@@ -46,7 +46,7 @@ class Communism : ITemporaryProduct
     public string description { get; } = "Splits income evenly with opponent";
     public double rarity { get; } = 0.1;
     public int price { get; } = 100;
-    public int lifetime { get; } = 3;
+    public int LifeTime { get; } = 3;
     public void Purchase() { }
 }
 
@@ -138,7 +138,7 @@ class MoreTetrominoI : ITemporaryProduct
     public string description { get; } = "Increases frequency of I pieces";
     public double rarity { get; } = 0.08;
     public int price { get; } = 120;
-    public int lifetime { get; } = 5;
+    public int LifeTime { get; } = 5;
     public void Purchase() { }
 }
 
@@ -150,7 +150,7 @@ class CandyCrush : ITemporaryProduct
     public string description { get; } = "Breaks connecting colors";
     public double rarity { get; } = 0.07;
     public int price { get; } = 110;
-    public int lifetime { get; } = 4;
+    public int LifeTime { get; } = 4;
     public void Purchase() { }
 }
 
@@ -164,7 +164,7 @@ class NuclearDrop : ITemporaryProduct
     public string description { get; } = "Alters drop collision";
     public double rarity { get; } = 0.03;
     public int price { get; } = 250;
-    public int lifetime { get; } = 3;
+    public int LifeTime { get; } = 3;
     public void Purchase() { }
 }
 
@@ -176,7 +176,7 @@ class SlowMotion : IAbilityProduct
     public string description { get; } = "Halves drop speed";
     public double rarity { get; } = 0.09;
     public int price { get; } = 150;
-    public int cooldown { get; } = 10;
+    public int Cooldown { get; } = 10;
     public void Purchase() { }
 }
 
@@ -188,7 +188,7 @@ class Skip : IAbilityProduct
     public string description { get; } = "Discard current tetromino";
     public double rarity { get; } = 0.11;
     public int price { get; } = 130;
-    public int cooldown { get; } = 6;
+    public int Cooldown { get; } = 6;
     public void Purchase() { }
 }
 
@@ -225,7 +225,7 @@ class TaxTime : ITemporaryProduct
     public string description { get; } = "Taxes opponent earnings";
     public double rarity { get; } = 0.06;
     public int price { get; } = 140;
-    public int lifetime { get; } = 4;
+    public int LifeTime { get; } = 4;
     public void Purchase() { }
 }
 
@@ -241,7 +241,7 @@ class ExtraBoard : ITemporaryProduct
     public string description { get; } = "Adds a second board for opponent";
     public double rarity { get; } = 0.02;
     public int price { get; } = 300;
-    public int lifetime { get; } = 6;
+    public int LifeTime { get; } = 6;
     public void Purchase() { }
 }
 
@@ -253,7 +253,7 @@ class SkipOpponentsPiece : IAbilityProduct
     public string description { get; } = "Skips opponents next piece";
     public double rarity { get; } = 0.04;
     public int price { get; } = 170;
-    public int cooldown { get; } = 8;
+    public int Cooldown { get; } = 8;
     public void Purchase() { }
 }
 
@@ -266,7 +266,7 @@ class DisableQuickDrop : IAbilityProduct
     public string description { get; } = "Disables opponents quick drop";
     public double rarity { get; } = 0.05;
     public int price { get; } = 160;
-    public int cooldown { get; } = 9;
+    public int Cooldown { get; } = 9;
     public void Purchase() { }
 }
 
@@ -278,6 +278,6 @@ class FreezeInput : IAbilityProduct
     public string description { get; } = "Freezes opponents input briefly";
     public double rarity { get; } = 0.04;
     public int price { get; } = 180;
-    public int cooldown { get; } = 12;
+    public int Cooldown { get; } = 12;
     public void Purchase() { }
 }
