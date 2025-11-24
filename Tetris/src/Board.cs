@@ -185,7 +185,7 @@ class Board
     private static Polyomino GetPolyomino()
     {
         Random rng = new();
-        return rng.Next(7) switch
+        return rng.Next(9) switch
         {
             0 => new OctominoThiccI(),
             1 => new DominoSmallI(),
