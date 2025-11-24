@@ -1,4 +1,76 @@
 
+class WallKickTable
+{
+    public List<(int, int)> row0R = [];
+    public List<(int, int)> rowR0 = [];
+    public List<(int, int)> rowR2 = [];
+    public List<(int, int)> row2R = [];
+    public List<(int, int)> row2L = [];
+    public List<(int, int)> rowL2 = [];
+    public List<(int, int)> rowL0 = [];
+    public List<(int, int)> row0L = [];
+
+    public (int, int) GetOffset(int rotationState, int testIndex)
+    {
+        int fromState = rotationState;
+        int toState = (rotationState + 1) % 4; // TODO handle if multi directional rotation is implemented
+        return GetOffset(fromState, toState, testIndex);
+    }
+    public (int, int) GetOffset(int fromState, int toState, int testIndex)
+    {
+        if (fromState == 0 && toState == 1)
+            return row0R[testIndex];
+        else if (fromState == 1 && toState == 0)
+            return rowR0[testIndex];
+        else if (fromState == 1 && toState == 2)
+            return rowR2[testIndex];
+        else if (fromState == 2 && toState == 1)
+            return row2R[testIndex];
+        else if (fromState == 2 && toState == 3)
+            return row2L[testIndex];
+        else if (fromState == 3 && toState == 2)
+            return rowL2[testIndex];
+        else if (fromState == 3 && toState == 0)
+            return rowL0[testIndex];
+        else if (fromState == 0 && toState == 3)
+            return row0L[testIndex];
+        else
+            throw new ArgumentException("Invalid rotation states");
+    }
+
+    public static WallKickTable MakeJLSTZTable()
+    {
+        // https://tetris.wiki/Super_Rotation_System#Wall_Kicks
+        return new WallKickTable()
+        {
+            row0R = [(0, 0), (-1, 0), (-1, +1), (0, -2), (-1, -2)],
+            rowR0 = [(0, 0), (+1, 0), (+1, -1), (0, +2), (+1, +2)],
+            rowR2 = [(0, 0), (+1, 0), (+1, -1), (0, +2), (+1, +2)],
+            row2R = [(0, 0), (-1, 0), (-1, +1), (0, -2), (-1, -2)],
+            row2L = [(0, 0), (+1, 0), (+1, +1), (0, -2), (+1, -2)],
+            rowL2 = [(0, 0), (-1, 0), (-1, -1), (0, +2), (-1, +2)],
+            rowL0 = [(0, 0), (-1, 0), (-1, -1), (0, +2), (-1, +2)],
+            row0L = [(0, 0), (+1, 0), (+1, +1), (0, -2), (+1, -2)],
+        };
+    }
+
+    public static WallKickTable MakeITable()
+    {
+        // https://tetris.wiki/Super_Rotation_System#Wall_Kicks
+        return new WallKickTable()
+        {
+            row0R = [(0, 0), (-2, 0), (+1, 0), (-2, -1), (+1, +2)],
+            rowR0 = [(0, 0), (+2, 0), (-1, 0), (+2, +1), (-1, -2)],
+            rowR2 = [(0, 0), (-1, 0), (+2, 0), (-1, +2), (+2, -1)],
+            row2R = [(0, 0), (+1, 0), (-2, 0), (+1, -2), (-2, +1)],
+            row2L = [(0, 0), (+2, 0), (-1, 0), (+2, +1), (-1, -2)],
+            rowL2 = [(0, 0), (-2, 0), (+1, 0), (-2, -1), (+1, +2)],
+            rowL0 = [(0, 0), (+1, 0), (-2, 0), (+1, -2), (-2, +1)],
+            row0L = [(0, 0), (-1, 0), (+2, 0), (-1, +2), (+2, -1)],
+        };
+    }
+}
+
 class Polyomino
 {
     public int X { get; set; }
@@ -9,6 +81,9 @@ class Polyomino
     public int SpawnYOffset { get; set; } = 0;
 
     public string Color { get; private set; }
+
+    public WallKickTable WallKickOffsets = WallKickTable.MakeJLSTZTable();
+    private int rotationState = 0;
 
     public Polyomino(int[,] shape)
     {
@@ -23,6 +98,8 @@ class Polyomino
 
     public virtual void Rotate()
     {
+        // Inspired by https://tetris.wiki/Super_Rotation_System
+
         int rows = Shape.GetLength(0);
         int cols = Shape.GetLength(1);
 
@@ -62,6 +139,9 @@ class Polyomino
         return blocks;
     }
 
+    /// <summary>
+    /// Gets the list of tiles that make up this polyomino
+    /// </summary>
     public List<Tile> GetTiles()
     {
         List<Tile> tiles = [];
@@ -80,10 +160,10 @@ class Polyomino
 
     public bool CanMove(int deltaX, int deltaY, Board board)
     {
-        return CanMove(deltaX, deltaY, board.CollisionGrid, board.Width, board.Height);
-    }
-    public bool CanMove(int deltaX, int deltaY, CollisionGrid collisionGrid, int boardWidth, int boardHeight)
-    {
+        int boardWidth = board.Width;
+        int boardHeight = board.Height;
+        CollisionGrid collisionGrid = board.CollisionGrid;
+
         foreach ((int x, int y) in GetTileCoords())
         {
             int newX = x + deltaX;
@@ -168,7 +248,9 @@ class TetrominoI : Polyomino
             { 0, 0, 0, 0},
             { 0, 0, 0, 0},
         }, AnsiColor.CyanCode)
-    { }
+    {
+        WallKickOffsets = WallKickTable.MakeITable();
+    }
 }
 
 class TetrominoJ : Polyomino
@@ -236,8 +318,11 @@ class TetrominoZ : Polyomino
     { }
 }
 
-// Custom polyominoes goes hard 
-// TODO: Make sure rotation works correctly
+
+/** 
+ * Custom polyominoes goes hard 
+ * TODO: Make sure rotation works correctly
+ */
 class OctominoThiccI : Polyomino
 {
     public OctominoThiccI() : base(new int[,] {

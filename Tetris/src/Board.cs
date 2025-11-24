@@ -100,7 +100,7 @@ class Board
         List<Polyomino> iterablePolyominoes = [.. FallingPolyominoes]; // Copy to avoid modification during iteration
         foreach (Polyomino polyomino in iterablePolyominoes)
         {
-            if (polyomino.CanMove(0, 1, CollisionGrid, Width, Height))
+            if (polyomino.CanMove(0, 1, this))
             {
                 polyomino.Y += 1;
                 continue;
