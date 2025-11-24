@@ -64,6 +64,22 @@ class WallKickTable
         };
     }
 
+    public static WallKickTable Make_ThiccI_Table()
+    {
+        // https://tetris.wiki/Super_Rotation_System#Wall_Kicks
+        return new WallKickTable()
+        {
+            row0R = [(0, 0), (-2, 0), (+1, 0), (-2, -1), (+1, +2)],
+            rowR0 = [(0, 0), (+1, 0), (-1, 0), (+2, +1), (-1, -2)],
+            rowR2 = [(0, 0), (-1, 0), (+1, 0), (-1, +2), (+2, -1)],
+            row2R = [(0, 0), (+1, 0), (-1, 0), (+1, -2), (-2, +1)],
+            row2L = [(0, 0), (+1, 0), (-1, 0), (+2, +1), (-1, -2)],
+            rowL2 = [(0, 0), (-2, 0), (+1, 0), (-2, -1), (+1, +2)],
+            rowL0 = [(0, 0), (+1, 0), (-1, 0), (+1, -2), (-2, +1)],
+            row0L = [(0, 0), (-1, 0), (+2, 0), (-1, +2), (+2, -1)],
+        };
+    }
+
     public static WallKickTable Make_III_Table()
     {
         // Aggressive wall kicks for big bois
@@ -389,7 +405,7 @@ class OctominoThiccI : Polyomino
         { 0, 0, 0, 0 },
     })
     {
-        WallKickOffsets = WallKickTable.Make_I_Table();
+        WallKickOffsets = WallKickTable.Make_ThiccI_Table();
     }
 }
 
