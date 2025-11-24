@@ -30,6 +30,7 @@
 ### Static
 - Increase dt
 - Monochrome board
+- Invert rotation direction
 
 ### Timed
 - Tax with brackets
