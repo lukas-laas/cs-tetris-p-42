@@ -141,7 +141,7 @@ class Polyomino
         // Try wall kicks if rotated shape collides
         for (int testIndex = 0; testIndex < WallKickOffsets.row0R.Count; testIndex++)
         {
-            // Define test position with wall kick offset and polyomino position TODO - is this origin good? can it mess up certain tests on certain shapes?
+            // Define test position with wall kick offset and polyomino position
             Orientation toOrientation = (Orientation)(((int)orientation + 1) % 4);
             (int offsetX, int offsetY) = WallKickOffsets.GetOffset(orientation, toOrientation, testIndex);
             int testX = X + offsetX;
@@ -394,7 +394,6 @@ class TetrominoZ : Polyomino
 
 /** 
  * Custom polyominoes goes hard 
- * TODO: Make sure rotation works correctly
  */
 class OctominoThiccI : Polyomino
 {
