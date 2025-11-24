@@ -110,7 +110,8 @@ class Board
             SettledTiles.AddRange(polyomino.GetTiles());
             FallingPolyominoes.Remove(polyomino);
 
-            int linesCleared = 0;
+            // Track tiles instead of rows when clearing for features that require it like color clearing
+            int tilesCleared = 0;
 
             UpdateCollisionGrid();
             for (int y = 0; y < CollisionGrid.Count; y++)
@@ -119,7 +120,7 @@ class Board
 
                 // Remove tiles on the cleared row
                 SettledTiles.RemoveAll((tile) => tile.Y == y);
-                linesCleared += 1;
+                tilesCleared += Width;
 
                 // Move all tiles above the cleared row down by 1
                 foreach (var tile in SettledTiles)
@@ -132,14 +133,14 @@ class Board
             }
 
             // Update score based on lines cleared
-            Score += linesCleared switch
+            Score += tilesCleared switch
             {
                 0 => 0,
-                1 => 100,
-                2 => 300,
-                3 => 500,
-                4 => 800,
-                _ => linesCleared * 200,
+                10 => 100,
+                20 => 300,
+                30 => 500,
+                40 => 800,
+                _ => tilesCleared * 20,
             };
         }
     }
@@ -186,14 +187,27 @@ class Board
         Random rng = new();
         return rng.Next(7) switch
         {
-            0 => new TetrominoI(),
-            1 => new TetrominoJ(),
-            2 => new TetrominoL(),
-            3 => new TetrominoO(),
-            4 => new TetrominoS(),
-            5 => new TetrominoT(),
-            6 => new TetrominoZ(),
-            _ => new OctominoThiccI(), // IMPOSSIBLE
+            0 => new OctominoThiccI(),
+            1 => new DominoSmallI(),
+            2 => new TrominoLowerI(),
+            3 => new OctominoIII(),
+            4 => new NonominoBlocc(),
+            5 => new OctominoDonut(),
+            6 => new MonominoDot(),
+            7 => new PentominoArch(),
+            8 => new PentominoX(),
+            _ => new TetrominoO(), // IMPOSSIBLE
         };
+        // return rng.Next(7) switch
+        // {
+        //     0 => new TetrominoI(),
+        //     1 => new TetrominoJ(),
+        //     2 => new TetrominoL(),
+        //     3 => new TetrominoO(),
+        //     4 => new TetrominoS(),
+        //     5 => new TetrominoT(),
+        //     6 => new TetrominoZ(),
+        //     _ => new OctominoThiccI(), // IMPOSSIBLE
+        // };
     }
 }
