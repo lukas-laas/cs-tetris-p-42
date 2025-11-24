@@ -7,3 +7,10 @@ enum Input
     Rotate,
     SoftDrop, // Hard drop not implemented, maybe l8r B)
 };
+enum Orientation
+{
+    Zero = 0,
+    Right = 1,
+    Two = 2,
+    Left = 3,
+}

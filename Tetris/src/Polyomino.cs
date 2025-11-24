@@ -10,32 +10,26 @@ class WallKickTable
     public List<(int, int)> rowL0 = [];
     public List<(int, int)> row0L = [];
 
-    public (int, int) GetOffset(int rotationState, int testIndex)
+    public (int, int) GetOffset(Orientation fromOrientation, Orientation toOrientation, int testIndex)
     {
-        int fromState = rotationState;
-        int toState = (rotationState + 1) % 4; // TODO handle if multi directional rotation is implemented
-        return GetOffset(fromState, toState, testIndex);
-    }
-    public (int, int) GetOffset(int fromState, int toState, int testIndex)
-    {
-        if (fromState == 0 && toState == 1)
+        if (fromOrientation == Orientation.Zero && toOrientation == Orientation.Right)
             return row0R[testIndex];
-        else if (fromState == 1 && toState == 0)
+        else if (fromOrientation == Orientation.Right && toOrientation == Orientation.Zero)
             return rowR0[testIndex];
-        else if (fromState == 1 && toState == 2)
+        else if (fromOrientation == Orientation.Right && toOrientation == Orientation.Two)
             return rowR2[testIndex];
-        else if (fromState == 2 && toState == 1)
+        else if (fromOrientation == Orientation.Two && toOrientation == Orientation.Right)
             return row2R[testIndex];
-        else if (fromState == 2 && toState == 3)
+        else if (fromOrientation == Orientation.Two && toOrientation == Orientation.Left)
             return row2L[testIndex];
-        else if (fromState == 3 && toState == 2)
+        else if (fromOrientation == Orientation.Left && toOrientation == Orientation.Two)
             return rowL2[testIndex];
-        else if (fromState == 3 && toState == 0)
+        else if (fromOrientation == Orientation.Left && toOrientation == Orientation.Zero)
             return rowL0[testIndex];
-        else if (fromState == 0 && toState == 3)
+        else if (fromOrientation == Orientation.Zero && toOrientation == Orientation.Left)
             return row0L[testIndex];
         else
-            throw new ArgumentException("Invalid rotation states");
+            throw new ArgumentException("Invalid orientation transition");
     }
 
     public static WallKickTable Make_JLSTZ_Table()
@@ -69,6 +63,22 @@ class WallKickTable
             row0L = [(0, 0), (-1, 0), (+2, 0), (-1, +2), (+2, -1)],
         };
     }
+
+    public static WallKickTable Make_III_Table()
+    {
+        // Aggressive wall kicks for big bois
+        return new WallKickTable()
+        {
+            row0R = [(0, 0), (-4, 0), (+2, 0), (-4, -2), (+2, +4)],
+            rowR0 = [(0, 0), (+4, 0), (-2, 0), (+4, +2), (-2, -4)],
+            rowR2 = [(0, 0), (-2, 0), (+4, 0), (-2, +4), (+4, -2)],
+            row2R = [(0, 0), (+2, 0), (-4, 0), (+2, -4), (-4, +2)],
+            row2L = [(0, 0), (+4, 0), (-2, 0), (+4, +2), (-2, -4)],
+            rowL2 = [(0, 0), (-4, 0), (+2, 0), (-4, -2), (+2, +4)],
+            rowL0 = [(0, 0), (+2, 0), (-4, 0), (+2, -4), (-4, +2)],
+            row0L = [(0, 0), (-2, 0), (+4, 0), (-2, +4), (+4, -2)],
+        };
+    }
 }
 
 class Polyomino
@@ -81,7 +91,8 @@ class Polyomino
     public int SpawnYOffset { get; set; } = 0;
 
     public WallKickTable WallKickOffsets = WallKickTable.Make_JLSTZ_Table();
-    private int rotationState = 0;
+
+    private Orientation orientation = Orientation.Zero;
 
     public Polyomino(int[,] shape)
     {
@@ -115,7 +126,7 @@ class Polyomino
         for (int testIndex = 0; testIndex < WallKickOffsets.row0R.Count; testIndex++)
         {
             // Define test position with wall kick offset and polyomino position TODO - is this origin good? can it mess up certain tests on certain shapes?
-            (int offsetX, int offsetY) = WallKickOffsets.GetOffset(rotationState, testIndex);
+            (int offsetX, int offsetY) = WallKickOffsets.GetOffset(orientation, orientation + 1, testIndex);
             int testX = X + offsetX;
             int testY = Y + offsetY;
 
@@ -153,16 +164,12 @@ class Polyomino
             {
                 // Successful rotation with wall kick
                 Shape = rotated;
-                rotationState = (rotationState + 1) % 4;
+                orientation = (Orientation)(((int)orientation + 1) % 4);
                 X = testX;
                 Y = testY;
                 return;
             }
         }
-
-
-        Shape = rotated;
-        rotationState = (rotationState + 1) % 4;
     }
 
     /// <summary>
@@ -292,11 +299,11 @@ class Polyomino
 class TetrominoI : Polyomino
 {
     public TetrominoI() : base(new int[,] {
-            { 0, 0, 0, 0},
-            { 1, 1, 1, 1},
-            { 0, 0, 0, 0},
-            { 0, 0, 0, 0},
-        }, AnsiColor.CyanCode)
+        { 0, 0, 0, 0},
+        { 1, 1, 1, 1},
+        { 0, 0, 0, 0},
+        { 0, 0, 0, 0},
+    }, AnsiColor.CyanCode)
     {
         WallKickOffsets = WallKickTable.Make_I_Table();
     }
@@ -305,30 +312,30 @@ class TetrominoI : Polyomino
 class TetrominoJ : Polyomino
 {
     public TetrominoJ() : base(new int[,] {
-            { 1, 0, 0},
-            { 1, 1, 1},
-            { 0, 0, 0},
-        }, AnsiColor.BlueCode)
+        { 1, 0, 0},
+        { 1, 1, 1},
+        { 0, 0, 0},
+    }, AnsiColor.BlueCode)
     { }
 }
 
 class TetrominoL : Polyomino
 {
     public TetrominoL() : base(new int[,] {
-            { 0, 0, 1},
-            { 1, 1, 1},
-            { 0, 0, 0},
-        }, AnsiColor.OrangeCode)
+        { 0, 0, 1},
+        { 1, 1, 1},
+        { 0, 0, 0},
+    }, AnsiColor.OrangeCode)
     { }
 }
 
 class TetrominoO : Polyomino
 {
     public TetrominoO() : base(new int[,] {
-            { 0, 1, 1, 0},
-            { 0, 1, 1, 0},
-            { 0, 0, 0, 0},
-        }, AnsiColor.YellowCode)
+        { 0, 1, 1, 0},
+        { 0, 1, 1, 0},
+        { 0, 0, 0, 0},
+    }, AnsiColor.YellowCode)
     { }
 
     public override void Rotate(Board board)
@@ -340,30 +347,30 @@ class TetrominoO : Polyomino
 class TetrominoS : Polyomino
 {
     public TetrominoS() : base(new int[,] {
-            { 0, 1, 1},
-            { 1, 1, 0},
-            { 0, 0, 0},
-        }, AnsiColor.GreenCode)
+        { 0, 1, 1},
+        { 1, 1, 0},
+        { 0, 0, 0},
+    }, AnsiColor.GreenCode)
     { }
 }
 
 class TetrominoT : Polyomino
 {
     public TetrominoT() : base(new int[,] {
-            { 0, 1, 0},
-            { 1, 1, 1},
-            { 0, 0, 0},
-        }, AnsiColor.MagentaCode)
+        { 0, 1, 0},
+        { 1, 1, 1},
+        { 0, 0, 0},
+    }, AnsiColor.MagentaCode)
     { }
 }
 
 class TetrominoZ : Polyomino
 {
     public TetrominoZ() : base(new int[,] {
-            { 1, 1, 0},
-            { 0, 1, 1},
-            { 0, 0, 0},
-        }, AnsiColor.RedCode)
+        { 1, 1, 0},
+        { 0, 1, 1},
+        { 0, 0, 0},
+    }, AnsiColor.RedCode)
     { }
 }
 
@@ -375,107 +382,111 @@ class TetrominoZ : Polyomino
 class OctominoThiccI : Polyomino
 {
     public OctominoThiccI() : base(new int[,] {
-            { 0, 0, 0, 0 },
-            { 1, 1, 1, 1 },
-            { 1, 1, 1, 1 },
-            { 0, 0, 0, 0 },
-        })
-    { }
+        { 0, 0, 0, 0 },
+        { 1, 1, 1, 1 },
+        { 1, 1, 1, 1 },
+        { 0, 0, 0, 0 },
+    })
+    {
+        WallKickOffsets = WallKickTable.Make_I_Table();
+    }
 }
 
 class DominoSmallI : Polyomino
 {
     public DominoSmallI() : base(new int[,] {
-            { 0, 0, 0 },
-            { 0, 1, 1 },
-            { 0, 0, 0 },
-
-        })
+        { 0, 0, 0 },
+        { 0, 1, 1 },
+        { 0, 0, 0 },
+    })
     { }
 }
 
 class TrominoLowerI : Polyomino
 {
     public TrominoLowerI() : base(new int[,] {
-            { 0, 0, 0, 0 },
-            { 1, 1, 0, 1 },
-            { 0, 0, 0, 0 },
-            { 0, 0, 0, 0 },
-        })
-    { }
+        { 0, 0, 0, 0 },
+        { 1, 1, 0, 1 },
+        { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 },
+    })
+    {
+        WallKickOffsets = WallKickTable.Make_I_Table();
+    }
 }
 
 class OctominoIII : Polyomino
 {
     public OctominoIII() : base(new int[,] {
-            { 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 1, 1, 1, 1, 1, 1, 1, 1 },
-            { 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0 },
-        }, AnsiColor.WhiteCode)
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 1, 1, 1, 1, 1, 1, 1, 1 },
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 0, 0, 0, 0, 0, 0, 0 },
+    }, AnsiColor.WhiteCode)
     {
         SpawnXOffset = -2;
         SpawnYOffset = -2;
+        WallKickOffsets = WallKickTable.Make_III_Table();
     }
 }
 
 class NonominoBlocc : Polyomino
 {
     public NonominoBlocc() : base(new int[,] {
-            { 0, 1, 1, 1, 0 },
-            { 0, 1, 1, 1, 0 },
-            { 0, 1, 1, 1, 0 },
-            { 0, 0, 0, 0, 0 },
-        })
+        { 0, 1, 1, 1, 0 },
+        { 0, 1, 1, 1, 0 },
+        { 0, 1, 1, 1, 0 },
+        { 0, 0, 0, 0, 0 },
+    })
     { }
 
     public override void Rotate(Board board)
     {
-        // Blocc does not rotate}
+        // Blocc does not rotate
     }
 }
 
 class OctominoDonut : Polyomino
 {
     public OctominoDonut() : base(new int[,] {
-            { 0, 1, 1, 1, 0 },
-            { 0, 1, 0, 1, 0 },
-            { 0, 1, 1, 1, 0 },
-            { 0, 0, 0, 0, 0 },
-        })
+        { 0, 1, 1, 1, 0 },
+        { 0, 1, 0, 1, 0 },
+        { 0, 1, 1, 1, 0 },
+        { 0, 0, 0, 0, 0 },
+    })
     { }
 
     public override void Rotate(Board board)
     {
-        // Donut does not rotate}
+        // Donut does not rotate
     }
 }
 
 class MonominoDot : Polyomino
 {
     public MonominoDot() : base(new int[,] {
-            { 0, 1, 0},
-            { 0, 0, 0},
-        })
+        { 0, 1, 0},
+        { 0, 0, 0},
+    })
     { }
 
     public override void Rotate(Board board)
     {
-        // Dot does not rotate}
+        // Dot does not rotate
     }
 }
 
 class PentominoArch : Polyomino
 {
     public PentominoArch() : base(new int[,] {
-            { 0, 1, 0, 1, 0 },
-            { 0, 1, 1, 1, 0 },
-            { 0, 0, 0, 0, 0 },
-        })
+        { 0, 1, 0, 1, 0 },
+        { 0, 1, 1, 1, 0 },
+        { 0, 0, 0, 0, 0 },
+    }, AnsiColor.GreenCode)
     { }
 }
 
@@ -485,6 +496,6 @@ class PentominoX : Polyomino
         { 1, 0, 1 },
         { 0, 1, 0 },
         { 1, 0, 1 },
-    })
+    }, AnsiColor.RedCode)
     { }
 }
