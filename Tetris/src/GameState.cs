@@ -9,10 +9,10 @@ class GameState
             { "S", Input.SoftDrop }
         }),
         new(new() {
-            { "LeftArrow", Input.Left },
+            { "LeftArrow",  Input.Left },
             { "RightArrow", Input.Right },
-            { "UpArrow", Input.Rotate },
-            { "DownArrow", Input.SoftDrop }
+            { "UpArrow",    Input.Rotate },
+            { "DownArrow",  Input.SoftDrop }
         }),
     ];
 
