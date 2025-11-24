@@ -71,11 +71,11 @@ class WallKickTable
         {
             row0R = [(0, 0), (-4, 0), (+2, 0), (-4, -2), (+2, +4)],
             rowR0 = [(0, 0), (+4, 0), (-2, 0), (+4, +2), (-2, -4)],
-            rowR2 = [(0, 0), (-2, 0), (+4, 0), (-2, +4), (+4, -2)],
+            rowR2 = [(0, 0), (-4, 0), (+3, 0), (-2, +4), (+4, -2)],
             row2R = [(0, 0), (+2, 0), (-4, 0), (+2, -4), (-4, +2)],
             row2L = [(0, 0), (+4, 0), (-2, 0), (+4, +2), (-2, -4)],
             rowL2 = [(0, 0), (-4, 0), (+2, 0), (-4, -2), (+2, +4)],
-            rowL0 = [(0, 0), (+2, 0), (-4, 0), (+2, -4), (-4, +2)],
+            rowL0 = [(0, 0), (+2, 0), (-5, 0), (+2, -4), (-4, +2)],
             row0L = [(0, 0), (-2, 0), (+4, 0), (-2, +4), (+4, -2)],
         };
     }
@@ -126,7 +126,8 @@ class Polyomino
         for (int testIndex = 0; testIndex < WallKickOffsets.row0R.Count; testIndex++)
         {
             // Define test position with wall kick offset and polyomino position TODO - is this origin good? can it mess up certain tests on certain shapes?
-            (int offsetX, int offsetY) = WallKickOffsets.GetOffset(orientation, orientation + 1, testIndex);
+            Orientation toOrientation = (Orientation)(((int)orientation + 1) % 4);
+            (int offsetX, int offsetY) = WallKickOffsets.GetOffset(orientation, toOrientation, testIndex);
             int testX = X + offsetX;
             int testY = Y + offsetY;
 
@@ -164,7 +165,7 @@ class Polyomino
             {
                 // Successful rotation with wall kick
                 Shape = rotated;
-                orientation = (Orientation)(((int)orientation + 1) % 4);
+                orientation = toOrientation;
                 X = testX;
                 Y = testY;
                 return;
@@ -420,9 +421,7 @@ class OctominoIII : Polyomino
     public OctominoIII() : base(new int[,] {
         { 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
         { 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0 },
         { 0, 0, 0, 0, 0, 0, 0, 0 },

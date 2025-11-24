@@ -9,8 +9,8 @@ enum Input
 };
 enum Orientation
 {
-    Zero = 0,
-    Right = 1,
-    Two = 2,
-    Left = 3,
+    Zero,
+    Right,
+    Two,
+    Left,
 }
