@@ -5,6 +5,26 @@ class Board
     public int Height { get; } = 40;
     public int VisibleHeight { get; set; } = 20;
 
+    public List<Func<Polyomino>> PolyominoPool { get; private set; } = [
+        () => new TetrominoI(),
+        () => new TetrominoJ(),
+        () => new TetrominoL(),
+        () => new TetrominoO(),
+        () => new TetrominoS(),
+        () => new TetrominoT(),
+        () => new TetrominoZ(),
+        () => new OctominoThiccI(),
+        () => new DominoSmallI(),
+        () => new TrominoLowerI(),
+        () => new OctominoIII(),
+        () => new NonominoBlocc(),
+        () => new OctominoDonut(),
+        () => new MonominoDot(),
+        () => new PentominoArch(),
+        () => new PentominoX(),
+        () => new TetrominoO(),
+    ];
+
     public Queue<Polyomino> Queue { get; private set; } = [];
     public CollisionGrid CollisionGrid { get; private set; } = [];
     public List<Tile> SettledTiles { get; private set; } = [];
@@ -182,32 +202,10 @@ class Board
         Queue.Enqueue(GetPolyomino());
     }
 
-    private static Polyomino GetPolyomino()
+    private Polyomino GetPolyomino()
     {
         Random rng = new();
-        return rng.Next(9) switch
-        {
-            0 => new OctominoThiccI(),
-            1 => new DominoSmallI(),
-            2 => new TrominoLowerI(),
-            3 => new OctominoIII(),
-            4 => new NonominoBlocc(),
-            5 => new OctominoDonut(),
-            6 => new MonominoDot(),
-            7 => new PentominoArch(),
-            8 => new PentominoX(),
-            _ => new TetrominoO(), // IMPOSSIBLE
-        };
-        // return rng.Next(7) switch
-        // {
-        //     0 => new TetrominoI(),
-        //     1 => new TetrominoJ(),
-        //     2 => new TetrominoL(),
-        //     3 => new TetrominoO(),
-        //     4 => new TetrominoS(),
-        //     5 => new TetrominoT(),
-        //     6 => new TetrominoZ(),
-        //     _ => new OctominoThiccI(), // IMPOSSIBLE
-        // };
+        int index = rng.Next(0, PolyominoPool.Count);
+        return PolyominoPool[index]();
     }
 }
