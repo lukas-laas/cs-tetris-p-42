@@ -1,9 +1,13 @@
 using System.Net;
 using System.Text;
+using System.Net.WebSockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 class KeyInput
 {
     private List<string> currentKeys = new();
+    private readonly object keyLock = new();
 
     public KeyInput()
     {
@@ -12,8 +16,8 @@ class KeyInput
         listener.Prefixes.Add("http://localhost:1337/");
         listener.Start();
 
-        // Server src/util/web-input/index.html
-        Task.Run(() =>
+        // Server src/util/web-input/index.html and WebSocket input
+        Task.Run(async () =>
         {
             while (true)
             {
@@ -28,23 +32,58 @@ class KeyInput
                         continue;
                     }
 
-                    if (request.HttpMethod == "POST")
+                    // If client requests WebSocket upgrade, accept and handle messages
+                    if (request.IsWebSocketRequest)
                     {
-                        using StreamReader reader = new(request.InputStream, request.ContentEncoding);
-                        string body = reader.ReadToEnd();
-                        string[] keys = body.Split(',', StringSplitOptions.RemoveEmptyEntries);
-                        byte[] okResponse = Encoding.UTF8.GetBytes("OK");
-                        response.ContentType = "text/plain; charset=utf-8";
-                        response.ContentLength64 = okResponse.Length;
-                        response.OutputStream.Write(okResponse, 0, okResponse.Length);
-                        response.Close();
+                        HttpListenerWebSocketContext wsContext = await context.AcceptWebSocketAsync(subProtocol: null);
+                        WebSocket ws = wsContext.WebSocket;
 
-                        // Clear and update current keys
-                        currentKeys.Clear();
-                        currentKeys.AddRange(keys);
+                        var wsBuffer = new byte[4096];
+                        try
+                        {
+                            while (ws.State == WebSocketState.Open)
+                            {
+                                var result = await ws.ReceiveAsync(new ArraySegment<byte>(wsBuffer), CancellationToken.None);
+                                if (result.MessageType == WebSocketMessageType.Close)
+                                {
+                                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
+                                    break;
+                                }
+
+                                int count = result.Count;
+                                // Handle multi-frame messages
+                                while (!result.EndOfMessage)
+                                {
+                                    if (count >= wsBuffer.Length)
+                                    {
+                                        // message too large, drop
+                                        break;
+                                    }
+                                    result = await ws.ReceiveAsync(new ArraySegment<byte>(wsBuffer, count, wsBuffer.Length - count), CancellationToken.None);
+                                    count += result.Count;
+                                }
+
+                                if (result.MessageType == WebSocketMessageType.Text)
+                                {
+                                    string payload = Encoding.UTF8.GetString(wsBuffer, 0, count);
+                                    string[] keys = payload.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                                    lock (keyLock)
+                                    {
+                                        currentKeys.Clear();
+                                        currentKeys.AddRange(keys);
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            try { ws.Abort(); } catch { }
+                        }
+
                         continue;
                     }
 
+                    // Serve static files for GET requests
                     string localPath = request.Url!.LocalPath;
                     if (localPath == "/") localPath = "Tetris/src/util/web-input/input.html";
                     if (localPath == "/input.js") localPath = "Tetris/src/util/web-input/input.js";
@@ -77,10 +116,10 @@ class KeyInput
                         _ => "application/octet-stream"
                     };
 
-                    byte[] buffer = File.ReadAllBytes(filePath);
+                    byte[] fileBuffer = File.ReadAllBytes(filePath);
                     response.ContentType = contentType;
-                    response.ContentLength64 = buffer.Length;
-                    response.OutputStream.Write(buffer, 0, buffer.Length);
+                    response.ContentLength64 = fileBuffer.Length;
+                    response.OutputStream.Write(fileBuffer, 0, fileBuffer.Length);
                     response.Close();
                 }
                 catch
@@ -93,6 +132,9 @@ class KeyInput
 
     public string[] ReadAll()
     {
-        return [.. currentKeys];
+        lock (keyLock)
+        {
+            return [.. currentKeys];
+        }
     }
 }

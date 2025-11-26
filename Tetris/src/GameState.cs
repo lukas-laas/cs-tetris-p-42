@@ -3,17 +3,29 @@ class GameState
 {
     public List<Board> Games { get; } = [
         new(new() {
-            { "A", Input.Left },
-            { "D", Input.Right },
-            { "W", Input.Rotate },
-            { "S", Input.SoftDrop }
+            { "a", Input.Left },
+            { "d", Input.Right },
+            { "w", Input.Rotate },
+            { "s", Input.SoftDrop }
         }),
         new(new() {
-            { "LeftArrow",  Input.Left },
-            { "RightArrow", Input.Right },
-            { "UpArrow",    Input.Rotate },
-            { "DownArrow",  Input.SoftDrop }
+            { "ArrowLeft",  Input.Left },
+            { "ArrowRight", Input.Right },
+            { "ArrowUp",    Input.Rotate },
+            { "ArrowDown",  Input.SoftDrop }
         }),
+        // new(new() {
+        //     { "A", Input.Left },
+        //     { "D", Input.Right },
+        //     { "W", Input.Rotate },
+        //     { "S", Input.SoftDrop }
+        // }),
+        // new(new() {
+        //     { "LeftArrow",  Input.Left },
+        //     { "RightArrow", Input.Right },
+        //     { "UpArrow",    Input.Rotate },
+        //     { "DownArrow",  Input.SoftDrop }
+        // }),
     ];
     private readonly KeyInput inputHandler = new();
 

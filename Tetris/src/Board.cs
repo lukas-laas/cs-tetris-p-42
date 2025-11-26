@@ -182,6 +182,7 @@ class Board
         }
 
         if (selectedInput == null) return;
+        Log.Add($"Input: {selectedInput}");
 
         foreach (Polyomino polyomino in FallingPolyominoes)
         {
