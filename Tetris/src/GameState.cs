@@ -15,6 +15,7 @@ class GameState
             { "DownArrow",  Input.SoftDrop }
         }),
     ];
+    private KeyInput inputHandler = new();
 
     public GameState()
     {
@@ -28,7 +29,8 @@ class GameState
         {
             long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            string key = KeyInput.Read() ?? "";
+            // string key = KeyInput.Read() ?? "";
+            string? key = inputHandler.Read() ?? "";
 
             Games.ForEach(board => board.Tick(key));
 
