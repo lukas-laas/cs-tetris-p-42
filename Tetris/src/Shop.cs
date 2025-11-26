@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-
 class Shop
 {
-    List<IProduct> products = new List<IProduct>();
+    public List<IProduct> Products = new();
 
     // Products
     // Buffs
@@ -16,6 +14,7 @@ class Shop
     {
         this.owner = owner;
         this.others = others;
+        this.Products = [new SpeedUp(others)];
     }
 }
 
@@ -25,12 +24,13 @@ interface IProduct
     string description { get; }
     double rarity { get; }
     int price { get; }
+    public List<Player> Targets { get; set; }
     void Purchase(Player purchaser)
     {
-        if (purchaser.Money >= this.price)
+        // if (purchaser.Money >= this.price)
         {
             purchaser.AddToInventory(this);
-            purchaser.Money -= price;
+            // purchaser.Money -= price;
         }
     }
     public void Use();
@@ -215,16 +215,24 @@ interface IAbilityProduct : IProduct
 
 
 // // ==================== DEBUFFS =================
-// class IncreaseDT : IStaticProduct
-// {
-//     // Debuff
-//     // Increase DT of opponent
-//     public string name { get; } = "IncreaseDT";
-//     public string description { get; } = "Increases opponent DT";
-//     public double rarity { get; } = 0.14;
-//     public int price { get; } = 90;
-//     public void Purchase() { }
-// }
+class SpeedUp : IStaticProduct
+{
+    // Debuff
+    // Increase DT of opponent
+    public SpeedUp(List<Player> targets)
+    {
+        Targets = targets;
+    }
+    public List<Player> Targets { get; set; }
+    public string name { get; } = "IncreaseDT";
+    public string description { get; } = "Increases opponent DT";
+    public double rarity { get; } = 0.14;
+    public int price { get; } = 90;
+    public void Use()
+    {
+        Targets.ForEach(target => target.Board.DT = (int)Math.Floor(target.Board.DT * 0.90));
+    }
+}
 
 // class MonochromeBoard : IStaticProduct
 // {

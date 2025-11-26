@@ -32,8 +32,7 @@ class Board
 
     public int Score { get; set; } = 0;
     public int Money { get; set; } = 0;
-
-    public int Dt { get; set; } = 500; // Delta time between ticks in ms
+    public int DT { get; set; } = 500; // Delta time between ticks in ms
     private long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
     private readonly ControlScheme controlScheme;
@@ -102,7 +101,7 @@ class Board
         Move(keyString); // Uncapped movement speed
 
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        if (currentTime - lastTick < Dt) return;
+        if (currentTime - lastTick < DT) return;
         lastTick = currentTime;
 
         if (FallingPolyominoes.Count == 0)

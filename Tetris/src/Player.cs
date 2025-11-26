@@ -4,11 +4,14 @@ class Player
     bool isAi;
     int score;
     public int Money;
-    List<IProduct> inventory = [];
+    public List<IProduct> Inventory = [];
     IAbilityProduct? currentAbility;
+    public Board Board;
+    public Shop? Shop { get; set; }
 
-    public Player(string name)
+    public Player(string name, Board board)
     {
+        this.Board = board;
         this.name = name;
         isAi = false;
         score = 0;
@@ -32,14 +35,14 @@ class Player
         }
         else
         {
-            inventory.Add(product);
+            Inventory.Add(product);
             product.Use();
         }
     }
 
     public void TickInventory()
     {
-        foreach (IProduct product in inventory)
+        foreach (IProduct product in Inventory)
         {
             if (product is ITemporaryProduct temp)
             {

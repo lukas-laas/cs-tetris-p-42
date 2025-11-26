@@ -36,7 +36,7 @@ class Renderer
     public Renderer(GameState gameState)
     {
         this.gameState = gameState;
-        this.boards = gameState.Games;
+        this.boards = gameState.Games.Select(player => player.Board).ToList();
 
         if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
         if (Console.WindowHeight == 0) throw new Exception("Console window height is 0. Cannot render.");

@@ -1,25 +1,28 @@
 
 class GameState
 {
-    public List<Board> Games { get; } = [
-        new(new() {
-            { "A", Input.Left },
-            { "D", Input.Right },
-            { "W", Input.Rotate },
-            { "S", Input.SoftDrop }
-        }),
-        new(new() {
-            { "LeftArrow",  Input.Left },
-            { "RightArrow", Input.Right },
-            { "UpArrow",    Input.Rotate },
-            { "DownArrow",  Input.SoftDrop }
-        }),
+    public List<Player> Games { get; } = [
+        new ("p1", new (new () {
+                { "A", Input.Left },
+                { "D", Input.Right },
+                { "W", Input.Rotate },
+                { "S", Input.SoftDrop }
+            })),
+        new ("p2", new (new () {
+                { "LeftArrow", Input.Left },
+                { "RightArrow", Input.Right },
+                { "UpArrow", Input.Rotate },
+                { "DownArrow", Input.SoftDrop }
+            }))
     ];
 
     public GameState()
     {
         Renderer renderer = new(this);
         bool gaming = true;
+
+        Games[0].Shop = new(Games[0], [Games[1]]);
+        Games[1].Shop = new(Games[1], [Games[0]]);
 
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
@@ -30,7 +33,13 @@ class GameState
 
             string key = KeyInput.Read() ?? "";
 
-            Games.ForEach(board => board.Tick(key));
+            if (key == "T")
+            {
+                Games[0].Shop!.Products[0].Purchase(Games[0]);
+                Log.Add($"SPEEDING UP {Games[1].Board.DT}");
+            }
+
+            Games.ForEach(player => player.Board.Tick(key));
 
             renderer.Render();
             Thread.Sleep(20);
