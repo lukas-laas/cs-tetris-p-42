@@ -14,10 +14,86 @@
             padding: 0;
             box-sizing: border-box;
             background: #1f1f1f;
+            font-family: sans-serif;
+        }
+
+        body {
+            margin-top: 1rem;
+        }
+
+        button {
+            all: unset;
+
+            background: #d4d4d4;
+            cursor: pointer;
+
+            padding: 1ch;
+
+            &:hover {
+                background: #ffffff;
+            }
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .justify-around {
+            justify-content: space-around;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .gap-x-1 {
+            gap: 1ch;
+        }
+
+        .gap-y-1 {
+            gap: 1ch;
+        }
+
+        .w-full {
+            width: 100%;
         }
     </style>
 </head>
 
-<body></body>
+<body class="row justify-around">
+    <div class="col gap-y-1">
+        <div class="row justify-center w-full">
+            <button>W</button>
+        </div>
+
+        <div class="row gap-x-1 w-full">
+            <button>A</button>
+            <button>S</button>
+            <button>D</button>
+        </div>
+    </div>
+
+    <div class="col gap-y-1">
+        <div class="row justify-center w-full">
+            <button>Up</button>
+        </div>
+
+        <div class="row gap-x-1 w-full">
+            <button>Left</button>
+            <button>Down</button>
+            <button>Right</button>
+        </div>
+    </div>
+</body>
 
 </html>

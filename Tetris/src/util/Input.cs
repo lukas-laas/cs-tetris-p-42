@@ -1,17 +1,15 @@
 using System.Net;
 using System.Text;
 using System.Net.WebSockets;
-using System.Threading;
-using System.Threading.Tasks;
 
 class KeyInput
 {
-    private List<string> currentKeys = new();
-    private readonly object keyLock = new();
+    private readonly List<string> currentKeys = []; // Last batch of pressed keys
+    private readonly Lock keyLock = new(); // For thread safety on ReadAll method
 
     public KeyInput()
     {
-        // Create web server on localhost:1337
+        // Create socket listener
         HttpListener listener = new();
         listener.Prefixes.Add("http://localhost:1337/");
         listener.Start();
