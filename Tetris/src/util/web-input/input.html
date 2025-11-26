@@ -32,6 +32,8 @@
             &:hover {
                 background: #ffffff;
             }
+
+            user-select: none;
         }
 
         .row {
@@ -73,25 +75,25 @@
 <body class="row justify-around">
     <div class="col gap-y-1">
         <div class="row justify-center w-full">
-            <button>W</button>
+            <button onclick="faceButton('w')">W</button>
         </div>
 
         <div class="row gap-x-1 w-full">
-            <button>A</button>
-            <button>S</button>
-            <button>D</button>
+            <button onclick="faceButton('a')">A</button>
+            <button onclick="faceButton('s')">S</button>
+            <button onclick="faceButton('d')">D</button>
         </div>
     </div>
 
     <div class="col gap-y-1">
         <div class="row justify-center w-full">
-            <button>Up</button>
+            <button onclick="faceButton('ArrowUp')">Up</button>
         </div>
 
         <div class="row gap-x-1 w-full">
-            <button>Left</button>
-            <button>Down</button>
-            <button>Right</button>
+            <button onclick="faceButton('ArrowLeft')">Left</button>
+            <button onclick="faceButton('ArrowDown')">Down</button>
+            <button onclick="faceButton('ArrowRight')">Right</button>
         </div>
     </div>
 </body>

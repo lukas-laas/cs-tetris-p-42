@@ -12,6 +12,7 @@ class KeyInput
         // Create socket listener
         HttpListener listener = new();
         listener.Prefixes.Add("http://localhost:1337/");
+        listener.Prefixes.Add("http://laptop:1337/");
         listener.Start();
 
         // Server src/util/web-input/index.html and WebSocket input

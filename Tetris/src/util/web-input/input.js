@@ -15,7 +15,7 @@ function connect() {
             setTimeout(connect, 1000);
         });
         ws.addEventListener('error', () => {
-            try { ws.close(); } catch (e) {}
+            try { ws.close(); } catch (e) { }
         });
     } catch (e) {
         // ignore
@@ -23,11 +23,11 @@ function connect() {
 }
 connect();
 
-window.addEventListener("keydown", function(event) {
+window.addEventListener("keydown", function (event) {
     keyStates[event.key] = true;
     sendToServer();
 });
-window.addEventListener("keyup", function(event) {
+window.addEventListener("keyup", function (event) {
     keyStates[event.key] = false;
     sendToServer();
 });
@@ -38,4 +38,13 @@ const sendToServer = () => {
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(payload);
     }
-}
+};
+
+const faceButton = (/** @type {string} */key) => {
+    keyStates[key] = true;
+    sendToServer();
+    setTimeout(() => {
+        keyStates[key] = false;
+        sendToServer();
+    }, 100);
+};
