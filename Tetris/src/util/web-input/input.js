@@ -1,5 +1,6 @@
 
 const keyStates = {};
+
 window.addEventListener("keydown", function(event) {
     keyStates[event.key] = true;
     sendToServer();

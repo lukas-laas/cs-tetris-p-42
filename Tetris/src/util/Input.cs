@@ -3,6 +3,8 @@ using System.Text;
 
 class KeyInput
 {
+    private List<string> currentKeys = new();
+
     public KeyInput()
     {
         // Create web server on localhost:1337
@@ -23,6 +25,23 @@ class KeyInput
                 {
                     if (request == null || response == null)
                     {
+                        continue;
+                    }
+
+                    if (request.HttpMethod == "POST")
+                    {
+                        using StreamReader reader = new(request.InputStream, request.ContentEncoding);
+                        string body = reader.ReadToEnd();
+                        string[] keys = body.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                        byte[] okResponse = Encoding.UTF8.GetBytes("OK");
+                        response.ContentType = "text/plain; charset=utf-8";
+                        response.ContentLength64 = okResponse.Length;
+                        response.OutputStream.Write(okResponse, 0, okResponse.Length);
+                        response.Close();
+
+                        // Clear and update current keys
+                        currentKeys.Clear();
+                        currentKeys.AddRange(keys);
                         continue;
                     }
 
@@ -72,8 +91,8 @@ class KeyInput
         });
     }
 
-    public string? Read()
+    public string[] ReadAll()
     {
-        return null;
+        return [.. currentKeys];
     }
 }

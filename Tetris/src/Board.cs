@@ -97,9 +97,9 @@ class Board
         UpdateCollisionGrid();
     }
 
-    public void Tick(string keyString)
+    public void Tick(string[] pressedKeys)
     {
-        Move(keyString); // Uncapped movement speed
+        Move(pressedKeys); // Uncapped movement speed
 
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         if (currentTime - lastTick < Dt) return;
@@ -165,11 +165,23 @@ class Board
         }
     }
 
-    private void Move(string keyString)
+    private void Move(string[] pressedKeys)
     {
-        if (!ValidKeys.Contains(keyString)) return;
+        if (!pressedKeys.Any(key => ValidKeys.Contains(key))) return;
 
-        Input selectedInput = controlScheme[keyString]; // Not sure if a copy is necessary TODO - look into it
+        // Input selectedInput = controlScheme[pressedKeys]; // Not sure if a copy is necessary TODO - look into it
+        // Get first valid input from pressed keys
+        Input? selectedInput = null;
+        foreach (string key in pressedKeys)
+        {
+            if (controlScheme.TryGetValue(key, out Input input))
+            {
+                selectedInput = input;
+                break;
+            }
+        }
+
+        if (selectedInput == null) return;
 
         foreach (Polyomino polyomino in FallingPolyominoes)
         {
@@ -178,15 +190,19 @@ class Board
                 case Input.Left:
                     if (polyomino.CanMove(-1, 0, this)) polyomino.X--;
                     break;
+
                 case Input.Right:
                     if (polyomino.CanMove(1, 0, this)) polyomino.X++;
                     break;
+
                 case Input.SoftDrop:
                     if (polyomino.CanMove(0, 1, this)) polyomino.Y++;
                     break;
+
                 case Input.Rotate:
                     polyomino.Rotate(this);
                     break;
+
                 default:
                     throw new Exception("Unrecognized input");
             }
