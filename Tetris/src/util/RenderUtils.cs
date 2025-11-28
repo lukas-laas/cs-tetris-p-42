@@ -67,6 +67,8 @@ static class RenderUtils
         return text + new string(' ', targetVisibleLength - currentVisibleLength);
     }
 
+
+
     /** 
      * Moves cursor to modify canvas in place to write a large number made of unicode block characters.
      */
@@ -76,7 +78,7 @@ static class RenderUtils
         int consoleWidth = Console.WindowWidth;
         int consoleHeight = Console.WindowHeight;
         int baseY = (consoleHeight - 10) / 2;
-        int baseX = (consoleWidth - 6) / 2;
+        int offsetX = (consoleWidth - 6) / 2;
 
         string selectedNumber = number switch
         {
@@ -91,19 +93,25 @@ static class RenderUtils
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i];
-            Console.SetCursorPosition(baseX, baseY + i);
+            Console.SetCursorPosition(offsetX, baseY + i);
             Console.WriteLine(line);
         }
     }
 
     private static readonly string zero = $"""
-    {AnsiColor.Green(" ████ ")}
-    {AnsiColor.Green("██   █")}
-    {AnsiColor.Green("█ █  █")}
-    {AnsiColor.Green("█  █ █")}
-    {AnsiColor.Green("█   ██")}
-    {AnsiColor.Green(" ████ ")}
+    {AnsiColor.Green(" ████    ████   ██")}
+    {AnsiColor.Green("█    █  █    █  ██")}
+    {AnsiColor.Green("█       █    █  ██")}
+    {AnsiColor.Green("█  ███  █    █  ██")}
+    {AnsiColor.Green("█    █  █    █    ")}
+    {AnsiColor.Green(" ████    ████   ██")}
     """;
+    // {AnsiColor.Green(" ████ ")}
+    // {AnsiColor.Green("██   █")}
+    // {AnsiColor.Green("█ █  █")}
+    // {AnsiColor.Green("█  █ █")}
+    // {AnsiColor.Green("█   ██")}
+    // {AnsiColor.Green(" ████ ")}
 
     private static readonly string one = $"""
     {AnsiColor.Orange("  ██  ")}
