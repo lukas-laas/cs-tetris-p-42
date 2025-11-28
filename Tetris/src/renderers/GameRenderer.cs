@@ -1,14 +1,10 @@
 
-using System.Text.RegularExpressions;
-
 class Renderer
 {
-    private readonly GameState gameState;
     private readonly List<Board> boards;
 
     private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
     private static readonly int boardSpacing = 16;
-    private static readonly Regex ansiRegex = new("\u001b\\[[0-9;]*m");
 
     private static readonly Dictionary<string, string> boardBorder = new()
     {
@@ -35,7 +31,6 @@ class Renderer
 
     public Renderer(GameState gameState)
     {
-        this.gameState = gameState;
         this.boards = gameState.Players.Select(player => player.Board).ToList();
 
         if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
@@ -55,7 +50,7 @@ class Renderer
         buffer += "\n";
 
         // Boards
-        buffer += Center2DString(Merge2DStrings([.. boards.Select(MakeBoard)], boardSpacing));
+        buffer += RenderUtils.Center2DString(RenderUtils.Merge2DStrings([.. boards.Select(MakeBoard)], boardSpacing));
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
@@ -74,7 +69,7 @@ class Renderer
 
         """;
 
-        return Center2DString(title);
+        return RenderUtils.Center2DString(title);
     }
 
     private static string[,] MakeColorGrid(Board board)
@@ -144,7 +139,7 @@ class Renderer
 
         // Add queue
         string queueString = MakeQueue(board);
-        buffer = Merge2DStrings([buffer, queueString], 2, false);
+        buffer = RenderUtils.Merge2DStrings([buffer, queueString], 2, false);
 
         // Prepend info lines at the end
         buffer = infoLines + buffer;
@@ -217,70 +212,6 @@ class Renderer
         );
         return buffer;
     }
-
-    private static string Merge2DStrings(List<string> parts, int spacing = 16, bool bottomAlign = true)
-    {
-        List<List<string>> linesGroupedByPart = [.. parts.Select(part => part.Split('\n').ToList())];
-
-        // Normalize line counts with leading empty lines
-        int largestHeight = linesGroupedByPart.Max(part => part.Count);
-        // linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup => Enumerable.Repeat(string.Empty, largestHeight - lineGroup.Count).Concat(lineGroup).ToList())];
-        if (bottomAlign)
-        {
-            linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup =>
-                Enumerable.Repeat(string.Empty, largestHeight - lineGroup.Count).Concat(lineGroup).ToList()
-            )];
-        }
-        else
-        {
-            linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup =>
-                lineGroup.Concat(Enumerable.Repeat(string.Empty, largestHeight - lineGroup.Count)).ToList()
-            )];
-        }
-
-        // Normalize line lengths with trailing spaces to groups widest line
-        linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup =>
-        {
-            int maxVisibleLength = lineGroup.Select(GetVisibleLength).Max();
-            return lineGroup.Select(line => PadRightVisible(line, maxVisibleLength)).ToList();
-        })];
-
-        // Merge line by line
-        string buffer = "";
-        for (int lineIndex = 0; lineIndex < largestHeight; lineIndex++)
-        {
-            string line = "";
-            foreach (var group in linesGroupedByPart)
-            {
-                line += group[lineIndex] + new string(' ', spacing);
-            }
-            buffer += line.TrimEnd() + "\n"; // Trim trailing spaces
-        }
-        return buffer;
-    }
-
-    private static string Center2DString(string input2d)
-    {
-        int consoleWidth = Console.WindowWidth;
-        int visibleWidth = input2d.Split('\n').Max(GetVisibleLength);
-        if (visibleWidth >= consoleWidth) return input2d;
-
-        int paddingLeft = (consoleWidth - visibleWidth) / 2;
-        string padding = new(' ', paddingLeft);
-        return padding + input2d.Replace("\n", "\n" + padding);
-    }
-
-    private static int GetVisibleLength(string text)
-        => ansiRegex.Replace(text, string.Empty).Length;
-
-    private static string PadRightVisible(string text, int targetVisibleLength)
-    {
-        int currentVisibleLength = GetVisibleLength(text);
-        if (currentVisibleLength >= targetVisibleLength) return text;
-
-        return text + new string(' ', targetVisibleLength - currentVisibleLength);
-    }
-
     private static string InfoLine(string label, string value)
         => AnsiColor.Gray($" {label}:{value}\n");
 

@@ -1,3 +1,4 @@
+
 class Player(string name, Board board)
 {
     public string Name = name;
