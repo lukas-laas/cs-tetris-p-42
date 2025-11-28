@@ -11,7 +11,6 @@ static class RenderUtils
 
         // Normalize line counts with leading empty lines
         int largestHeight = linesGroupedByPart.Max(part => part.Count);
-        // linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup => Enumerable.Repeat(string.Empty, largestHeight - lineGroup.Count).Concat(lineGroup).ToList())];
         if (bottomAlign)
         {
             linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup =>
@@ -76,34 +75,24 @@ static class RenderUtils
         // move cursor to center of the screen
         int consoleWidth = Console.WindowWidth;
         int consoleHeight = Console.WindowHeight;
+        int baseY = (consoleHeight - 10) / 2;
+        int baseX = (consoleWidth - 6) / 2;
 
-        switch (number)
+        string selectedNumber = number switch
         {
-            case 0:
-                Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2);
-                // Console.Write(zero);
-                string[] lines = zero.Split('\n');
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    string line = lines[i];
-                    Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2 + i);
-                    Console.WriteLine(line);
-                }
-                break;
-            case 1:
-                Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2);
-                Console.Write(one);
-                break;
-            case 2:
-                Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2);
-                Console.Write(two);
-                break;
-            case 3:
-                Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2);
-                Console.Write(three);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(number), "Only numbers 0-3 are supported.");
+            0 => zero,
+            1 => one,
+            2 => two,
+            3 => three,
+            _ => throw new ArgumentOutOfRangeException(nameof(number), "Only numbers 0-3 are supported."),
+        };
+
+        string[] lines = selectedNumber.Split('\n');
+        for (int i = 0; i < lines.Length; i++)
+        {
+            string line = lines[i];
+            Console.SetCursorPosition(baseX, baseY + i);
+            Console.WriteLine(line);
         }
     }
 
