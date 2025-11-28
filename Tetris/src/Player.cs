@@ -18,6 +18,13 @@ class Player(string name, Board board)
         // Every tick it will empty the boards local score and money buffers into the player's total
         this.Score += Board.ScoreBuffer;
         this.Money += Board.MoneyBuffer;
+
+        if (Board.HasLost)
+        {
+            // TODO: not like this...
+            Console.WriteLine($"{Name} has lost the game!");
+            Environment.Exit(0); // TODO: implement proper game over handling
+        }
     }
 
     public void UseAbility()

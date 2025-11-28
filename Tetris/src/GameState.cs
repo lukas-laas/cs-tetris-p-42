@@ -31,17 +31,22 @@ class GameState
         // State management variables
         bool shopping = false;
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        int secondsBetweenShopping = 10;
 
         while (true)
         {
             long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            if (currentTime - lastTick >= 10 * 1_000)
+            if (currentTime - lastTick >= secondsBetweenShopping * 1_000)
             {
                 shopping = !shopping;
-                lastTick = currentTime; // TODO this should only update once shopping is over
+                lastTick = currentTime;
             }
 
-            if (shopping) ShoppingMode();
+            if (shopping)
+            {
+                ShoppingMode(); // Holds until user exits shop
+                shopping = false;
+            }
             else GamingFrame();
         }
     }
@@ -83,7 +88,12 @@ class GameState
             if (remaimingWait > 0) Thread.Sleep(remaimingWait);
         }
 
-        gameRenderer.Render();
-        Thread.Sleep(1000);
+        // Countdown before resuming game
+        for (int i = 0; i < 4; i++)
+        {
+            gameRenderer.Render();
+            RenderUtils.WriteLargeNumberInPlace(3 - i);
+            Thread.Sleep(1000);
+        }
     }
 }

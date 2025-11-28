@@ -68,22 +68,78 @@ static class RenderUtils
         return text + new string(' ', targetVisibleLength - currentVisibleLength);
     }
 
+    /** 
+     * Moves cursor to modify canvas in place to write a large number made of unicode block characters.
+     */
     public static void WriteLargeNumberInPlace(int number)
     {
         // move cursor to center of the screen
         int consoleWidth = Console.WindowWidth;
         int consoleHeight = Console.WindowHeight;
-        int numberWidth = number.ToString().Length * 6; // each digit is 6 characters wide
-        int startX = (consoleWidth - numberWidth) / 2;
-        int startY = consoleHeight / 2 - 3; // 3 lines tall
+
+        switch (number)
+        {
+            case 0:
+                Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2);
+                // Console.Write(zero);
+                string[] lines = zero.Split('\n');
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string line = lines[i];
+                    Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2 + i);
+                    Console.WriteLine(line);
+                }
+                break;
+            case 1:
+                Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2);
+                Console.Write(one);
+                break;
+            case 2:
+                Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2);
+                Console.Write(two);
+                break;
+            case 3:
+                Console.SetCursorPosition((consoleWidth - 6) / 2, (consoleHeight - 6) / 2);
+                Console.Write(three);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(number), "Only numbers 0-3 are supported.");
+        }
     }
 
-    private static readonly string zero = """
-     ████
-    ██   █
-    █ █  █
-    █  █ █
-    █   ██
-     ████
+    private static readonly string zero = $"""
+    {AnsiColor.Green(" ████ ")}
+    {AnsiColor.Green("██   █")}
+    {AnsiColor.Green("█ █  █")}
+    {AnsiColor.Green("█  █ █")}
+    {AnsiColor.Green("█   ██")}
+    {AnsiColor.Green(" ████ ")}
+    """;
+
+    private static readonly string one = $"""
+    {AnsiColor.Orange("  ██  ")}
+    {AnsiColor.Orange(" ███  ")}
+    {AnsiColor.Orange("  ██  ")}
+    {AnsiColor.Orange("  ██  ")}
+    {AnsiColor.Orange("  ██  ")}
+    {AnsiColor.Orange("██████")}
+    """;
+
+    private static readonly string two = $"""
+    {AnsiColor.Yellow(" ████ ")}
+    {AnsiColor.Yellow("██   █")}
+    {AnsiColor.Yellow("   ██ ")}
+    {AnsiColor.Yellow("  ██  ")}
+    {AnsiColor.Yellow(" ██   ")}
+    {AnsiColor.Yellow("██████")}
+    """;
+
+    private static readonly string three = $"""
+    {AnsiColor.Red(" ████ ")}
+    {AnsiColor.Red("██  ██")}
+    {AnsiColor.Red("   ██ ")}
+    {AnsiColor.Red("  ██  ")}
+    {AnsiColor.Red("▄  ██ ")}
+    {AnsiColor.Red("▀████ ")}
     """;
 }

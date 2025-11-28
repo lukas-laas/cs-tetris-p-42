@@ -5,6 +5,8 @@ class Board
     public int Height { get; } = 40;
     public int VisibleHeight { get; set; } = 20;
 
+    public bool HasLost { get; private set; } = false;
+
     public List<Func<Polyomino>> PolyominoPool { get; private set; } = [
         () => new TetrominoI(),
         () => new TetrominoJ(),
@@ -98,8 +100,13 @@ class Board
         {
             int y = tile.Y;
             int x = tile.X;
+
+            // Only work on tiles in bounds
             if (y >= 0 && y < Height && x >= 0 && x < Width)
             {
+                // Lose when trying to place on an occupied tile
+                if (CollisionGrid[y][x] == true) HasLost = true;
+
                 CollisionGrid[y][x] = true;
             }
         }
@@ -156,7 +163,7 @@ class Board
             UpdateCollisionGrid();
             for (int y = 0; y < CollisionGrid.Count; y++)
             {
-                if (!CollisionGrid[y].All((b) => b == true)) continue;
+                if (!CollisionGrid[y].All((b) => b == true)) continue; // Skip empty rows
 
                 // Remove tiles on the cleared row
                 SettledTiles.RemoveAll((tile) => tile.Y == y);
@@ -182,6 +189,7 @@ class Board
                 40 => 800,
                 _ => tilesCleared * 20,
             };
+            money += score / 10;
         }
     }
 
