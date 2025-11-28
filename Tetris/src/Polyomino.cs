@@ -6,8 +6,7 @@ class Polyomino
     public int[,] Shape { get; private set; }
     public int SpawnXOffset { get; set; } = 0;
     public int SpawnYOffset { get; set; } = 0;
-
-    public int SettleMoney { get; set; } = 1;
+    public int SettleMoneyMultiplier { get; set; } = 2;
 
     public WallKickTable WallKickOffsets = WallKickTable.Make_JLSTZ_Table();
 

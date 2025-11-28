@@ -33,6 +33,7 @@ class Player
 
     public void Tick(string key)
     {
+        // TODO: polymorphism
         if (IsAI)
         {
             bool noOp = rng.NextDouble() < 0.8;

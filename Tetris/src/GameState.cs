@@ -32,7 +32,7 @@ class GameState
         // State management variables
         bool shopping = false;
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        int secondsBetweenShopping = 10; // TODO - Test 20 seconds
+        int secondsBetweenShopping = 1000; // TODO - Test 20 seconds
 
         while (true)
         {

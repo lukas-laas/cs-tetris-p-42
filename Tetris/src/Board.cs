@@ -148,7 +148,7 @@ class Board
             // Cannot move down, settle the polyomino
             SettledTiles.AddRange(polyomino.GetTiles());
             FallingPolyominoes.Remove(polyomino);
-            money += polyomino.SettleMoney;
+            money += 1 * polyomino.SettleMoneyMultiplier;
 
             // Track tiles instead of rows when clearing for features that require it like color clearing
             int tilesCleared = 0;
@@ -182,7 +182,7 @@ class Board
                 40 => 800,
                 _ => tilesCleared * 20,
             };
-            money += score / 10;
+            money += score / 10 * polyomino.SettleMoneyMultiplier;
         }
     }
 
