@@ -56,13 +56,8 @@ class Board
     public int DT { get; set; } = 500; // Delta time between ticks in ms
     private long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-    private readonly ControlScheme controlScheme;
-    private string[] ValidKeys => [.. controlScheme.Keys];
-
-    public Board(ControlScheme controlScheme)
+    public Board()
     {
-        this.controlScheme = controlScheme;
-
         // Initialize collision grid
         for (int y = 0; y < Height; y++)
         {
@@ -122,10 +117,8 @@ class Board
         UpdateCollisionGrid();
     }
 
-    public void Tick(string keyString)
+    public void Tick()
     {
-        Move(keyString); // Uncapped movement speed
-
         // Time elapse check before physics tick
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         if (currentTime - lastTick < DT) return;
@@ -193,15 +186,11 @@ class Board
         }
     }
 
-    private void Move(string keyString)
+    public void Move(Input input)
     {
-        if (!ValidKeys.Contains(keyString)) return;
-
-        Input selectedInput = controlScheme[keyString]; // Not sure if a copy is necessary TODO - look into it
-
         foreach (Polyomino polyomino in FallingPolyominoes)
         {
-            switch (selectedInput)
+            switch (input)
             {
                 case Input.Left:
                     if (polyomino.CanMove(-1, 0, this)) polyomino.X--;
@@ -219,6 +208,11 @@ class Board
                     throw new Exception("Unrecognized input");
             }
         }
+    }
+
+    public void Move()
+    {
+
     }
 
     private void AddToQueue(int Count)

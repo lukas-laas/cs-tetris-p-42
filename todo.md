@@ -36,6 +36,7 @@
 - Tax with brackets
 - Communism (share income)
 - Give opponent second board with shared inputs but different pieces and faster dt
+- Make opponent be controlled by AI
 
 ### Abilities
 - Skip piece

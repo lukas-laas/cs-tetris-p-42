@@ -1,18 +1,54 @@
 
-class Player(string name, Board board)
+class Player
 {
-    public string Name = name;
-    public bool IsAI = false;
+    private readonly Random rng = new();
+    public string Name;
+    public bool IsAI { get; private set; } = false;
+    private static readonly string[] aiNames = ["AI_Lukas", "AI_Vena", "AI_Morgan", "AI_Samuel", "AI_Alex"];
     public int Score = 0;
     public int Money = 0;
     private IAbilityProduct? currentAbility;
     public List<IProduct> Inventory = [];
-    public Board Board = board;
+    public Board Board;
     public Shop? Shop { get; set; }
+
+    private readonly ControlScheme controlScheme;
+    private string[] ValidKeys => [.. controlScheme.Keys];
+
+    public Player(string name, ControlScheme controlScheme)
+    {
+        this.controlScheme = controlScheme;
+        this.Name = name;
+        this.Board = new();
+    }
+    public Player(bool isAI)
+    {
+        if (isAI == false) throw new ArgumentException("Use other constructor for non-AI players");
+        this.IsAI = true;
+
+        this.controlScheme = []; // Empty control scheme for AI
+        this.Name = aiNames[rng.Next(aiNames.Length)];
+        this.Board = new();
+    }
 
     public void Tick(string key)
     {
-        Board.Tick(key);
+        if (IsAI)
+        {
+            bool noOp = rng.NextDouble() < 0.8;
+            if (!noOp)
+            {
+                Input[] possibleInputs = Enum.GetValues<Input>();
+                Board.Move(possibleInputs[rng.Next(possibleInputs.Length)]);
+            }
+        }
+        else
+        {
+            Input? input = ValidKeys.Contains(key) ? controlScheme[key] : null;
+            if (input is Input moveInput) Board.Move(moveInput);
+        }
+
+        Board.Tick();
         TickInventory();
 
         // Every tick it will empty the boards local score and money buffers into the player's total

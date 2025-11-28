@@ -2,18 +2,19 @@
 class GameState
 {
     public List<Player> Players { get; } = [
-        new ("Lukas", new (new () {
+        new ("Lukas", new () {
             { "A", Input.Left },
             { "D", Input.Right },
             { "W", Input.Rotate },
             { "S", Input.SoftDrop }
-        })),
-        new ("Vena", new (new () {
+        }),
+        new ("Vena", new () {
             { "LeftArrow",  Input.Left },
             { "RightArrow", Input.Right },
             { "UpArrow",    Input.Rotate },
             { "DownArrow",  Input.SoftDrop }
-        })),
+        }),
+        new (true), // AI Player
     ];
 
     private readonly GameRenderer gameRenderer;
@@ -31,7 +32,7 @@ class GameState
         // State management variables
         bool shopping = false;
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        int secondsBetweenShopping = 5; // TODO - Test 20 seconds
+        int secondsBetweenShopping = 10; // TODO - Test 20 seconds
 
         while (true)
         {
