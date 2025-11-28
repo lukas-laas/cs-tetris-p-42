@@ -164,8 +164,8 @@ static class RenderUtils
     private static readonly string three = $"""
     {AnsiColor.Red(" ▄▇▇▄ ")}
     {AnsiColor.Red("██  ██")}
-    {AnsiColor.Red(" ▗▄█▀ ")}
-    {AnsiColor.Red(" ▝▀█▄ ")}
+    {AnsiColor.Red(" ▗▄▄█▘")}
+    {AnsiColor.Red(" ▝▀▀█▖")}
     {AnsiColor.Red("██  ██")}
     {AnsiColor.Red("▝████▘")}
     """;
