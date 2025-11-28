@@ -1,22 +1,22 @@
-class Player
+class Player(string name, Board board)
 {
-    string name;
-    bool isAi;
-    int score;
-    public int Money;
+    public string Name = name;
+    public bool IsAI = false;
+    public int Score = 0;
+    public int Money = 0;
+    private IAbilityProduct? currentAbility;
     public List<IProduct> Inventory = [];
-    IAbilityProduct? currentAbility;
-    public Board Board;
+    public Board Board = board;
     public Shop? Shop { get; set; }
 
-    public Player(string name, Board board)
+    public void Tick(string key)
     {
-        this.Board = board;
-        this.name = name;
-        isAi = false;
-        score = 0;
-        Money = 0;
-        // currentAbility = new HardDrop(); // TODO: implement
+        Board.Tick(key);
+        TickInventory();
+
+        // TODO - maybe do this differently? i.e. having the board reference the player and updating upstream?
+        this.Score = Board.Score;
+        this.Money = Board.Money;
     }
 
     public void UseAbility()
