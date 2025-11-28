@@ -67,4 +67,23 @@ static class RenderUtils
 
         return text + new string(' ', targetVisibleLength - currentVisibleLength);
     }
+
+    public static void WriteLargeNumberInPlace(int number)
+    {
+        // move cursor to center of the screen
+        int consoleWidth = Console.WindowWidth;
+        int consoleHeight = Console.WindowHeight;
+        int numberWidth = number.ToString().Length * 6; // each digit is 6 characters wide
+        int startX = (consoleWidth - numberWidth) / 2;
+        int startY = consoleHeight / 2 - 3; // 3 lines tall
+    }
+
+    private static readonly string zero = """
+     ████
+    ██   █
+    █ █  █
+    █  █ █
+    █   ██
+     ████
+    """;
 }

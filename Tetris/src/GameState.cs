@@ -41,15 +41,8 @@ class GameState
                 lastTick = currentTime; // TODO this should only update once shopping is over
             }
 
-
-            if (shopping)
-            {
-                ShoppingMode();
-            }
-            else
-            {
-                GamingFrame();
-            }
+            if (shopping) ShoppingMode();
+            else GamingFrame();
         }
     }
 
@@ -77,11 +70,20 @@ class GameState
             int frameTarget = 20; // milliseconds per frame
             long frameStart = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
+            string key = KeyInput.Read() ?? "";
+
+            // Stop shopping
+            if (key == "Enter") break;
+
+
             shopRenderer.Render();
 
             // Throttle
             int remaimingWait = frameTarget - (int)(DateTimeOffset.Now.ToUnixTimeMilliseconds() - frameStart);
             if (remaimingWait > 0) Thread.Sleep(remaimingWait);
         }
+
+        gameRenderer.Render();
+        Thread.Sleep(1000);
     }
 }
