@@ -1,8 +1,7 @@
 
-class Renderer
+class GameRenderer
 {
     private readonly List<Player> players;
-    private readonly List<Board> boards;
 
     private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
     private static readonly int boardSpacing = 16;
@@ -30,10 +29,9 @@ class Renderer
         {"bottomHorizontal", "═"},
     };
 
-    public Renderer(GameState gameState)
+    public GameRenderer(GameState gameState)
     {
         this.players = gameState.Players;
-        this.boards = [.. gameState.Players.Select(player => player.Board)];
 
         if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
         if (Console.WindowHeight == 0) throw new Exception("Console window height is 0. Cannot render.");
