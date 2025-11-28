@@ -30,8 +30,27 @@ class Board
     public List<Tile> SettledTiles { get; private set; } = [];
     public List<Polyomino> FallingPolyominoes { get; private set; } = []; // usually just one but debuffs might change that
 
-    public int Score { get; set; } = 0;
-    public int Money { get; set; } = 0;
+    private int score = 0;
+    private int money = 0;
+    public int ScoreBuffer
+    {
+        get
+        {
+            int temp = score;
+            score = 0;
+            return temp;
+        }
+    }
+    public int MoneyBuffer
+    {
+        get
+        {
+            int temp = money;
+            money = 0;
+            return temp;
+        }
+    }
+
     public int DT { get; set; } = 500; // Delta time between ticks in ms
     private long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
@@ -100,6 +119,7 @@ class Board
     {
         Move(keyString); // Uncapped movement speed
 
+        // Time elapse check before physics tick
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         if (currentTime - lastTick < DT) return;
         lastTick = currentTime;
@@ -128,6 +148,7 @@ class Board
             // Cannot move down, settle the polyomino
             SettledTiles.AddRange(polyomino.GetTiles());
             FallingPolyominoes.Remove(polyomino);
+            money += polyomino.SettleMoney;
 
             // Track tiles instead of rows when clearing for features that require it like color clearing
             int tilesCleared = 0;
@@ -152,7 +173,7 @@ class Board
             }
 
             // Update score based on lines cleared
-            Score += tilesCleared switch
+            score += tilesCleared switch
             {
                 0 => 0,
                 10 => 100,

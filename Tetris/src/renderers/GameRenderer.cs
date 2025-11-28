@@ -1,6 +1,7 @@
 
 class Renderer
 {
+    private readonly List<Player> players;
     private readonly List<Board> boards;
 
     private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
@@ -31,7 +32,8 @@ class Renderer
 
     public Renderer(GameState gameState)
     {
-        this.boards = gameState.Players.Select(player => player.Board).ToList();
+        this.players = gameState.Players;
+        this.boards = [.. gameState.Players.Select(player => player.Board)];
 
         if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
         if (Console.WindowHeight == 0) throw new Exception("Console window height is 0. Cannot render.");
@@ -50,7 +52,7 @@ class Renderer
         buffer += "\n";
 
         // Boards
-        buffer += RenderUtils.Center2DString(RenderUtils.Merge2DStrings([.. boards.Select(MakeBoard)], boardSpacing));
+        buffer += RenderUtils.Center2DString(RenderUtils.Merge2DStrings([.. players.Select(MakeBoard)], boardSpacing));
 
         Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
         Console.WriteLine(buffer);
@@ -86,14 +88,16 @@ class Renderer
         return colorGrid;
     }
 
-    private static string MakeBoard(Board board)
+    private static string MakeBoard(Player player)
     {
+        Board board = player.Board;
+
         int innerCanvasWidth = board.Width * aspectRatioCorrection;
 
         // Info lines (prepended later)
         string infoLines = "";
-        infoLines += InfoLine("Score", board.Score);
-        infoLines += InfoLine("Money", board.Money);
+        infoLines += InfoLine("Score", player.Score);
+        infoLines += InfoLine("Money", player.Money);
         // TODO - remove these
         // infoLines += InfoLine("Falling", board.FallingPolyominoes.Count);
         // infoLines += InfoLine("Settled tiles", board.SettledTiles.Count);

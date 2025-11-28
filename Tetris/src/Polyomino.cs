@@ -7,6 +7,8 @@ class Polyomino
     public int SpawnXOffset { get; set; } = 0;
     public int SpawnYOffset { get; set; } = 0;
 
+    public int SettleMoney { get; set; } = 1;
+
     public WallKickTable WallKickOffsets = WallKickTable.Make_JLSTZ_Table();
 
     private Orientation orientation = Orientation.Zero;
@@ -368,7 +370,7 @@ class OctominoIII : Polyomino
             { 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0 },
-        }, 
+        },
         AnsiColor.WhiteCode
     )
     {

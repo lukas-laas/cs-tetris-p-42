@@ -15,9 +15,9 @@ class Player(string name, Board board)
         Board.Tick(key);
         TickInventory();
 
-        // TODO - maybe do this differently? i.e. having the board reference the player and updating upstream?
-        this.Score = Board.Score;
-        this.Money = Board.Money;
+        // Every tick it will empty the boards local score and money buffers into the player's total
+        this.Score += Board.ScoreBuffer;
+        this.Money += Board.MoneyBuffer;
     }
 
     public void UseAbility()
