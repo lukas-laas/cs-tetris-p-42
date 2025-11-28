@@ -135,16 +135,16 @@ static class RenderUtils
     }
 
     private static readonly string zero = $"""
-    {AnsiColor.Green(" ████    ████   ██")}
-    {AnsiColor.Green("█    █  █    █  ██")}
+    {AnsiColor.Green("▗▇▇▇▇▖  ▗▇▇▇▇▖  ▇▇")}
+    {AnsiColor.Green("█▘  ▝█  █▘  ▝█  ██")}
     {AnsiColor.Green("█       █    █  ██")}
     {AnsiColor.Green("█  ███  █    █  ██")}
-    {AnsiColor.Green("█    █  █    █    ")}
-    {AnsiColor.Green(" ████    ████   ██")}
+    {AnsiColor.Green("█▖  ▗█  █▖  ▗█    ")}
+    {AnsiColor.Green("▝████▘  ▝████▘  ██")}
     """;
 
     private static readonly string one = $"""
-    {AnsiColor.Orange("  ██  ")}
+    {AnsiColor.Orange(" ▗▇▇  ")}
     {AnsiColor.Orange(" ███  ")}
     {AnsiColor.Orange("  ██  ")}
     {AnsiColor.Orange("  ██  ")}
@@ -153,20 +153,20 @@ static class RenderUtils
     """;
 
     private static readonly string two = $"""
-    {AnsiColor.Yellow(" ████ ")}
-    {AnsiColor.Yellow("██   █")}
-    {AnsiColor.Yellow("   ██ ")}
-    {AnsiColor.Yellow("  ██  ")}
-    {AnsiColor.Yellow(" ██   ")}
+    {AnsiColor.Yellow(" ▄▇▇▄ ")}
+    {AnsiColor.Yellow("██▘ ██")}
+    {AnsiColor.Yellow("  ▗██▘")}
+    {AnsiColor.Yellow(" ▗██▘ ")}
+    {AnsiColor.Yellow("▗██▘  ")}
     {AnsiColor.Yellow("██████")}
     """;
 
     private static readonly string three = $"""
-    {AnsiColor.Red(" ████ ")}
+    {AnsiColor.Red(" ▄▇▇▄ ")}
     {AnsiColor.Red("██  ██")}
-    {AnsiColor.Red("   ██ ")}
-    {AnsiColor.Red("  ██  ")}
-    {AnsiColor.Red("▄  ██ ")}
-    {AnsiColor.Red("▀████ ")}
+    {AnsiColor.Red(" ▗▄█▀ ")}
+    {AnsiColor.Red(" ▝▀█▄ ")}
+    {AnsiColor.Red("██  ██")}
+    {AnsiColor.Red("▝████▘")}
     """;
 }
