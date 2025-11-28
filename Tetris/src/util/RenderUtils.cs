@@ -77,7 +77,29 @@ static class RenderUtils
 
     public static void DimCanvas()
     {
-        string dimmedLastFrame = ansiRegex.Replace(lastFrame, match => match.Value.Insert(2, "2;"));
+        string dimmedLastFrame = ansiRegex.Replace(lastFrame, match =>
+        {
+            string inner = match.Value.Replace("\u001b[", "").Replace("m", "");
+            string[] parts = inner.Split(';');
+
+            // If rgb, dim via rgb manipulation
+            if (parts.Length == 5)
+            {
+                if (int.TryParse(parts[2], out int r) &&
+                    int.TryParse(parts[3], out int g) &&
+                    int.TryParse(parts[4], out int b))
+                {
+                    r = (int)(r * 0.6);
+                    g = (int)(g * 0.6);
+                    b = (int)(b * 0.6);
+                    return $"\u001b[38;2;{r};{g};{b}m";
+                }
+            }
+
+            // Else, normal dim code insertion
+            return match.Value.Insert(2, "2;");
+
+        });
         Render(dimmedLastFrame);
     }
 

@@ -4,6 +4,7 @@
     {
         // Rough guidelines followed:
         // https://tetris.wiki/Tetris_Guideline
+
         // Game entry point
         try
         {
