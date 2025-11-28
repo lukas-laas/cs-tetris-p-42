@@ -81,7 +81,6 @@ class GameState
             // Stop shopping
             if (key == "Enter") break;
 
-
             shopRenderer.Render();
 
             // Throttle

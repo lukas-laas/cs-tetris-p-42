@@ -1,9 +1,17 @@
-
 using System.Text.RegularExpressions;
 
 static class RenderUtils
 {
+    public static string lastFrame = "";
+
     public static readonly Regex ansiRegex = new("\u001b\\[[0-9;]*m");
+
+    public static void Render(string content)
+    {
+        RenderUtils.lastFrame = content;
+        Console.Clear();
+        Console.WriteLine(content);
+    }
 
     public static string Merge2DStrings(List<string> parts, int spacing = 16, bool bottomAlign = true)
     {
@@ -67,18 +75,22 @@ static class RenderUtils
         return text + new string(' ', targetVisibleLength - currentVisibleLength);
     }
 
-
+    public static void DimCanvas()
+    {
+        string dimmedLastFrame = ansiRegex.Replace(lastFrame, match => match.Value.Insert(2, "2;"));
+        Render(dimmedLastFrame);
+    }
 
     /** 
      * Moves cursor to modify canvas in place to write a large number made of unicode block characters.
      */
     public static void WriteLargeNumberInPlace(int number)
     {
-        // move cursor to center of the screen
+        DimCanvas();
+
         int consoleWidth = Console.WindowWidth;
         int consoleHeight = Console.WindowHeight;
         int baseY = (consoleHeight - 10) / 2;
-        int offsetX = (consoleWidth - 6) / 2;
 
         string selectedNumber = number switch
         {
@@ -88,6 +100,8 @@ static class RenderUtils
             3 => three,
             _ => throw new ArgumentOutOfRangeException(nameof(number), "Only numbers 0-3 are supported."),
         };
+
+        int offsetX = (consoleWidth - GetVisibleLength(selectedNumber.Split('\n').First())) / 2;
 
         string[] lines = selectedNumber.Split('\n');
         for (int i = 0; i < lines.Length; i++)
@@ -106,12 +120,6 @@ static class RenderUtils
     {AnsiColor.Green("█    █  █    █    ")}
     {AnsiColor.Green(" ████    ████   ██")}
     """;
-    // {AnsiColor.Green(" ████ ")}
-    // {AnsiColor.Green("██   █")}
-    // {AnsiColor.Green("█ █  █")}
-    // {AnsiColor.Green("█  █ █")}
-    // {AnsiColor.Green("█   ██")}
-    // {AnsiColor.Green(" ████ ")}
 
     private static readonly string one = $"""
     {AnsiColor.Orange("  ██  ")}

@@ -14,8 +14,7 @@ class ShopRenderer
 
         buffer += MakeTitle() + "\n\n";
 
-        Console.Clear();
-        Console.WriteLine(buffer);
+        RenderUtils.Render(buffer);
     }
 
     private static string MakeTitle()

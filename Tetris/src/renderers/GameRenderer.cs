@@ -52,8 +52,7 @@ class GameRenderer
         // Boards
         buffer += RenderUtils.Center2DString(RenderUtils.Merge2DStrings([.. players.Select(MakeBoard)], boardSpacing));
 
-        Console.Clear(); // Clear and draw close together to mitigate stutter and visual unpleasantries
-        Console.WriteLine(buffer);
+        RenderUtils.Render(buffer);
     }
 
     private static string MakeTitle()
