@@ -58,8 +58,8 @@ class GameState
         long frameStart = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
         // Logic
-        string key = KeyInput.Read() ?? "";
-        Players.ForEach(player => player.Tick(key));
+        string[] pressedKeys = KeyInput.ReadAll();
+        Players.ForEach(player => player.Tick(pressedKeys));
 
         // Render
         gameRenderer.Render();
@@ -76,10 +76,10 @@ class GameState
             int frameTarget = 20; // milliseconds per frame
             long frameStart = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            string key = KeyInput.Read() ?? "";
+            string[] pressedKeys = KeyInput.ReadAll();
 
             // Stop shopping
-            if (key == "Enter") break;
+            if (pressedKeys.Contains("Enter")) break;
 
             shopRenderer.Render();
 

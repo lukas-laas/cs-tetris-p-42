@@ -31,7 +31,7 @@ class Player
         this.Board = new();
     }
 
-    public void Tick(string key)
+    public void Tick(string[] pressedKeys)
     {
         // TODO: polymorphism
         if (IsAI)
@@ -45,8 +45,16 @@ class Player
         }
         else
         {
-            Input? input = ValidKeys.Contains(key) ? controlScheme[key] : null;
-            if (input is Input moveInput) Board.Move(moveInput);
+            // Get first valid input from pressed keys
+            foreach (string key in pressedKeys)
+            {
+                if (ValidKeys.Contains(key))
+                {
+                    Input input = controlScheme[key];
+                    Board.Move(input);
+                    break; // Only process first valid key
+                }
+            }
         }
 
         Board.Tick();
