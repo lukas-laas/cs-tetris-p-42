@@ -48,6 +48,7 @@ class Player
             // Get first valid input from pressed keys
             foreach (KeyCode key in pressedKeys)
             {
+                Log.Add($"Pressed key: {key}");
                 if (ValidKeys.Contains(key))
                 {
                     Input input = controlScheme[key];

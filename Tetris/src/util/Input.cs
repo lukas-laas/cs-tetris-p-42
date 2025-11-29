@@ -32,8 +32,8 @@ class KeyInput
             "Tetris",
             SDL.SDL_WINDOWPOS_CENTERED,
             SDL.SDL_WINDOWPOS_CENTERED,
-            100, 100,
-            SDL.SDL_WindowFlags.SDL_WINDOW_HIDDEN
+            800, 600,
+            SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN
         );
 
         if (window == IntPtr.Zero)
