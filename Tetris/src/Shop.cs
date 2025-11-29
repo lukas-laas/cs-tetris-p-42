@@ -18,7 +18,7 @@ class Shop
         this.others = others;
         this.Products = [
             new SpeedUp(others),
-            new SpeedUp(others),
+            new MoreI(others),
         ];
     }
 
@@ -150,7 +150,19 @@ interface IAbilityProduct : IProduct
 //     public string description { get; } = "Adds extra rows to board";
 //     public double rarity { get; } = 0.12;
 //     public int price { get; } = 80;
-//     public void Purchase() { }
+//     private Player purchaser;
+//     public List<Player> Targets { get; set; }
+//     public void Purchase(Player purchaser)
+//     {
+//         this.purchaser = purchaser;
+//         purchaser.AddToInventory(this);
+//         Use();
+//     }
+//     public void Use()
+//     {
+//         purchaser.Board.Height += 1;
+//         purchaser.Board.GetAllTiles();
+//     }
 // }
 
 // class TetrominoProjection : IStaticProduct
@@ -175,17 +187,41 @@ interface IAbilityProduct : IProduct
 //     public void Purchase() { }
 // }
 
-// class MoreTetrominoI : ITemporaryProduct
-// {
-//     // Buff
-//     // Gets more I pieces but may result in esoteric I's
-//     public string name { get; } = "MoreTetrominoI";
-//     public string description { get; } = "Increases frequency of I pieces";
-//     public double rarity { get; } = 0.08;
-//     public int price { get; } = 120;
-//     public int LifeTime { get; } = 5;
-//     public void Purchase() { }
-// }
+class MoreI : ITemporaryProduct
+{
+    // Buff
+    // Gets more I pieces but may result in esoteric I's
+    public string name { get; } = "MoreTetrominoI";
+    public string description { get; } = "Increases frequency of I pieces";
+    public double rarity { get; } = 0.08;
+    public int price { get; } = 120;
+    public int LifeTime { get; } = 5;
+
+    private Player? purchaser;
+
+    public int lifetime { get; set; }
+    public List<Player> Targets { get; set; }
+    public MoreI(List<Player> targets)
+    {
+        this.Targets = targets;
+    }
+    public void Purchase(Player purchaser)
+    {
+        this.purchaser = purchaser;
+        this.lifetime = LifeTime;
+        purchaser.AddToInventory(this);
+        this.Use();
+    }
+    public void Use()
+    {
+        if (purchaser == null) return;
+        purchaser.Board.PolyominoPool.Add(() => new TetrominoI());
+        purchaser.Board.PolyominoPool.Add(() => new OctominoThiccI());
+        purchaser.Board.PolyominoPool.Add(() => new OctominoIII());
+        purchaser.Board.PolyominoPool.Add(() => new TrominoLowerI());
+    }
+    public void Disable() { }
+}
 
 // class CandyCrush : ITemporaryProduct
 // {
@@ -270,17 +306,51 @@ class SpeedUp : IStaticProduct
 //     public void Purchase() { }
 // }
 
-// class TaxTime : ITemporaryProduct
-// {
-//     // Debuff
-//     // Tax your opponent! YOU ARE THE KING
-//     public string name { get; } = "TaxTime";
-//     public string description { get; } = "Taxes opponent earnings";
-//     public double rarity { get; } = 0.06;
-//     public int price { get; } = 140;
-//     public int LifeTime { get; } = 4;
-//     public void Purchase() { }
-// }
+class TaxTime : ITemporaryProduct
+{
+    // Debuff
+    // Tax your opponent! YOU ARE THE KING
+
+    public TaxTime(List<Player> targets)
+    {
+        this.Targets = targets;
+    }
+    public string name { get; } = "TaxTime";
+    private Player? purchaser;
+    public List<Player> Targets { get; set; }
+    public int lifetime { get; set; }
+
+    public string description { get; } = "Taxes opponent earnings";
+    public double rarity { get; } = 0.06;
+    public int price { get; } = 140;
+    public int LifeTime { get; } = 4;
+
+    // Called when purchased
+    public void Purchase(Player purchaser)
+    {
+        purchaser.AddToInventory(this);
+        this.purchaser = purchaser;
+        this.lifetime = LifeTime;
+    }
+
+    // Called every tick (or when effect should apply)
+    public void Use()
+    {
+        if (purchaser == null) return;
+        int taxed = 0;
+        foreach (var target in Targets)
+        {
+            int before = target.Money;
+            target.Money = (int)Math.Floor(target.Money * 0.90); // 10% tax
+            taxed += (before - target.Money);
+        }
+        purchaser.Money += taxed;
+    }
+    public void Disable()
+    {
+
+    }
+}
 
 // class ExtraBoard : ITemporaryProduct
 // {
