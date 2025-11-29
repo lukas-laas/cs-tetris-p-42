@@ -1,5 +1,6 @@
 global using CollisionGrid = System.Collections.Generic.List<System.Collections.Generic.List<bool>>;
-global using ControlScheme = System.Collections.Generic.Dictionary<string, Input>;
+global using KeyCode = SDL2.SDL.SDL_Keycode;
+global using ControlScheme = System.Collections.Generic.Dictionary<SDL2.SDL.SDL_Keycode, Input>;
 enum Input
 {
     Left,

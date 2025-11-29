@@ -2,17 +2,17 @@ using SDL2;
 
 class KeyInput
 {
-    private static readonly Dictionary<SDL.SDL_Keycode, bool> pressedKeys = [];
-    private static readonly Lock pressedKeysLock = new();
-    private static CancellationTokenSource? cts;
-    private static Task? eventLoopTask;
+    private readonly Dictionary<KeyCode, bool> pressedKeys = [];
+    private readonly Lock pressedKeysLock = new();
+    private CancellationTokenSource? cts;
+    private Task? eventLoopTask;
 
     public KeyInput()
     {
         if (eventLoopTask != null && !eventLoopTask.IsCompleted)
         {
             Log.Add("KeyInput event loop already running.");
-            return; // already running
+            return;
         }
 
         cts = new CancellationTokenSource();
@@ -20,7 +20,7 @@ class KeyInput
         eventLoopTask = Task.Run(() => RunEventLoop(token), token);
     }
 
-    private static void RunEventLoop(CancellationToken cancellationToken)
+    private void RunEventLoop(CancellationToken cancellationToken)
     {
         if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
         {
@@ -76,18 +76,18 @@ class KeyInput
         SDL.SDL_Quit();
     }
 
-    public static string[] ReadAll()
+    public KeyCode[] ReadAll()
     {
         lock (pressedKeysLock)
         {
             return [.. pressedKeys
                 .Where(kvp => kvp.Value)
-                .Select(kvp => kvp.Key.ToString())
+                .Select(kvp => kvp.Key)
             ];
         }
     }
 
-    public static async Task StopAsync()
+    public async Task StopAsync()
     {
         if (cts == null || eventLoopTask == null)
         {

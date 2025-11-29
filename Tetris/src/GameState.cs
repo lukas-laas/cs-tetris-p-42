@@ -3,16 +3,16 @@ class GameState
 {
     public List<Player> Players { get; } = [
         new ("Lukas", new () {
-            { "A", Input.Left },
-            { "D", Input.Right },
-            { "W", Input.Rotate },
-            { "S", Input.SoftDrop }
+            { KeyCode.SDLK_a, Input.Left },
+            { KeyCode.SDLK_d, Input.Right },
+            { KeyCode.SDLK_w, Input.Rotate },
+            { KeyCode.SDLK_s, Input.SoftDrop }
         }),
         new ("Vena", new () {
-            { "LeftArrow",  Input.Left },
-            { "RightArrow", Input.Right },
-            { "UpArrow",    Input.Rotate },
-            { "DownArrow",  Input.SoftDrop }
+            { KeyCode.SDLK_LEFT,  Input.Left },
+            { KeyCode.SDLK_RIGHT, Input.Right },
+            { KeyCode.SDLK_UP,    Input.Rotate },
+            { KeyCode.SDLK_DOWN,  Input.SoftDrop }
         }),
         new (true), // AI Player
     ];
@@ -60,7 +60,7 @@ class GameState
         long frameStart = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
         // Logic
-        string[] pressedKeys = KeyInput.ReadAll();
+        KeyCode[] pressedKeys = inputHandler.ReadAll();
         Players.ForEach(player => player.Tick(pressedKeys));
 
         // Render
@@ -78,10 +78,10 @@ class GameState
             int frameTarget = 20; // milliseconds per frame
             long frameStart = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            string[] pressedKeys = KeyInput.ReadAll();
+            KeyCode[] pressedKeys = inputHandler.ReadAll();
 
             // Stop shopping
-            if (pressedKeys.Contains("Enter")) break;
+            if (pressedKeys.Contains(KeyCode.SDLK_RETURN)) break;
 
             shopRenderer.Render();
 

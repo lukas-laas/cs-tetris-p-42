@@ -13,7 +13,7 @@ class Player
     public Shop? Shop { get; set; }
 
     private readonly ControlScheme controlScheme;
-    private string[] ValidKeys => [.. controlScheme.Keys];
+    private KeyCode[] ValidKeys => [.. controlScheme.Keys];
 
     public Player(string name, ControlScheme controlScheme)
     {
@@ -31,7 +31,7 @@ class Player
         this.Board = new();
     }
 
-    public void Tick(string[] pressedKeys)
+    public void Tick(KeyCode[] pressedKeys)
     {
         // TODO: polymorphism
         if (IsAI)
@@ -46,7 +46,7 @@ class Player
         else
         {
             // Get first valid input from pressed keys
-            foreach (string key in pressedKeys)
+            foreach (KeyCode key in pressedKeys)
             {
                 if (ValidKeys.Contains(key))
                 {
