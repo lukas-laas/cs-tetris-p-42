@@ -17,6 +17,8 @@ class GameState
         new (true), // AI Player
     ];
 
+    private KeyInput inputHandler = new();
+
     private readonly GameRenderer gameRenderer;
     private readonly ShopRenderer shopRenderer;
 
