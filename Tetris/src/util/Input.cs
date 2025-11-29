@@ -2,13 +2,29 @@ using SDL2;
 
 class KeyInput
 {
-    private static Dictionary<SDL.SDL_Keycode, bool> pressedKeys = [];
+    private static readonly Dictionary<SDL.SDL_Keycode, bool> pressedKeys = [];
+    private static readonly Lock pressedKeysLock = new();
+    private static CancellationTokenSource? cts;
+    private static Task? eventLoopTask;
 
     public KeyInput()
     {
+        if (eventLoopTask != null && !eventLoopTask.IsCompleted)
+        {
+            Log.Add("KeyInput event loop already running.");
+            return; // already running
+        }
+
+        cts = new CancellationTokenSource();
+        CancellationToken token = cts.Token;
+        eventLoopTask = Task.Run(() => RunEventLoop(token), token);
+    }
+
+    private static void RunEventLoop(CancellationToken cancellationToken)
+    {
         if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
         {
-            Console.WriteLine("SDL init failed: " + SDL.SDL_GetError());
+            Log.Add("SDL init failed: " + SDL.SDL_GetError());
             return;
         }
 
@@ -16,21 +32,19 @@ class KeyInput
             "Tetris",
             SDL.SDL_WINDOWPOS_CENTERED,
             SDL.SDL_WINDOWPOS_CENTERED,
-            800, 600,
+            100, 100,
             SDL.SDL_WindowFlags.SDL_WINDOW_HIDDEN
         );
 
         if (window == IntPtr.Zero)
         {
-            Log.Add("Window creation failed: " + SDL.SDL_GetError());
             SDL.SDL_Quit();
-            return;
+            throw new Exception("Window creation failed: " + SDL.SDL_GetError());
         }
 
         bool running = true;
-        while (running)
+        while (running && !cancellationToken.IsCancellationRequested)
         {
-            // 1) Poll SDL events
             while (SDL.SDL_PollEvent(out SDL.SDL_Event e) == 1)
             {
                 switch (e.type)
@@ -40,16 +54,22 @@ class KeyInput
                         break;
 
                     case SDL.SDL_EventType.SDL_KEYDOWN:
-                        pressedKeys[e.key.keysym.sym] = true;
+                        lock (pressedKeysLock)
+                        {
+                            pressedKeys[e.key.keysym.sym] = true;
+                        }
                         break;
 
                     case SDL.SDL_EventType.SDL_KEYUP:
-                        pressedKeys[e.key.keysym.sym] = false;
+                        lock (pressedKeysLock)
+                        {
+                            pressedKeys[e.key.keysym.sym] = false;
+                        }
                         break;
                 }
             }
 
-            SDL.SDL_Delay(16); // crude ~60 FPS cap
+            SDL.SDL_Delay(10);
         }
 
         SDL.SDL_DestroyWindow(window);
@@ -58,7 +78,34 @@ class KeyInput
 
     public static string[] ReadAll()
     {
-        // return [];
-        return [.. pressedKeys.Where(kvp => kvp.Value).Select(kvp => kvp.Key.ToString())];
+        lock (pressedKeysLock)
+        {
+            return [.. pressedKeys
+                .Where(kvp => kvp.Value)
+                .Select(kvp => kvp.Key.ToString())
+            ];
+        }
+    }
+
+    public static async Task StopAsync()
+    {
+        if (cts == null || eventLoopTask == null)
+        {
+            Log.Add("KeyInput event loop not running when attempting to stop.");
+            return;
+        }
+
+        try
+        {
+            cts.Cancel();
+            await eventLoopTask.ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) { }
+        finally
+        {
+            cts.Dispose();
+            cts = null;
+            eventLoopTask = null;
+        }
     }
 }
