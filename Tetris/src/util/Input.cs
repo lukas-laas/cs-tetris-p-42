@@ -29,7 +29,7 @@ class KeyInput
         }
 
         IntPtr window = SDL.SDL_CreateWindow(
-            "Tetris",
+            "Tetris Controls",
             SDL.SDL_WINDOWPOS_CENTERED,
             SDL.SDL_WINDOWPOS_CENTERED,
             800, 600,
