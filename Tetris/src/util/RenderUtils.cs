@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using SDL2;
 
 static class RenderUtils
 {
@@ -6,11 +7,112 @@ static class RenderUtils
 
     public static readonly Regex ansiRegex = new("\u001b\\[[0-9;]*m");
 
+    private static IntPtr sdlWindow = IntPtr.Zero;
+    private static IntPtr sdlRenderer = IntPtr.Zero;
+    private static bool useSdl = false;
+
+    public static void InitializeSdlWindow()
+    {
+        if (useSdl) return;
+
+        if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
+        {
+            Log.Add("SDL init failed in RenderUtils: " + SDL.SDL_GetError());
+            return;
+        }
+
+        sdlWindow = SDL.SDL_CreateWindow(
+            "Tetris",
+            SDL.SDL_WINDOWPOS_CENTERED,
+            SDL.SDL_WINDOWPOS_CENTERED,
+            1920,
+            1080,
+            SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN | SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE | SDL.SDL_WindowFlags.SDL_WINDOW_MAXIMIZED
+        );
+
+        if (sdlWindow == IntPtr.Zero)
+        {
+            Log.Add("Failed to create SDL window in RenderUtils: " + SDL.SDL_GetError());
+            return;
+        }
+
+        sdlRenderer = SDL.SDL_CreateRenderer(sdlWindow, -1, SDL.SDL_RendererFlags.SDL_RENDERER_ACCELERATED);
+        if (sdlRenderer == IntPtr.Zero)
+        {
+            Log.Add("Failed to create SDL renderer in RenderUtils: " + SDL.SDL_GetError());
+            SDL.SDL_DestroyWindow(sdlWindow);
+            sdlWindow = IntPtr.Zero;
+            return;
+        }
+
+        useSdl = true;
+    }
+
+    public static void ShutdownSdlWindow()
+    {
+        if (!useSdl) return;
+
+        SDL.SDL_DestroyRenderer(sdlRenderer);
+        SDL.SDL_DestroyWindow(sdlWindow);
+        SDL.SDL_QuitSubSystem(SDL.SDL_INIT_VIDEO);
+        sdlRenderer = IntPtr.Zero;
+        sdlWindow = IntPtr.Zero;
+        useSdl = false;
+    }
+
     public static void Render(string content)
     {
         RenderUtils.lastFrame = content;
-        Console.Clear();
-        Console.WriteLine(content);
+
+        if (useSdl && sdlWindow != IntPtr.Zero && sdlRenderer != IntPtr.Zero)
+        {
+            SDL.SDL_GetWindowSize(sdlWindow, out int width, out int height);
+
+            SDL.SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
+            SDL.SDL_RenderClear(sdlRenderer);
+
+            string[] lines = content.Split('\n');
+
+            int charWidth = 10;
+            int charHeight = 18;
+            int margin = 10;
+
+            int y = margin;
+            foreach (string rawLine in lines)
+            {
+                string line = ansiRegex.Replace(rawLine, string.Empty);
+                for (int i = 0; i < line.Length; i++)
+                {
+                    char c = line[i];
+                    if (c == ' ') continue;
+
+                    int x = margin + i * charWidth;
+
+                    if (x >= width || y >= height) continue;
+
+                    SDL.SDL_Rect rect = new SDL.SDL_Rect
+                    {
+                        x = x,
+                        y = y,
+                        w = charWidth - 2,
+                        h = charHeight - 2
+                    };
+
+                    SDL.SDL_SetRenderDrawColor(sdlRenderer, 255, 255, 255, 255);
+                    SDL.SDL_RenderFillRect(sdlRenderer, ref rect);
+                }
+
+                y += charHeight;
+                if (y >= height) break;
+            }
+
+            SDL.SDL_RenderPresent(sdlRenderer);
+        }
+        else
+        {
+            Console.Clear();
+            Console.WriteLine(content);
+        }
     }
 
     public static string Merge2DStrings(List<string> parts, int spacing = 16, bool bottomAlign = true)

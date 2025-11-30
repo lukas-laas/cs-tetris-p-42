@@ -22,26 +22,6 @@ class KeyInput
 
     private void RunEventLoop(CancellationToken cancellationToken)
     {
-        if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
-        {
-            Log.Add("SDL init failed: " + SDL.SDL_GetError());
-            return;
-        }
-
-        IntPtr window = SDL.SDL_CreateWindow(
-            "Tetris Controls",
-            SDL.SDL_WINDOWPOS_CENTERED,
-            SDL.SDL_WINDOWPOS_CENTERED,
-            800, 600,
-            SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN
-        );
-
-        if (window == IntPtr.Zero)
-        {
-            SDL.SDL_Quit();
-            throw new Exception("Window creation failed: " + SDL.SDL_GetError());
-        }
-
         bool running = true;
         while (running && !cancellationToken.IsCancellationRequested)
         {
@@ -71,9 +51,6 @@ class KeyInput
 
             SDL.SDL_Delay(10);
         }
-
-        SDL.SDL_DestroyWindow(window);
-        SDL.SDL_Quit();
     }
 
     public KeyCode[] ReadAll()

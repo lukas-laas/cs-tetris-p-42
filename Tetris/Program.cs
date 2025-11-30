@@ -9,6 +9,7 @@ internal class Program
         // Game entry point
         try
         {
+            RenderUtils.InitializeSdlWindow();
             _ = new GameState();
         }
         catch (Exception e)
