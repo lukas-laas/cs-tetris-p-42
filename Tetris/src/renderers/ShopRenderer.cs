@@ -32,7 +32,10 @@ class ShopRenderer(GameState gameState)
         List<Shelf> shopItems = shopStates.First(s => s.Shop == shop).ShelvesList;
 
         string buffer = "";
-        buffer += $"{player.Name.PadLeft((shelfWidth + player.Name.Length) / 2).PadRight(shelfWidth)}\n"; // TODO Make prettier
+
+        string playerMoney = $"{player.Money}cu";
+        string playerNameAndMoney = $"{player.Name}    {playerMoney}";
+        buffer += $"{playerNameAndMoney.PadLeft((shelfWidth + playerNameAndMoney.Length) / 2).PadRight(shelfWidth)}\n"; // TODO Make prettier
         buffer += $"╭───────────── SHOP ─────────────┬───────────── CART ─────────────╮\n";
 
         for (int i = 0; i < shopItems.Count; i++)
