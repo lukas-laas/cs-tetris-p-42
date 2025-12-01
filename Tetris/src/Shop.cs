@@ -20,7 +20,8 @@ class Shop
             new SpeedUp(owner, others),
             new MoreI(owner, others),
             new Tax(owner, others),
-            new MoreRows(owner)
+            new MoreRows(owner),
+            new SlowDown(owner)
         ];
     }
 }
@@ -94,16 +95,32 @@ interface IAbilityProduct : IProduct
 //     public void Purchase() { }
 // }
 
-// class LowerDT : IStaticProduct
-// {
-//     // Buff
-//     // Lowers speed of own board
-//     public string name { get; } = "LowerDT";
-//     public string description { get; } = "Lowers own drop timer";
-//     public double rarity { get; } = 0.15;
-//     public int price { get; } = 40;
-//     public void Purchase() { }
-// }
+class SlowDown : IStaticProduct
+{
+    // Buff
+    // Lowers speed of own board
+    public string name { get; } = "LowerDT";
+    public string description { get; } = "Lowers own drop timer";
+    public double rarity { get; } = 0.15;
+    public int price { get; } = 40;
+    public List<Player> Targets { get; set; }
+    public Player Purchaser { get; set; }
+    public SlowDown(Player purchaser)
+    {
+        this.Targets = [purchaser];
+        this.Purchaser = purchaser;
+    }
+    public void Purchase()
+    {
+        Purchaser.AddToInventory(this);
+        Use();
+    }
+
+    public void Use()
+    {
+        Purchaser.Board.DT = (int)Math.Floor(Purchaser.Board.DT * 1.1);
+    }
+}
 
 // class ScoreMultiplier : IStaticProduct
 // {
