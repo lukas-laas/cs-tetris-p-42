@@ -212,12 +212,7 @@ class Board
         }
     }
 
-    public void Move()
-    {
-
-    }
-
-    private void AddToQueue(int Count)
+    public void AddToQueue(int Count)
     {
         for (int i = 0; i < Count; i++) AddToQueue();
     }

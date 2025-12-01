@@ -21,6 +21,11 @@ class Player
         this.Name = name;
         this.Board = new();
     }
+
+    // Krav 2
+    // 1: Overloading av konstruktor
+    // 2: Tar ej emot kontrollschema och har en bool för AI
+    // 3: För att alternativt kunna instansiera en datorspelare utan att ange data på flera ställen
     public Player(bool isAI)
     {
         if (isAI == false) throw new ArgumentException("Use other constructor for non-AI players");
