@@ -36,7 +36,7 @@ static class RenderUtils
         linesGroupedByPart = [.. linesGroupedByPart.Select(lineGroup =>
         {
             int maxVisibleLength = lineGroup.Select(GetVisibleLength).Max();
-            return lineGroup.Select(line => PadRightVisible(line, maxVisibleLength)).ToList();
+            return lineGroup.Select(line => line.PadVisibleRight(maxVisibleLength)).ToList();
         })];
 
         // Merge line by line
@@ -66,14 +66,6 @@ static class RenderUtils
 
     public static int GetVisibleLength(string text)
         => ansiRegex.Replace(text, string.Empty).Length;
-
-    public static string PadRightVisible(string text, int targetVisibleLength)
-    {
-        int currentVisibleLength = GetVisibleLength(text);
-        if (currentVisibleLength >= targetVisibleLength) return text;
-
-        return text + new string(' ', targetVisibleLength - currentVisibleLength);
-    }
 
     public static void DimCanvas()
     {
