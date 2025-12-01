@@ -2,19 +2,19 @@
 class GameState
 {
     public List<Player> Players { get; } = [
-        new ("Lukas", new () {
+        new HumanPlayer("Lukas", new () {
             { "A", Input.Left },
             { "D", Input.Right },
             { "W", Input.Up },
             { "S", Input.Down }
         }),
-        new ("Vena", new () {
+        new HumanPlayer("Vena", new () {
             { "LeftArrow",  Input.Left },
             { "RightArrow", Input.Right },
             { "UpArrow",    Input.Up },
             { "DownArrow",  Input.Down }
         }),
-        // new (true), // AI Player
+        // new AIPlayer(), // AI Player
     ];
 
     private readonly GameRenderer gameRenderer;

@@ -1,9 +1,9 @@
 
 class Player
 {
-    private readonly Random rng = new();
+    private static readonly Random rng = new();
     public string Name;
-    public bool IsAI { get; private set; } = false;
+    public bool IsAI { get; protected set; } = false;
     private static readonly string[] aiNames = ["AI_Lukas", "AI_Vena", "AI_Morgan", "AI_Samuel", "AI_Alex"];
     public int Score = 0;
     public int Money = 200;
@@ -22,11 +22,7 @@ class Player
         this.Board = new();
     }
 
-    // Krav 2
-    // 1: Overloading av konstruktor
-    // 2: Tar ej emot kontrollschema och har en bool för AI
-    // 3: För att alternativt kunna instansiera en datorspelare utan att ange data på flera ställen
-    public Player(bool isAI)
+    protected Player(bool isAI)
     {
         if (isAI == false) throw new ArgumentException("Use other constructor for non-AI players");
         this.IsAI = true;
@@ -36,23 +32,12 @@ class Player
         this.Board = new();
     }
 
-    public void Tick(string key)
+    protected virtual Input? GetInput(string key) => null;
+
+    public virtual void Tick(string key)
     {
-        // TODO: polymorphism
-        if (IsAI)
-        {
-            bool noOp = rng.NextDouble() < 0.8;
-            if (!noOp)
-            {
-                Input[] possibleInputs = Enum.GetValues<Input>();
-                Board.Move(possibleInputs[rng.Next(possibleInputs.Length)]);
-            }
-        }
-        else
-        {
-            Input? input = ValidKeys.Contains(key) ? ControlScheme[key] : null;
-            if (input is Input moveInput) Board.Move(moveInput);
-        }
+        Input? input = GetInput(key);
+        if (input is Input moveInput) Board.Move(moveInput);
 
         Board.Tick();
         TickInventory();
@@ -69,11 +54,12 @@ class Player
         }
     }
 
+    // TODO: implement
     public void UseAbility()
     {
         if (currentAbility?.Cooldown == 0)
         {
-            currentAbility.Use(); // TODO: implement
+            currentAbility.Use();
         }
     }
 
@@ -104,5 +90,31 @@ class Player
             }
         }
         if ((currentAbility != null) && (currentAbility.Cooldown > 0)) currentAbility.Cooldown--;
+    }
+}
+
+class HumanPlayer(string name, ControlScheme controlScheme) : Player(name, controlScheme)
+{
+    protected override Input? GetInput(string key)
+    {
+        return ValidKeys.Contains(key) ? ControlScheme[key] : null;
+    }
+}
+
+class AIPlayer : Player
+{
+    private readonly Random aiRng = new();
+
+    public AIPlayer() : base(true) { }
+
+    protected override Input? GetInput(string key)
+    {
+        bool noOp = aiRng.NextDouble() < 0.8;
+        if (!noOp)
+        {
+            Input[] possibleInputs = Enum.GetValues<Input>();
+            return possibleInputs[aiRng.Next(possibleInputs.Length)];
+        }
+        return null;
     }
 }
