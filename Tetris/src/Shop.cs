@@ -23,7 +23,9 @@ class Shop
             () => new MoreI(owner, others),
             () => new Tax(owner, others),
             () => new MoreRows(owner),
-            () => new SlowDown(owner)
+            () => new SlowDown(owner),
+            () => new DotTime(owner),
+            () => new MoneyMultiplier(owner),
         ];
 
         int productsLength = 3;
@@ -95,17 +97,33 @@ interface IAbilityProduct : IProduct
 
 
 // // ==================== BUFFS ===================
-// class DotTime : IStaticProduct
-// {
-//     // Buff
-//     // Have a chance to fill in the gaps 
-//     // with the new exciting . (dot) tetromino!
-//     public string name { get; } = "DotTime";
-//     public string description { get; } = "Chance to spawn dot tetromino";
-//     public double rarity { get; } = 0.2;
-//     public int price { get; } = 50;
-//     public void Purchase() { }
-// }
+class DotTime : IStaticProduct
+{
+    // Buff
+    // Have a chance to fill in the gaps 
+    // with the new exciting . (dot) tetromino!
+    public string name { get; } = "DotTime";
+    public string description { get; } = "Chance to spawn dot tetromino";
+    public double rarity { get; } = 0.2;
+    public int price { get; } = 50;
+    public Player Purchaser { get; set; }
+    public List<Player> Targets { get; set; }
+    public DotTime(Player purchaser)
+    {
+        this.Purchaser = purchaser;
+        this.Targets = [purchaser];
+    }
+    public void Purchase()
+    {
+        Purchaser.AddToInventory(this);
+        Use();
+    }
+
+    public void Use()
+    {
+        Purchaser.Board.PolyominoPool.Add(() => new MonominoDot());
+    }
+}
 
 class SlowDown : IStaticProduct
 {
@@ -142,19 +160,50 @@ class SlowDown : IStaticProduct
 //     public string description { get; } = "Multiplies score";
 //     public double rarity { get; } = 0.05;
 //     public int price { get; } = 200;
+//     public List<Player> Targets { get; set; }
+//     public Player Purchaser { get; set; }
+
+//     public ScoreMultiplier(Player purchaser)
+//     {
+//         this.Purchaser = purchaser;
+//         this.Targets = [purchaser];
+//     }
 //     public void Purchase() { }
+
+//     public void Use()
+//     {
+//         Purchaser.Board.
+//     }
 // }
 
-// class MoneyMultiplier : IStaticProduct
-// {
-//     // Buff
-//     // Multiplies money
-//     public string name { get; } = "MoneyMultiplier";
-//     public string description { get; } = "Multiplies money earned";
-//     public double rarity { get; } = 0.05;
-//     public int price { get; } = 200;
-//     public void Purchase() { }
-// }
+class MoneyMultiplier : IStaticProduct
+{
+    // Buff
+    // Multiplies money
+    // Buff
+    // Multiplies score
+    public string name { get; } = "ScoreMultiplier";
+    public string description { get; } = "Multiplies score";
+    public double rarity { get; } = 0.05;
+    public int price { get; } = 200;
+    public List<Player> Targets { get; set; }
+    public Player Purchaser { get; set; }
+
+    public MoneyMultiplier(Player purchaser)
+    {
+        this.Purchaser = purchaser;
+        this.Targets = [purchaser];
+    }
+    public void Purchase()
+    {
+        Purchaser.AddToInventory(this);
+    }
+
+    public void Use()
+    {
+        Purchaser.Board.MoneyMultiplier += 0.1;
+    }
+}
 
 class MoreRows : IStaticProduct
 {

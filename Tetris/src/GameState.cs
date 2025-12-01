@@ -34,10 +34,10 @@ class GameState
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         int secondsBetweenShopping = 20; // TODO - Test 20 seconds
 
-        // Players[0].Shop.Products[4].Purchase();
-        // Players[0].Shop.Products[4].Purchase();
-        // Players[0].Shop.Products[4].Purchase();
-        // Players[0].Shop.Products[4].Purchase();
+        // Players[0].Shop.ProductPool[6]().Purchase();
+        // Players[0].Shop.ProductPool[6]().Purchase();
+        // Players[0].Shop.ProductPool[6]().Purchase();
+        // Players[0].Shop.ProductPool[6]().Purchase();
 
         while (true)
         {

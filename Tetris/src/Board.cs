@@ -54,6 +54,8 @@ class Board
     }
 
     public int DT { get; set; } = 500; // Delta time between ticks in ms
+    public double MoneyMultiplier { get; set; } = 1;
+
     private long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
     public Board()
@@ -148,7 +150,7 @@ class Board
             // Cannot move down, settle the polyomino
             SettledTiles.AddRange(polyomino.GetTiles());
             FallingPolyominoes.Remove(polyomino);
-            money += 1 * polyomino.SettleMoneyMultiplier;
+            money += (int)Math.Floor(1 * polyomino.SettleMoneyMultiplier * MoneyMultiplier);
 
             // Track tiles instead of rows when clearing for features that require it like color clearing
             int tilesCleared = 0;
@@ -182,7 +184,7 @@ class Board
                 40 => 800,
                 _ => tilesCleared * 20,
             };
-            money += score / 10 * polyomino.SettleMoneyMultiplier;
+            money += (int)Math.Floor(score / 10 * polyomino.SettleMoneyMultiplier * MoneyMultiplier);
         }
     }
 
