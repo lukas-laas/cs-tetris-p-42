@@ -13,6 +13,10 @@ class Player
     public Shop? Shop { get; set; }
 
     public readonly ControlScheme ControlScheme;
+    // Krav 3
+    // 1. Computed property.
+    // 2. Vi använder konceptet för att dynamiskt få en lista av giltiga tangenter.
+    // 3. När vi kontrollerar inputs så används denna egenskap för att verifiera om en tangent är giltig så switchen inte throwar.
     public string[] ValidKeys => [.. ControlScheme.Keys];
 
     public Player(string name, ControlScheme controlScheme)
