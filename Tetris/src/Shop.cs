@@ -17,8 +17,10 @@ class Shop
         this.owner = owner;
         this.others = others;
         this.Products = [
-            new SpeedUp(others),
-            new MoreI(others),
+            new SpeedUp(owner, others),
+            new MoreI(owner, others),
+            new Tax(owner, others),
+            new MoreRows(owner)
         ];
     }
 }
@@ -30,11 +32,13 @@ interface IProduct
     double rarity { get; }
     int price { get; }
     public List<Player> Targets { get; set; }
-    void Purchase(Player purchaser)
+    public Player Purchaser { get; set; }
+
+    void Purchase()
     {
         // if (purchaser.Money >= this.price)
         {
-            purchaser.AddToInventory(this);
+            Purchaser.AddToInventory(this);
             // purchaser.Money -= price;
         }
     }
@@ -123,28 +127,32 @@ interface IAbilityProduct : IProduct
 //     public void Purchase() { }
 // }
 
-// class MoreRows : IStaticProduct
-// {
-//     // Buff
-//     // Adds more rows to board
-//     public string name { get; } = "MoreRows";
-//     public string description { get; } = "Adds extra rows to board";
-//     public double rarity { get; } = 0.12;
-//     public int price { get; } = 80;
-//     private Player purchaser;
-//     public List<Player> Targets { get; set; }
-//     public void Purchase(Player purchaser)
-//     {
-//         this.purchaser = purchaser;
-//         purchaser.AddToInventory(this);
-//         Use();
-//     }
-//     public void Use()
-//     {
-//         purchaser.Board.Height += 1;
-//         purchaser.Board.GetAllTiles();
-//     }
-// }
+class MoreRows : IStaticProduct
+{
+    // Buff
+    // Adds more rows to board
+    public string name { get; } = "MoreRows";
+    public string description { get; } = "Adds extra rows to board";
+    public double rarity { get; } = 0.12;
+    public int price { get; } = 80;
+    public Player Purchaser { get; set; }
+    public List<Player> Targets { get; set; }
+    public MoreRows(Player purchaser)
+    {
+        this.Purchaser = purchaser;
+        this.Targets = [purchaser];
+    }
+
+    public void Purchase()
+    {
+        Purchaser.AddToInventory(this);
+        Use();
+    }
+    public void Use()
+    {
+        Purchaser.Board.VisibleHeight += 1;
+    }
+}
 
 // class TetrominoProjection : IStaticProduct
 // {
@@ -178,28 +186,29 @@ class MoreI : ITemporaryProduct
     public int price { get; } = 120;
     public int LifeTime { get; } = 5;
 
-    private Player? purchaser;
+    public Player Purchaser { get; set; }
 
     public int lifetime { get; set; }
     public List<Player> Targets { get; set; }
-    public MoreI(List<Player> targets)
+    public MoreI(Player purchaser, List<Player> targets)
     {
+        this.Purchaser = purchaser;
         this.Targets = targets;
     }
     public void Purchase(Player purchaser)
     {
-        this.purchaser = purchaser;
+        this.Purchaser = purchaser;
         this.lifetime = LifeTime;
         purchaser.AddToInventory(this);
         this.Use();
     }
     public void Use()
     {
-        if (purchaser == null) return;
-        purchaser.Board.PolyominoPool.Add(() => new TetrominoI());
-        purchaser.Board.PolyominoPool.Add(() => new OctominoThiccI());
-        purchaser.Board.PolyominoPool.Add(() => new OctominoIII());
-        purchaser.Board.PolyominoPool.Add(() => new TrominoLowerI());
+        if (Purchaser == null) return;
+        Purchaser.Board.PolyominoPool.Add(() => new TetrominoI());
+        Purchaser.Board.PolyominoPool.Add(() => new OctominoThiccI());
+        Purchaser.Board.PolyominoPool.Add(() => new OctominoIII());
+        Purchaser.Board.PolyominoPool.Add(() => new TrominoLowerI());
     }
     public void Disable() { }
 }
@@ -260,15 +269,22 @@ class SpeedUp : IStaticProduct
 {
     // Debuff
     // Increase DT of opponent
-    public SpeedUp(List<Player> targets)
+    public SpeedUp(Player purchaser, List<Player> targets)
     {
-        Targets = targets;
+        this.Purchaser = purchaser;
+        this.Targets = targets;
     }
     public List<Player> Targets { get; set; }
     public string name { get; } = "IncreaseDT";
     public string description { get; } = "Increases opponent DT";
     public double rarity { get; } = 0.14;
     public int price { get; } = 90;
+    public Player Purchaser { get; set; }
+    public void Purchase()
+    {
+        Purchaser.AddToInventory(this);
+        Use();
+    }
     public void Use()
     {
         Targets.ForEach(target => target.Board.DT = (int)Math.Floor(target.Board.DT * 0.90));
@@ -287,17 +303,18 @@ class SpeedUp : IStaticProduct
 //     public void Purchase() { }
 // }
 
-class TaxTime : ITemporaryProduct
+class Tax : ITemporaryProduct
 {
     // Debuff
     // Tax your opponent! YOU ARE THE KING
 
-    public TaxTime(List<Player> targets)
+    public Tax(Player purchaser, List<Player> targets)
     {
+        this.Purchaser = purchaser;
         this.Targets = targets;
     }
     public string name { get; } = "TaxTime";
-    private Player? purchaser;
+    public Player Purchaser { get; set; }
     public List<Player> Targets { get; set; }
     public int lifetime { get; set; }
 
@@ -310,14 +327,14 @@ class TaxTime : ITemporaryProduct
     public void Purchase(Player purchaser)
     {
         purchaser.AddToInventory(this);
-        this.purchaser = purchaser;
+        this.Purchaser = purchaser;
         this.lifetime = LifeTime;
     }
 
     // Called every tick (or when effect should apply)
     public void Use()
     {
-        if (purchaser == null) return;
+        if (Purchaser == null) return;
         int taxed = 0;
         foreach (var target in Targets)
         {
@@ -325,7 +342,7 @@ class TaxTime : ITemporaryProduct
             target.Money = (int)Math.Floor(target.Money * 0.90); // 10% tax
             taxed += (before - target.Money);
         }
-        purchaser.Money += taxed;
+        Purchaser.Money += taxed;
     }
     public void Disable()
     {
