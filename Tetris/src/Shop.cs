@@ -12,17 +12,29 @@ class Shop
 
     public int ShelfIndex = 0;
 
+    public List<Func<IProduct>> ProductPool = [];
+
     public Shop(Player owner, List<Player> others)
     {
         this.owner = owner;
         this.others = others;
-        this.Products = [
-            new SpeedUp(owner, others),
-            new MoreI(owner, others),
-            new Tax(owner, others),
-            new MoreRows(owner),
-            new SlowDown(owner)
+        this.ProductPool = [
+            () => new SpeedUp(owner, others),
+            () => new MoreI(owner, others),
+            () => new Tax(owner, others),
+            () => new MoreRows(owner),
+            () => new SlowDown(owner)
         ];
+
+        int productsLength = 3;
+        Random rng = new();
+        this.Products = [];
+
+        for (int i = 0; i < productsLength; i++)
+        {
+            Products.Add(ProductPool[rng.Next(ProductPool.Count)].Invoke());
+        }
+
     }
 }
 
