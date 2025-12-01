@@ -20,6 +20,8 @@ class GameState
     private readonly GameRenderer gameRenderer;
     private readonly ShopRenderer shopRenderer;
 
+    public readonly HashSet<Player> ReadyPlayers = [];
+
     public GameState()
     {
         // Instantiate shops
@@ -76,7 +78,10 @@ class GameState
 
     private void ShoppingMode()
     {
-        List<Shelves> shopStates = [.. Players.Select(p => new Shelves(p.Shop!, [.. p.Shop!.Products.Select(prod => new Shelf(Side.Stand, prod))]))];
+        ReadyPlayers.Clear();
+        List<Shelves> shopStates = [.. Players
+            .Where(p => !p.IsAI)
+            .Select(p => new Shelves(p.Shop!, [.. p.Shop!.Products.Select(prod => new Shelf(Side.Stand, prod))]))];
 
         while (true)
         {
@@ -85,11 +90,11 @@ class GameState
 
             string key = KeyInput.Read() ?? "";
 
-            // Stop shopping
-            if (key == "Enter") break;
+            // Logic (ignore AI players during shopping)
+            Players.Where(p => !p.IsAI).ToList().ForEach(player => ShoppingActions(player, key, shopStates));
 
-            // Logic
-            Players.ForEach(player => ShoppingActions(player, key, shopStates));
+            // If all non-AI players are ready, stop shopping
+            if (Players.Where(p => !p.IsAI).All(p => ReadyPlayers.Contains(p))) break;
 
             shopRenderer.Render(shopStates);
 
@@ -115,20 +120,29 @@ class GameState
         if (!player.ValidKeys.Contains(key)) return;
         ControlScheme controls = player.IsAI ? [] : player.ControlScheme;
 
-        int readyShelfIndex = shop.ShelfIndex + 1;
-
         switch (controls[key])
         {
             case Input.Up:
-                shop.ShelfIndex = (shop.ShelfIndex - 1 + shop.Products.Count) % shop.Products.Count;
+                // Include extra "Ready" row below the last product
+                int totalOptionsUp = shop.Products.Count + 1; // products + ready row
+                shop.ShelfIndex = (shop.ShelfIndex - 1 + totalOptionsUp) % totalOptionsUp;
                 break;
 
             case Input.Down:
-                shop.ShelfIndex = (shop.ShelfIndex + 1) % shop.Products.Count;
+                // Include extra "Ready" row below the last product
+                int totalOptionsDown = shop.Products.Count + 1; // products + ready row
+                shop.ShelfIndex = (shop.ShelfIndex + 1) % totalOptionsDown;
                 break;
 
             case Input.Right:
-                // Find selected shelf
+                // If on the Ready row, mark player as ready and do nothing else
+                if (shop.ShelfIndex == shop.Products.Count)
+                {
+                    ReadyPlayers.Add(player);
+                    break;
+                }
+
+                // Find selected shelf (only for real product indices)
                 Shelf selectedShelf = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
                 if (selectedShelf.Side == Side.Basket) break; // Already in basket
 
@@ -146,7 +160,14 @@ class GameState
                 break;
 
             case Input.Left:
-                // Find selected shelf
+                // If on the Ready row, unready the player (if they move away)
+                if (shop.ShelfIndex == shop.Products.Count)
+                {
+                    ReadyPlayers.Remove(player);
+                    break;
+                }
+
+                // Find selected shelf (only for real product indices)
                 Shelf selectedShelf2 = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
                 if (selectedShelf2.Side == Side.Stand) break; // Already in stand
 

@@ -2,7 +2,7 @@
 
 class ShopRenderer(GameState gameState)
 {
-    private readonly List<Player> players = gameState.Players;
+    private readonly List<Player> players = [.. gameState.Players.Where(p => !p.IsAI)];
     private static readonly int itemWidth = 30;
     private static readonly int shelfWidth = itemWidth * 2 + 3 + 4; // 3 and 4 for borders and padding
 
@@ -65,11 +65,17 @@ class ShopRenderer(GameState gameState)
             buffer += " │\n";
         }
 
+        // Ready row (one step below the last shop item)
+        bool isReadySelected = shop.ShelfIndex == shop.Products.Count;
+        string readyLabel = isReadySelected ? AnsiColor.Black(AnsiColor.BgWhite(" READY ")) : " READY ";
+        string readyText = $"{readyLabel.PadVisibleLeft((itemWidth + "READY".Length) / 2).PadVisibleRight(itemWidth)}";
+        buffer += $"│ {readyText} │ {"".PadVisibleRight(itemWidth)} │\n";
+
         // Bottom
         buffer += $"│ {"".PadVisibleRight(itemWidth)} │ {"".PadVisibleRight(itemWidth)} │\n";
         buffer += $"├─{new string('─', itemWidth)}─┴─{new string('─', itemWidth)}─┤\n";
         buffer += $"│ {"Use Up/Down to select an item.".PadVisibleRight(shelfWidth - 4)} │\n";
-        buffer += $"│ {"Use Left/Right to put back/to cart.".PadVisibleRight(shelfWidth - 4)} │\n";
+        buffer += $"│ {"Use Left/Right to put back/to cart/ready.".PadVisibleRight(shelfWidth - 4)} │\n";
         buffer += $"╰{new string('─', shelfWidth - 2)}╯\n";
 
         return buffer;
