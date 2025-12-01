@@ -200,10 +200,10 @@ class Board
                 case Input.Right:
                     if (polyomino.CanMove(1, 0, this)) polyomino.X++;
                     break;
-                case Input.SoftDrop:
+                case Input.Down:
                     if (polyomino.CanMove(0, 1, this)) polyomino.Y++;
                     break;
-                case Input.Rotate:
+                case Input.Up:
                     polyomino.Rotate(this);
                     break;
                 default:

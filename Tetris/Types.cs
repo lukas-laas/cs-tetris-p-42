@@ -4,8 +4,8 @@ enum Input
 {
     Left,
     Right,
-    Rotate,
-    SoftDrop, // Hard drop not implemented, maybe l8r B)
+    Up,
+    Down, // Hard drop not implemented, maybe l8r B)
 };
 enum Orientation
 {

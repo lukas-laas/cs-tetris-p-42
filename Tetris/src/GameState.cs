@@ -5,14 +5,14 @@ class GameState
         new ("Lukas", new () {
             { "A", Input.Left },
             { "D", Input.Right },
-            { "W", Input.Rotate },
-            { "S", Input.SoftDrop }
+            { "W", Input.Up },
+            { "S", Input.Down }
         }),
         new ("Vena", new () {
             { "LeftArrow",  Input.Left },
             { "RightArrow", Input.Right },
-            { "UpArrow",    Input.Rotate },
-            { "DownArrow",  Input.SoftDrop }
+            { "UpArrow",    Input.Up },
+            { "DownArrow",  Input.Down }
         }),
         // new (true), // AI Player
     ];
@@ -89,44 +89,7 @@ class GameState
             if (key == "Enter") break;
 
             // Logic
-            Players.ForEach(player =>
-            {
-                if (player.Shop is null) throw new Exception("Player has no shop!");
-                Shop shop = player.Shop;
-
-                if (!player.ValidKeys.Contains(key)) return;
-                ControlScheme controls = player.IsAI ? [] : player.ControlScheme;
-
-                switch (controls[key])
-                {
-                    case Input.Rotate:
-                        shop.ShelfIndex = (shop.ShelfIndex - 1 + shop.Products.Count) % shop.Products.Count;
-                        break;
-
-                    case Input.SoftDrop:
-                        shop.ShelfIndex = (shop.ShelfIndex + 1) % shop.Products.Count;
-                        break;
-
-                    case Input.Right:
-                        // Find selected shelf
-                        Shelf selectedShelf = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
-                        if (selectedShelf.Side == Side.Basket) break; // Already in basket
-                        // Move to basket
-                        selectedShelf.Side = Side.Basket;
-                        break;
-
-                    case Input.Left:
-                        // Find selected shelf
-                        Shelf selectedShelf2 = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
-                        if (selectedShelf2.Side == Side.Stand) break; // Already in stand
-                        // Move to stand
-                        selectedShelf2.Side = Side.Stand;
-                        break;
-
-                    default:
-                        break;
-                }
-            });
+            Players.ForEach(player => ShoppingActions(player, key, shopStates));
 
             shopRenderer.Render(shopStates);
 
@@ -141,6 +104,47 @@ class GameState
             gameRenderer.Render();
             RenderUtils.WriteLargeNumberInPlace(3 - i);
             Thread.Sleep(1000);
+        }
+    }
+
+    private void ShoppingActions(Player player, string key, List<Shelves> shopStates)
+    {
+        if (player.Shop is null) throw new Exception("Player has no shop!");
+        Shop shop = player.Shop;
+
+        if (!player.ValidKeys.Contains(key)) return;
+        ControlScheme controls = player.IsAI ? [] : player.ControlScheme;
+
+        int readyShelfIndex = shop.ShelfIndex + 1;
+
+        switch (controls[key])
+        {
+            case Input.Up:
+                shop.ShelfIndex = (shop.ShelfIndex - 1 + shop.Products.Count) % shop.Products.Count;
+                break;
+
+            case Input.Down:
+                shop.ShelfIndex = (shop.ShelfIndex + 1) % shop.Products.Count;
+                break;
+
+            case Input.Right:
+                // Find selected shelf
+                Shelf selectedShelf = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
+                if (selectedShelf.Side == Side.Basket) break; // Already in basket
+                // Move to basket
+                selectedShelf.Side = Side.Basket;
+                break;
+
+            case Input.Left:
+                // Find selected shelf
+                Shelf selectedShelf2 = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
+                if (selectedShelf2.Side == Side.Stand) break; // Already in stand
+                // Move to stand
+                selectedShelf2.Side = Side.Stand;
+                break;
+
+            default:
+                break;
         }
     }
 }
