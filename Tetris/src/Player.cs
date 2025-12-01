@@ -12,12 +12,12 @@ class Player
     public Board Board;
     public Shop? Shop { get; set; }
 
-    private readonly ControlScheme controlScheme;
-    private string[] ValidKeys => [.. controlScheme.Keys];
+    public readonly ControlScheme ControlScheme;
+    public string[] ValidKeys => [.. ControlScheme.Keys];
 
     public Player(string name, ControlScheme controlScheme)
     {
-        this.controlScheme = controlScheme;
+        this.ControlScheme = controlScheme;
         this.Name = name;
         this.Board = new();
     }
@@ -26,7 +26,7 @@ class Player
         if (isAI == false) throw new ArgumentException("Use other constructor for non-AI players");
         this.IsAI = true;
 
-        this.controlScheme = []; // Empty control scheme for AI
+        this.ControlScheme = []; // Empty control scheme for AI
         this.Name = aiNames[rng.Next(aiNames.Length)];
         this.Board = new();
     }
@@ -45,7 +45,7 @@ class Player
         }
         else
         {
-            Input? input = ValidKeys.Contains(key) ? controlScheme[key] : null;
+            Input? input = ValidKeys.Contains(key) ? ControlScheme[key] : null;
             if (input is Input moveInput) Board.Move(moveInput);
         }
 

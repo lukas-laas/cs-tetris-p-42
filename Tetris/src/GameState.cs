@@ -14,7 +14,7 @@ class GameState
             { "UpArrow",    Input.Rotate },
             { "DownArrow",  Input.SoftDrop }
         }),
-        new (true), // AI Player
+        // new (true), // AI Player
     ];
 
     private readonly GameRenderer gameRenderer;
@@ -82,7 +82,36 @@ class GameState
             if (key == "Enter") break;
 
             // Logic
-            Players.ForEach(player => player.Shop!.Tick(key));
+            Players.ForEach(player =>
+            {
+                if (player.Shop is null) throw new Exception("Player has no shop!");
+                Shop shop = player.Shop;
+
+                if (!player.ValidKeys.Contains(key)) return;
+                ControlScheme controls = player.IsAI ? [] : player.ControlScheme;
+
+                switch (controls[key])
+                {
+                    case Input.Rotate:
+                        shop.ShelfIndex = (shop.ShelfIndex - 1 + shop.Products.Count) % shop.Products.Count;
+                        break;
+
+                    case Input.SoftDrop:
+                        shop.ShelfIndex = (shop.ShelfIndex + 1) % shop.Products.Count;
+                        break;
+
+                    case Input.Right:
+                        // Put in cart
+                        break;
+
+                    case Input.Left:
+                        // Put back to stand
+                        break;
+
+                    default:
+                        break;
+                }
+            });
 
             shopRenderer.Render();
 

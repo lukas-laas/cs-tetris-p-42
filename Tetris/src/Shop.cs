@@ -21,25 +21,6 @@ class Shop
             new MoreI(others),
         ];
     }
-
-    public void Tick(string keyInput)
-    {
-        // Navigate shelves
-        if (keyInput == "ArrowUp")
-        {
-            ShelfIndex = (ShelfIndex - 1 + Products.Count) % Products.Count;
-        }
-        else if (keyInput == "ArrowDown")
-        {
-            ShelfIndex = (ShelfIndex + 1) % Products.Count;
-        }
-        else if (keyInput == "ArrowRight")
-        {
-            // Purchase item
-            IProduct selectedProduct = Products[ShelfIndex];
-            selectedProduct.Purchase(owner);
-        }
-    }
 }
 
 interface IProduct
