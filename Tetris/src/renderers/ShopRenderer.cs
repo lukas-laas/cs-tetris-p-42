@@ -34,9 +34,9 @@ class ShopRenderer(GameState gameState)
         string buffer = "";
 
         string title = $"{player.Name.Possessive()} Shop";
-    int cartValue = shopItems.Where(shelf => shelf.Side == Side.Basket).Sum(shelf => shelf.Product.price);
-    string balance = $"Balance: {player.Money}cu";
-    string cartTotal = $"Cart total: {cartValue}cu";
+        int cartValue = shopItems.Where(shelf => shelf.Side == Side.Basket).Sum(shelf => shelf.Product.price);
+        string balance = $"Balance: {player.Money}cu";
+        string cartTotal = $"Cart total: {cartValue}cu";
 
         buffer += $"{title.PadVisibleLeft((shelfWidth + title.VisibleLength()) / 2).PadVisibleRight(shelfWidth)}\n";
         buffer += $" {balance.PadVisibleRight(shelfWidth - cartTotal.VisibleLength() - 2)}{cartTotal}\n";
@@ -59,7 +59,7 @@ class ShopRenderer(GameState gameState)
             else buffer += " │ ";
 
             // Cart side
-            if (shelf.Side == Side.Basket) buffer += MakeProductDisplay(shelf, isSelected, player, cartValue);
+            if (shelf.Side == Side.Basket) buffer += MakeProductDisplay(shelf, isSelected, player, cartValue, isCart: true);
             else buffer += "".PadVisibleRight(itemWidth);
 
             buffer += " │\n";
@@ -75,17 +75,25 @@ class ShopRenderer(GameState gameState)
         return buffer;
     }
 
-    private static string MakeProductDisplay(Shelf shelf, bool isSelected, Player player, int cartValue)
+    private static string MakeProductDisplay(Shelf shelf, bool isSelected, Player player, int cartValue, bool isCart = false)
     {
         string displayPrice = AnsiColor.Gray("N/A");
         if (shelf.Product.price != int.MaxValue)
         {
-            int effectiveMoney = player.Money - cartValue;
+            if (isCart)
+            {
+                // Items already in the cart keep a neutral color
+                displayPrice = $"{shelf.Product.price}cu";
+            }
+            else
+            {
+                int effectiveMoney = player.Money - cartValue;
 
-            displayPrice = shelf.Product.price <= effectiveMoney ?
-                AnsiColor.Green($"{shelf.Product.price}cu")
-                :
-                AnsiColor.Red($"{shelf.Product.price}cu");
+                displayPrice = shelf.Product.price <= effectiveMoney ?
+                    AnsiColor.Green($"{shelf.Product.price}cu")
+                    :
+                    AnsiColor.Red($"{shelf.Product.price}cu");
+            }
         }
         string line = $"{shelf.Product.name.PadVisibleRight(itemWidth - displayPrice.VisibleLength() - 1)} {displayPrice}";
 
