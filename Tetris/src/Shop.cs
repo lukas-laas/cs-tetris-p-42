@@ -10,11 +10,35 @@ class Shop
     private Player owner; // The player who buys stuff
     List<Player> others = [];
 
+    public int ShelfIndex = 0;
+
     public Shop(Player owner, List<Player> others)
     {
         this.owner = owner;
         this.others = others;
-        this.Products = [new SpeedUp(others)];
+        this.Products = [
+            new SpeedUp(others),
+            new SpeedUp(others),
+        ];
+    }
+
+    public void Tick(string keyInput)
+    {
+        // Navigate shelves
+        if (keyInput == "ArrowUp")
+        {
+            ShelfIndex = (ShelfIndex - 1 + Products.Count) % Products.Count;
+        }
+        else if (keyInput == "ArrowDown")
+        {
+            ShelfIndex = (ShelfIndex + 1) % Products.Count;
+        }
+        else if (keyInput == "ArrowRight")
+        {
+            // Purchase item
+            IProduct selectedProduct = Products[ShelfIndex];
+            selectedProduct.Purchase(owner);
+        }
     }
 }
 

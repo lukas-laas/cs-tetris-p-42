@@ -22,17 +22,17 @@ class GameState
 
     public GameState()
     {
+        // Instantiate shops
+        Players.ForEach(player => player.Shop = new(player, [.. Players.Where(p => p != player)]));
+
         // Instantiate renderers
         gameRenderer = new(this);
         shopRenderer = new(this);
 
-        // Instantiate shops
-        Players.ForEach(player => player.Shop = new(player, [.. Players.Where(p => p != player)]));
-
         // State management variables
         bool shopping = false;
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        int secondsBetweenShopping = 5; // TODO - Test 20 seconds
+        int secondsBetweenShopping = 0; // TODO - Test 20 seconds
 
         while (true)
         {
@@ -80,6 +80,9 @@ class GameState
 
             // Stop shopping
             if (key == "Enter") break;
+
+            // Logic
+            Players.ForEach(player => player.Shop!.Tick(key));
 
             shopRenderer.Render();
 
