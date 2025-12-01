@@ -6,7 +6,7 @@ class ShopRenderer(GameState gameState)
     private static readonly int itemWidth = 30;
     private static readonly int shelfWidth = itemWidth * 2 + 3 + 4; // 3 and 4 for borders and padding
 
-    public void Render()
+    public void Render(List<Shelves> shopStates)
     {
         string buffer = "";
 
@@ -14,7 +14,7 @@ class ShopRenderer(GameState gameState)
         buffer += MakeTitle();
         buffer += "\n\n";
 
-        buffer += RenderUtils.Center2DString(RenderUtils.Merge2DStrings([.. players.Select(MakeShoppingStand)], 8));
+        buffer += RenderUtils.Center2DString(RenderUtils.Merge2DStrings([.. players.Select(p => MakeShoppingStand(p, shopStates))], 8));
 
         RenderUtils.Render(buffer);
     }
@@ -24,12 +24,12 @@ class ShopRenderer(GameState gameState)
         return RenderUtils.Center2DString("============ SHOP ============");
     }
 
-    private static string MakeShoppingStand(Player player)
+    private static string MakeShoppingStand(Player player, List<Shelves> shopStates)
     {
         if (player.Shop is null) throw new Exception("Player has no shop!");
         Shop shop = player.Shop;
 
-        List<Shelf> shopItems = [.. shop.Products.Select(product => new Shelf(Side.Stand, product))];
+        List<Shelf> shopItems = shopStates.First(s => s.Shop == shop).ShelvesList;
 
         string buffer = "";
         buffer += $"{player.Name.PadLeft((shelfWidth + player.Name.Length) / 2).PadRight(shelfWidth)}\n"; // TODO Make prettier

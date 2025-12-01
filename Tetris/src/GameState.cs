@@ -76,6 +76,8 @@ class GameState
 
     private void ShoppingMode()
     {
+        List<Shelves> shopStates = [.. Players.Select(p => new Shelves(p.Shop!, [.. p.Shop!.Products.Select(prod => new Shelf(Side.Stand, prod))]))];
+
         while (true)
         {
             int frameTarget = 20; // milliseconds per frame
@@ -106,11 +108,19 @@ class GameState
                         break;
 
                     case Input.Right:
-                        // Put in cart
+                        // Find selected shelf
+                        Shelf selectedShelf = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
+                        if (selectedShelf.Side == Side.Basket) break; // Already in basket
+                        // Move to basket
+                        selectedShelf.Side = Side.Basket;
                         break;
 
                     case Input.Left:
-                        // Put back to stand
+                        // Find selected shelf
+                        Shelf selectedShelf2 = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
+                        if (selectedShelf2.Side == Side.Stand) break; // Already in stand
+                        // Move to stand
+                        selectedShelf2.Side = Side.Stand;
                         break;
 
                     default:
@@ -118,7 +128,7 @@ class GameState
                 }
             });
 
-            shopRenderer.Render();
+            shopRenderer.Render(shopStates);
 
             // Throttle
             int remaimingWait = frameTarget - (int)(DateTimeOffset.Now.ToUnixTimeMilliseconds() - frameStart);
