@@ -103,6 +103,17 @@ class GameState
             if (remaimingWait > 0) Thread.Sleep(remaimingWait);
         }
 
+        // Finalize purchases
+        foreach (Shelves shelves in shopStates)
+        {
+            Shop shop = shelves.Shop;
+            Player player = shop.Owner;
+            List<Shelf> cartedItems = [.. shelves.ShelvesList.Where(shelf => shelf.Side == Side.Basket)];
+            int totalCost = cartedItems.Sum(shelf => shelf.Product.price);
+            if (totalCost > player.Money) throw new Exception("Player cannot afford their cart items!");
+            cartedItems.ForEach(shelf => shelf.Product.Purchase());
+        }
+
         // Countdown before resuming game
         for (int i = 0; i < 4; i++)
         {
@@ -135,14 +146,9 @@ class GameState
                 break;
 
             case Input.Right:
-                // If on the Ready row, mark player as ready and do nothing else
-                if (shop.ShelfIndex == shop.Products.Count)
-                {
-                    ReadyPlayers.Add(player);
-                    break;
-                }
-
                 // Find selected shelf (only for real product indices)
+                if (shop.ShelfIndex >= shop.Products.Count) break; // ignore READY row for Right
+
                 Shelf selectedShelf = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
                 if (selectedShelf.Side == Side.Basket) break; // Already in basket
 
@@ -160,14 +166,9 @@ class GameState
                 break;
 
             case Input.Left:
-                // If on the Ready row, unready the player (if they move away)
-                if (shop.ShelfIndex == shop.Products.Count)
-                {
-                    ReadyPlayers.Remove(player);
-                    break;
-                }
-
                 // Find selected shelf (only for real product indices)
+                if (shop.ShelfIndex >= shop.Products.Count) break; // ignore READY row for Left
+
                 Shelf selectedShelf2 = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
                 if (selectedShelf2.Side == Side.Stand) break; // Already in stand
 
@@ -177,6 +178,16 @@ class GameState
 
             default:
                 break;
+        }
+
+        // Ready when merely selected
+        if (shop.ShelfIndex == shop.Products.Count)
+        {
+            ReadyPlayers.Add(player);
+        }
+        else
+        {
+            ReadyPlayers.Remove(player);
         }
     }
 }

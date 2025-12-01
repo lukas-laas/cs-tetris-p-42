@@ -7,8 +7,8 @@ class Shop
     // Debuffs
 
     // Casino? blackjack, slots, roulette osv
-    private Player owner; // The player who buys stuff
-    List<Player> others = [];
+    public Player Owner; // The player who buys stuff
+    private List<Player> others = [];
 
     public int ShelfIndex = 0;
 
@@ -16,7 +16,7 @@ class Shop
 
     public Shop(Player owner, List<Player> others)
     {
-        this.owner = owner;
+        this.Owner = owner;
         this.others = others;
         this.ProductPool = [
             () => new SpeedUp(owner, others),
@@ -52,10 +52,10 @@ interface IProduct
 
     void Purchase()
     {
-        // if (purchaser.Money >= this.price)
+        if (Purchaser.Money >= this.price)
         {
             Purchaser.AddToInventory(this);
-            // purchaser.Money -= price;
+            Purchaser.Money -= price;
         }
     }
     public void Use();
