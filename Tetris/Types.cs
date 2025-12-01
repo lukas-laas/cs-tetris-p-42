@@ -14,3 +14,18 @@ enum Orientation
     Two,
     Left,
 }
+enum Side
+{
+    Stand, // Left
+    Basket, // Right
+};
+class Shelf(Side side, IProduct product)
+{
+    public Side Side { get; set; } = side;
+    public IProduct Product { get; set; } = product;
+}
+class Shelves(Shop shop, List<Shelf> shelves)
+{
+    public Shop Shop { get; set; } = shop;
+    public List<Shelf> ShelvesList { get; set; } = shelves;
+}

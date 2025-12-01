@@ -49,6 +49,14 @@ class AnsiColor
     public const string XRedCode = "\u001b[38;2;255;0;0m";
     public static string XRed(string text) => Apply(text, XRedCode);
 
+    public const string BlackCode = "\u001b[30m";
+    public static string Black(string text) => Apply(text, BlackCode);
+
+
+    // BG colors
+    public const string BgWhiteCode = "\u001b[47m";
+    public static string BgWhite(string text) => Apply(text, BgWhiteCode);
+
     public const string ResetCode = "\u001b[0m";
     public static string Reset(string text) => $"{ResetCode}{text}{ResetCode}";
 

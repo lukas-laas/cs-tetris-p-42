@@ -1,18 +1,10 @@
 
-enum Side
-{
-    Stand, // Left
-    Basket, // Right
-};
-class Shelf(Side side, IProduct product)
-{
-    public Side Side { get; set; } = side;
-    public IProduct Product { get; set; } = product;
-}
 
 class ShopRenderer(GameState gameState)
 {
     private readonly List<Player> players = gameState.Players;
+    private static readonly int itemWidth = 30;
+    private static readonly int shelfWidth = itemWidth * 2 + 3 + 4; // 3 and 4 for borders and padding
 
     public void Render()
     {
@@ -39,25 +31,20 @@ class ShopRenderer(GameState gameState)
 
         List<Shelf> shopItems = [.. shop.Products.Select(product => new Shelf(Side.Stand, product))];
 
-        const int itemWidth = 20;
-        const int shelfWidth = itemWidth * 2 + 3 + 4; // 3 and 4 for borders and padding
-
         string buffer = "";
         buffer += $"{player.Name.PadLeft((shelfWidth + player.Name.Length) / 2).PadRight(shelfWidth)}\n"; // TODO Make prettier
-        buffer += $"╭──────── SHOP ────────┬──────── CART ────────╮\n";
+        buffer += $"╭───────────── SHOP ─────────────┬───────────── CART ─────────────╮\n";
 
         for (int i = 0; i < shopItems.Count; i++)
         {
             buffer += "│ ";
             Shelf shelf = shopItems[i];
             bool isSelected = shop.ShelfIndex == i;
+            string displayPrice = shelf.Product.price == int.MaxValue ? "N/A" : $"{shelf.Product.price}cu";
 
             // Shop side
-            if (shelf.Side == Side.Stand)
-            {
-                buffer += $"{shelf.Product.name} - {shelf.Product.price}cu".PadRight(itemWidth);
-            }
-            else buffer += $"{"",itemWidth}";
+            if (shelf.Side == Side.Stand) buffer += MakeProductDisplay(shelf.Product, isSelected);
+            else buffer += "".PadRight(itemWidth);
 
             // Middle barrier
             if (isSelected)
@@ -67,18 +54,27 @@ class ShopRenderer(GameState gameState)
             else buffer += " │ ";
 
             // Cart side
-            if (shelf.Side == Side.Basket)
-            {
-                buffer += $"{shelf.Product.name} - {shelf.Product.price}cu".PadRight(itemWidth);
-            }
-            else buffer += $"{"",itemWidth}";
+            if (shelf.Side == Side.Basket) buffer += MakeProductDisplay(shelf.Product, isSelected);
+            else buffer += "".PadRight(itemWidth);
+
             buffer += " │\n";
         }
 
         // Bottom
-        buffer += $"│ {"",itemWidth} │ {"",itemWidth} │\n";
-        buffer += $"╰─{new string('─', itemWidth)}─┴─{new string('─', itemWidth)}─╯\n";
+        buffer += $"│ {"".PadRight(itemWidth)} │ {"".PadRight(itemWidth)} │\n";
+        buffer += $"├─{new string('─', itemWidth)}─┴─{new string('─', itemWidth)}─┤\n";
+        buffer += $"│ {"Use Up/Down to select an item.".PadRight(shelfWidth - 4)} │\n";
+        buffer += $"│ {"Use Left/Right to put back/to cart.".PadRight(shelfWidth - 4)} │\n";
+        buffer += $"╰{new string('─', shelfWidth - 2)}╯\n";
 
         return buffer;
+    }
+
+    private static string MakeProductDisplay(IProduct product, bool isSelected)
+    {
+        string displayPrice = product.price == int.MaxValue ? "N/A" : $"{product.price}cu";
+        string line = $"{product.name.PadRight(itemWidth - displayPrice.Length - 1)} {displayPrice}";
+
+        return isSelected ? AnsiColor.Black(AnsiColor.BgWhite(line)) : line;
     }
 }
