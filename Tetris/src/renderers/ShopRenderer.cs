@@ -33,11 +33,13 @@ class ShopRenderer(GameState gameState)
 
         string buffer = "";
 
-        string playerMoney = $"{player.Money}cu";
-        string playerNameAndMoney = $"{player.Name}    {playerMoney}";
-        buffer += $"{playerNameAndMoney.PadLeft((shelfWidth + playerNameAndMoney.Length) / 2).PadRight(shelfWidth)}\n"; // TODO Make prettier
-        buffer += $"╭───────────── SHOP ─────────────┬───────────── CART ─────────────╮\n";
+        string title = $"{player.Name}'s Shop";
+        string balance = $"Balance: {player.Money}cu";
+        string cartTotal = $"Cart total: {shopItems.Where(shelf => shelf.Side == Side.Basket).Sum(shelf => shelf.Product.price)}cu";
 
+        buffer += $"{title.PadLeft((shelfWidth + title.Length) / 2).PadRight(shelfWidth)}\n";
+        buffer += $" {balance.PadRight(shelfWidth - cartTotal.Length - 2)}{cartTotal}\n";
+        buffer += $"╭───────────── SHOP ─────────────┬───────────── CART ─────────────╮\n";
         for (int i = 0; i < shopItems.Count; i++)
         {
             buffer += "│ ";

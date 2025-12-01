@@ -32,7 +32,7 @@ class GameState
         // State management variables
         bool shopping = false;
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        int secondsBetweenShopping = 20; // TODO - Test 20 seconds
+        int secondsBetweenShopping = 0; // TODO - Test 20 seconds
 
         // Players[0].Shop.ProductPool[6]().Purchase();
         // Players[0].Shop.ProductPool[6]().Purchase();
@@ -131,6 +131,10 @@ class GameState
                 // Find selected shelf
                 Shelf selectedShelf = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
                 if (selectedShelf.Side == Side.Basket) break; // Already in basket
+
+                // Money check
+                if (player.Money < selectedShelf.Product.price) break; // Not enough money
+
                 // Move to basket
                 selectedShelf.Side = Side.Basket;
                 break;
@@ -139,6 +143,7 @@ class GameState
                 // Find selected shelf
                 Shelf selectedShelf2 = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
                 if (selectedShelf2.Side == Side.Stand) break; // Already in stand
+
                 // Move to stand
                 selectedShelf2.Side = Side.Stand;
                 break;
