@@ -2,6 +2,7 @@
 
 class ShopRenderer(GameState gameState)
 {
+    private readonly GameState gameState = gameState;
     private readonly List<Player> players = [.. gameState.Players.Where(p => !p.IsAI)];
     private static readonly int itemWidth = 30;
     private static readonly int shelfWidth = itemWidth * 2 + 3 + 4; // 3 and 4 for borders and padding
@@ -15,8 +16,18 @@ class ShopRenderer(GameState gameState)
         buffer += "\n\n";
 
         buffer += RenderUtils.Center2DString(RenderUtils.Merge2DStrings([.. players.Select(p => MakeShoppingStand(p, shopStates))], 8));
+        buffer += "\n";
+        buffer += RenderUtils.Center2DString(MakeReadyPlayerDisplay());
 
         RenderUtils.Render(buffer);
+    }
+
+    private string MakeReadyPlayerDisplay()
+    {
+        int nonAIPlayerCount = gameState.Players.Count(p => !p.IsAI);
+        int readyPlayerCount = gameState.ReadyPlayers.Count(p => !p.IsAI);
+        string readyText = $"Ready players [{readyPlayerCount}/{nonAIPlayerCount}]";
+        return readyText;
     }
 
     private static string MakeTitle()
@@ -75,7 +86,8 @@ class ShopRenderer(GameState gameState)
         buffer += $"│ {"".PadVisibleRight(itemWidth)} │ {"".PadVisibleRight(itemWidth)} │\n";
         buffer += $"├─{new string('─', itemWidth)}─┴─{new string('─', itemWidth)}─┤\n";
         buffer += $"│ {"Use Up/Down to select an item.".PadVisibleRight(shelfWidth - 4)} │\n";
-        buffer += $"│ {"Use Left/Right to put back/to cart/ready.".PadVisibleRight(shelfWidth - 4)} │\n";
+        buffer += $"│ {"Use Left/Right to put back/to cart.".PadVisibleRight(shelfWidth - 4)} │\n";
+        buffer += $"│ {"Select READY to mark yourself as ready to continue.".PadVisibleRight(shelfWidth - 4)} │\n";
         buffer += $"╰{new string('─', shelfWidth - 2)}╯\n";
 
         return buffer;

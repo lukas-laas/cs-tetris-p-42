@@ -95,9 +95,6 @@ class GameRenderer
         string infoLines = "";
         infoLines += InfoLine("Score", player.Score);
         infoLines += InfoLine("Money", player.Money);
-        // TODO - remove these
-        // infoLines += InfoLine("Falling", board.FallingPolyominoes.Count);
-        // infoLines += InfoLine("Settled tiles", board.SettledTiles.Count);
 
         string buffer = "";
 

@@ -13,6 +13,12 @@ static class StringExtensions
         }
     }
 
+    /// <summary>
+    /// Pads the string on the right to achieve the desired total visible length, accounting for non-visible characters such as ANSI escape codes.
+    /// </summary>
+    /// <param name="str"></param>
+    /// <param name="totalWidth"></param>
+    /// <returns></returns>
     public static string PadVisibleRight(this string str, int totalWidth)
     {
         int visibleLength = RenderUtils.GetVisibleLength(str);
@@ -27,6 +33,12 @@ static class StringExtensions
         }
     }
 
+    /// <summary>
+    /// Pads the string on the left to achieve the desired total visible length, accounting for non-visible characters such as ANSI escape codes.
+    /// </summary>
+    /// <param name="str"></param>
+    /// <param name="totalWidth"></param>
+    /// <returns></returns>
     public static string PadVisibleLeft(this string str, int totalWidth)
     {
         int visibleLength = RenderUtils.GetVisibleLength(str);
