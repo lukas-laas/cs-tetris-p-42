@@ -34,7 +34,7 @@ class GameState
         // State management variables
         bool shopping = false;
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        int secondsBetweenShopping = 0; // TODO - Test 20 seconds
+        int secondsBetweenShopping = 20; // TODO - Test 20 seconds
 
         // Players[0].Shop.ProductPool[6]().Purchase();
         // Players[0].Shop.ProductPool[6]().Purchase();
@@ -127,6 +127,7 @@ class GameState
     {
         if (player.Shop is null) throw new Exception("Player has no shop!");
         Shop shop = player.Shop;
+        Shelves shelves = shopStates.First(s => s.Shop == shop);
 
         if (!player.ValidKeys.Contains(key)) return;
         ControlScheme controls = player.IsAI ? [] : player.ControlScheme;
@@ -136,25 +137,24 @@ class GameState
             case Input.Up:
                 // Include extra "Ready" row below the last product
                 int totalOptionsUp = shop.Products.Count + 1; // products + ready row
-                shop.ShelfIndex = (shop.ShelfIndex - 1 + totalOptionsUp) % totalOptionsUp;
+                shelves.ShelfIndex = (shelves.ShelfIndex - 1 + totalOptionsUp) % totalOptionsUp;
                 break;
 
             case Input.Down:
                 // Include extra "Ready" row below the last product
                 int totalOptionsDown = shop.Products.Count + 1; // products + ready row
-                shop.ShelfIndex = (shop.ShelfIndex + 1) % totalOptionsDown;
+                shelves.ShelfIndex = (shelves.ShelfIndex + 1) % totalOptionsDown;
                 break;
 
             case Input.Right:
                 // Find selected shelf (only for real product indices)
-                if (shop.ShelfIndex >= shop.Products.Count) break; // ignore READY row for Right
+                if (shelves.ShelfIndex >= shop.Products.Count) break; // ignore READY row for Right
 
-                Shelf selectedShelf = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
+                Shelf selectedShelf = shelves.ShelvesList[shelves.ShelfIndex];
                 if (selectedShelf.Side == Side.Basket) break; // Already in basket
 
                 // Money check - include current cart total so you can't exceed balance
-                List<Shelf> playerShelves = shopStates.First(s => s.Shop == shop).ShelvesList;
-                int currentCartTotal = playerShelves
+                int currentCartTotal = shelves.ShelvesList
                     .Where(shelf => shelf.Side == Side.Basket)
                     .Sum(shelf => shelf.Product.price);
                 int prospectiveTotal = currentCartTotal + selectedShelf.Product.price;
@@ -167,9 +167,9 @@ class GameState
 
             case Input.Left:
                 // Find selected shelf (only for real product indices)
-                if (shop.ShelfIndex >= shop.Products.Count) break; // ignore READY row for Left
+                if (shelves.ShelfIndex >= shop.Products.Count) break; // ignore READY row for Left
 
-                Shelf selectedShelf2 = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
+                Shelf selectedShelf2 = shelves.ShelvesList[shelves.ShelfIndex];
                 if (selectedShelf2.Side == Side.Stand) break; // Already in stand
 
                 // Move to stand
@@ -181,7 +181,7 @@ class GameState
         }
 
         // Ready when merely selected
-        if (shop.ShelfIndex == shop.Products.Count)
+        if (shelves.ShelfIndex == shop.Products.Count)
         {
             ReadyPlayers.Add(player);
         }

@@ -26,6 +26,7 @@ class Shelf(Side side, IProduct product)
 }
 class Shelves(Shop shop, List<Shelf> shelves)
 {
+    public int ShelfIndex { get; set; } = 0;
     public Shop Shop { get; set; } = shop;
     public List<Shelf> ShelvesList { get; set; } = shelves;
 }

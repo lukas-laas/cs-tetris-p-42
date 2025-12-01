@@ -10,8 +10,6 @@ class Shop
     public Player Owner; // The player who buys stuff
     private List<Player> others = [];
 
-    public int ShelfIndex = 0;
-
     public List<Func<IProduct>> ProductPool = [];
 
     public Shop(Player owner, List<Player> others)

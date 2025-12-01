@@ -40,7 +40,8 @@ class ShopRenderer(GameState gameState)
         if (player.Shop is null) throw new Exception("Player has no shop!");
         Shop shop = player.Shop;
 
-        List<Shelf> shopItems = shopStates.First(s => s.Shop == shop).ShelvesList;
+        Shelves shelves = shopStates.First(s => s.Shop == shop);
+        List<Shelf> shopItems = shelves.ShelvesList;
 
         string buffer = "";
 
@@ -56,7 +57,7 @@ class ShopRenderer(GameState gameState)
         {
             buffer += "│ ";
             Shelf shelf = shopItems[i];
-            bool isSelected = shop.ShelfIndex == i;
+            bool isSelected = shelves.ShelfIndex == i;
 
             // Shop side
             if (shelf.Side == Side.Stand) buffer += MakeProductDisplay(shelf, isSelected, player, cartValue);
@@ -77,7 +78,7 @@ class ShopRenderer(GameState gameState)
         }
 
         // Ready row (one step below the last shop item)
-        bool isReadySelected = shop.ShelfIndex == shop.Products.Count;
+        bool isReadySelected = shelves.ShelfIndex == shop.Products.Count;
         string readyLabel = isReadySelected ? AnsiColor.Black(AnsiColor.BgWhite(" READY ")) : " READY ";
         string readyText = $"{readyLabel.PadVisibleLeft((itemWidth + "READY".Length) / 2).PadVisibleRight(itemWidth)}";
         buffer += $"│ {readyText} │ {"".PadVisibleRight(itemWidth)} │\n";

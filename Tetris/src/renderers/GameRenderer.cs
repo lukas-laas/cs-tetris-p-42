@@ -94,7 +94,7 @@ class GameRenderer
         // Info lines (prepended later)
         string infoLines = "";
         infoLines += InfoLine("Score", player.Score);
-        infoLines += InfoLine("Money", player.Money);
+        infoLines += InfoLine("Money", player.Money + "cu");
 
         string buffer = "";
 
