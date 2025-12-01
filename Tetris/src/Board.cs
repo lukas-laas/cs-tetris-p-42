@@ -221,7 +221,7 @@ class Board
     {
         for (int i = 0; i < Count; i++) AddToQueue();
     }
-    private void AddToQueue()
+    public void AddToQueue()
     {
         Queue.Enqueue(GetPolyomino());
     }

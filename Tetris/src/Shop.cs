@@ -26,6 +26,7 @@ class Shop
             () => new SlowDown(owner),
             () => new DotTime(owner),
             () => new MoneyMultiplier(owner),
+            () => new LongerPreview(owner),
         ];
 
         int productsLength = 3;
@@ -243,16 +244,31 @@ class MoreRows : IStaticProduct
 //     public void Purchase() { }
 // }
 
-// class LongerPreview : IStaticProduct
-// {
-//     // Buff
-//     // Shows more upcoming blocks in queue
-//     public string name { get; } = "LongerPreview";
-//     public string description { get; } = "Shows more upcoming pieces";
-//     public double rarity { get; } = 0.16;
-//     public int price { get; } = 70;
-//     public void Purchase() { }
-// }
+class LongerPreview : IStaticProduct
+{
+    // Buff
+    // Shows more upcoming blocks in queue
+    public string name { get; } = "LongerPreview";
+    public string description { get; } = "Shows more upcoming pieces";
+    public double rarity { get; } = 0.16;
+    public int price { get; } = 70;
+    public List<Player> Targets { get; set; }
+    public Player Purchaser { get; set; }
+    public LongerPreview(Player purchaser)
+    {
+        this.Purchaser = purchaser;
+        this.Targets = [purchaser];
+    }
+    public void Purchase()
+    {
+        Purchaser.AddToInventory(this);
+        Use();
+    }
+    public void Use()
+    {
+        Purchaser.Board.AddToQueue();
+    }
+}
 
 class MoreI : ITemporaryProduct
 {
