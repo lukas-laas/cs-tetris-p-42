@@ -112,11 +112,6 @@ class DotTime : IStaticProduct
         this.Purchaser = purchaser;
         this.Targets = [purchaser];
     }
-    public void Purchase()
-    {
-        Purchaser.AddToInventory(this);
-        Use();
-    }
 
     public void Use()
     {
@@ -138,11 +133,6 @@ class SlowDown : IStaticProduct
     {
         this.Targets = [purchaser];
         this.Purchaser = purchaser;
-    }
-    public void Purchase()
-    {
-        Purchaser.AddToInventory(this);
-        Use();
     }
 
     public void Use()
@@ -167,7 +157,6 @@ class SlowDown : IStaticProduct
 //         this.Purchaser = purchaser;
 //         this.Targets = [purchaser];
 //     }
-//     public void Purchase() { }
 
 //     public void Use()
 //     {
@@ -193,10 +182,6 @@ class MoneyMultiplier : IStaticProduct
         this.Purchaser = purchaser;
         this.Targets = [purchaser];
     }
-    public void Purchase()
-    {
-        Purchaser.AddToInventory(this);
-    }
 
     public void Use()
     {
@@ -220,11 +205,6 @@ class MoreRows : IStaticProduct
         this.Targets = [purchaser];
     }
 
-    public void Purchase()
-    {
-        Purchaser.AddToInventory(this);
-        Use();
-    }
     public void Use()
     {
         Purchaser.Board.VisibleHeight += 1;
@@ -292,7 +272,6 @@ class MoreI : ITemporaryProduct
         this.Purchaser = purchaser;
         this.lifetime = LifeTime;
         purchaser.AddToInventory(this);
-        this.Use();
     }
     public void Use()
     {
