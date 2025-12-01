@@ -6,7 +6,7 @@ class Player
     public bool IsAI { get; private set; } = false;
     private static readonly string[] aiNames = ["AI_Lukas", "AI_Vena", "AI_Morgan", "AI_Samuel", "AI_Alex"];
     public int Score = 0;
-    public int Money = 12399;
+    public int Money = 200;
     private IAbilityProduct? currentAbility;
     public List<IProduct> Inventory = [];
     public Board Board;

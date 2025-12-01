@@ -132,8 +132,14 @@ class GameState
                 Shelf selectedShelf = shopStates.First(s => s.Shop == shop).ShelvesList[shop.ShelfIndex];
                 if (selectedShelf.Side == Side.Basket) break; // Already in basket
 
-                // Money check
-                if (player.Money < selectedShelf.Product.price) break; // Not enough money
+                // Money check - include current cart total so you can't exceed balance
+                List<Shelf> playerShelves = shopStates.First(s => s.Shop == shop).ShelvesList;
+                int currentCartTotal = playerShelves
+                    .Where(shelf => shelf.Side == Side.Basket)
+                    .Sum(shelf => shelf.Product.price);
+                int prospectiveTotal = currentCartTotal + selectedShelf.Product.price;
+
+                if (prospectiveTotal > player.Money) break; // Not enough money including cart
 
                 // Move to basket
                 selectedShelf.Side = Side.Basket;

@@ -34,8 +34,9 @@ class ShopRenderer(GameState gameState)
         string buffer = "";
 
         string title = $"{player.Name.Possessive()} Shop";
-        string balance = $"Balance: {player.Money}cu";
-        string cartTotal = $"Cart total: {shopItems.Where(shelf => shelf.Side == Side.Basket).Sum(shelf => shelf.Product.price)}cu";
+    int cartValue = shopItems.Where(shelf => shelf.Side == Side.Basket).Sum(shelf => shelf.Product.price);
+    string balance = $"Balance: {player.Money}cu";
+    string cartTotal = $"Cart total: {cartValue}cu";
 
         buffer += $"{title.PadVisibleLeft((shelfWidth + title.VisibleLength()) / 2).PadVisibleRight(shelfWidth)}\n";
         buffer += $" {balance.PadVisibleRight(shelfWidth - cartTotal.VisibleLength() - 2)}{cartTotal}\n";
@@ -47,7 +48,7 @@ class ShopRenderer(GameState gameState)
             bool isSelected = shop.ShelfIndex == i;
 
             // Shop side
-            if (shelf.Side == Side.Stand) buffer += MakeProductDisplay(shelf, isSelected, player);
+            if (shelf.Side == Side.Stand) buffer += MakeProductDisplay(shelf, isSelected, player, cartValue);
             else buffer += "".PadVisibleRight(itemWidth);
 
             // Middle barrier
@@ -58,7 +59,7 @@ class ShopRenderer(GameState gameState)
             else buffer += " │ ";
 
             // Cart side
-            if (shelf.Side == Side.Basket) buffer += MakeProductDisplay(shelf, isSelected, player);
+            if (shelf.Side == Side.Basket) buffer += MakeProductDisplay(shelf, isSelected, player, cartValue);
             else buffer += "".PadVisibleRight(itemWidth);
 
             buffer += " │\n";
@@ -74,12 +75,14 @@ class ShopRenderer(GameState gameState)
         return buffer;
     }
 
-    private static string MakeProductDisplay(Shelf shelf, bool isSelected, Player player)
+    private static string MakeProductDisplay(Shelf shelf, bool isSelected, Player player, int cartValue)
     {
         string displayPrice = AnsiColor.Gray("N/A");
         if (shelf.Product.price != int.MaxValue)
         {
-            displayPrice = shelf.Product.price <= player.Money ?
+            int effectiveMoney = player.Money - cartValue;
+
+            displayPrice = shelf.Product.price <= effectiveMoney ?
                 AnsiColor.Green($"{shelf.Product.price}cu")
                 :
                 AnsiColor.Red($"{shelf.Product.price}cu");
