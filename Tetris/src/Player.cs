@@ -2,9 +2,10 @@
 class Player
 {
     private static readonly Random rng = new();
+    private static readonly string[] aiNames = ["AI_Lukas", "AI_Vena", "AI_Mina", "AI_Sammy", "AI_Kassandra", "AI_Klara", "AI_Moa", "AI_Alice"];
     public string Name;
     public bool IsAI { get; protected set; } = false;
-    private static readonly string[] aiNames = ["AI_Lukas", "AI_Vena", "AI_Mina", "AI_Sammy", "AI_Kassandra", "AI_Klara", "AI_Moa", "AI_Alice"];
+    public readonly ControlScheme ControlScheme;
     public int Score = 0;
     public int Money = 200;
     public IAbilityProduct? CurrentAbility;
@@ -22,17 +23,16 @@ class Player
     //     sig själva på Boarden.
     public Board Board;
     private Shop? shop;
+    private readonly long inventoryTickRate = GameState.GameplayDuration;
+    private long lastInventoryTick = 0;
+    private long lastAbilityTick = 0;
+
     public Shop Shop
     {
         get => shop ?? throw new InvalidOperationException("Player shop has not been assigned.");
         set => shop = value ?? throw new ArgumentNullException(nameof(value));
     }
-    private long lastInventoryTick = 0;
-    private long lastAbilityTick = 0;
 
-    private long inventoryTickRate = GameState.GameplayDuration;
-
-    public readonly ControlScheme ControlScheme;
     // KRAV 3:
     // 1: Computed properties
     // 2: Vi använder konceptet vid ValidKeys för att dynamiskt få en lista av 
@@ -46,8 +46,8 @@ class Player
 
     public Player(string name, ControlScheme controlScheme)
     {
-        this.ControlScheme = controlScheme;
         this.Name = name;
+        this.ControlScheme = controlScheme;
         this.Board = new();
     }
     // KRAV 2:
@@ -64,8 +64,8 @@ class Player
         if (isAI == false) throw new ArgumentException("Use other constructor for non-AI players");
         this.IsAI = true;
 
-        this.ControlScheme = []; // Empty control scheme for AI
         this.Name = aiNames[rng.Next(aiNames.Length)];
+        this.ControlScheme = []; // Empty control scheme for AI
         this.Board = new();
     }
 
@@ -93,15 +93,6 @@ class Player
             // TODO: not like this...
             Console.WriteLine($"{Name} has lost the game!");
             Environment.Exit(0); // TODO: implement proper game over handling
-        }
-    }
-
-    // TODO: implement
-    public void UseAbility()
-    {
-        if (CurrentAbility?.Cooldown == 0)
-        {
-            CurrentAbility.Use();
         }
     }
 
