@@ -14,7 +14,7 @@ class Polyomino
 {
     public int X { get; set; }
     public int Y { get; set; }
-    public string Color { get; private set; }
+    public string Color { get; set; }
     public int[,] Shape { get; private set; }
     public int SpawnXOffset { get; set; } = 0;
     public int SpawnYOffset { get; set; } = 0;

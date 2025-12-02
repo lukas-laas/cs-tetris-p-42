@@ -31,7 +31,10 @@ class Shop
             () => new DotTime(owner),
             () => new MoneyMultiplier(owner),
             () => new LongerPreview(owner),
-            () => new SlowMotion(owner)
+            () => new SlowMotion(owner),
+            () => new SkipOwnCurrent(owner),
+            () => new SkipOpponentsCurrent(owner, others),
+            () => new MonochromeBoard(owner, others),
         ];
 
         this.Products = [];
@@ -359,7 +362,6 @@ class SlowMotion : IAbilityProduct
 
     public void Use()
     {
-        Log.Add(Purchaser.Board.DT.ToString());
         if ((CooldownTimer <= 0) && Disabled)
         {
             Disabled = false;
@@ -376,20 +378,46 @@ class SlowMotion : IAbilityProduct
     }
 }
 
-// class Skip : IAbilityProduct
-// {
-//     // Buff
-//     // Discard tetromino
-//     public string name { get; } = "Skip";
-//     public string description { get; } = "Discards currently falling polyomino.";
-//     public double rarity { get; } = 0.11;
-//     public int price { get; } = 130;
-//     public int Cooldown { get; } = 6;
-//     public void Purchase() { }
-// }
+class SkipOwnCurrent : IAbilityProduct
+{
+    // Buff
+    // Discard current falling polyomino
+    public string name { get; } = "Skip";
+    public string description { get; } = "Discards currently falling polyomino.";
+    public double rarity { get; } = 0.11;
+    public int price { get; } = 130;
+    public int Cooldown { get; set; } = 7;
+    public int CooldownTimer { get; set; } = 0;
+    public int Duration { get; set; } = 0;
+    public int DurationTimer { get; set; } = 0;
+    public bool Disabled { get; set; } = true;
+    public List<Player> Targets { get; set; }
+    public Player Purchaser { get; set; }
+
+    public SkipOwnCurrent(Player purchaser)
+    {
+        this.Targets = [purchaser];
+        this.Purchaser = purchaser;
+    }
+
+    public void Use()
+    {
+        if ((CooldownTimer <= 0) && Disabled)
+        {
+            Disabled = false;
+            Purchaser.Board.FallingPolyominoes.RemoveAt(0);
+            CooldownTimer = Cooldown;
+        }
+    }
+
+    public void Disable()
+    {
+        Disabled = true;
+    }
+}
 
 
-// // ==================== DEBUFFS =================
+// ================== DEBUFFS ==================
 class SpeedUp : IStaticProduct
 {
     // Debuff
@@ -412,17 +440,42 @@ class SpeedUp : IStaticProduct
     }
 }
 
-// class MonochromeBoard : IStaticProduct
-// {
-//     // Debuff
-//     // Make opponents board black & white 
-//     // (might not pair well if they have with candy crush)
-//     public string name { get; } = "MonochromeBoard";
-//     public string description { get; } = "Turn opponents boards monochrome";
-//     public double rarity { get; } = 0.13;
-//     public int price { get; } = 95;
-//     public void Purchase() { }
-// }
+class MonochromeBoard : IStaticProduct
+{
+    // Debuff
+    // Make opponents board black & white 
+    // (might not pair well if they have with candy crush)
+    public string name { get; } = "MonochromeBoard";
+    public string description { get; } = "Turn opponents polyominoes monochrome. It will affect both settled and falling pieces as well as the visible queue.";
+    public double rarity { get; } = 0.13;
+    public int price { get; } = 95;
+    public List<Player> Targets { get; set; }
+    public Player Purchaser { get; set; }
+    public MonochromeBoard(Player purchaser, List<Player> targets)
+    {
+        this.Purchaser = purchaser;
+        this.Targets = targets;
+    }
+
+    public void Use()
+    {
+        Targets.ForEach(target =>
+        {
+            target.Board.SettledTiles.ForEach(tile => tile.Color = AnsiColor.GrayCode);
+            target.Board.FallingPolyominoes.ForEach(polyomino => polyomino.Color = AnsiColor.GrayCode);
+            int queueLength = target.Board.Queue.Count;
+            List<Polyomino> tempQueue = [];
+            for (int i = 0; i < queueLength; i++)
+            {
+                Polyomino poly = target.Board.Queue.Dequeue();
+                poly.Color = AnsiColor.GrayCode;
+                tempQueue.Add(poly);
+            }
+            tempQueue.Reverse();
+            tempQueue.ForEach(poly => target.Board.Queue.Enqueue(poly));
+        });
+    }
+}
 
 class Tax : ITemporaryProduct
 {
@@ -478,17 +531,42 @@ class Tax : ITemporaryProduct
 //     public void Purchase() { }
 // }
 
-// class SkipOpponentsPiece : IAbilityProduct
-// {
-//     // Debuff
-//     // Skip the next piece for your opponent
-//     public string name { get; } = "SkipOpponentsPiece";
-//     public string description { get; } = "Skips opponents next piece";
-//     public double rarity { get; } = 0.04;
-//     public int price { get; } = 170;
-//     public int Cooldown { get; } = 8;
-//     public void Purchase() { }
-// }
+class SkipOpponentsCurrent : IAbilityProduct
+{
+    // Debuff
+    // Skip the next piece for your opponent
+    public string name { get; } = "SkipOpponentsPiece";
+    public string description { get; } = "Skips opponents next piece";
+    public double rarity { get; } = 0.04;
+    public int price { get; } = 170;
+    public int Cooldown { get; set; } = 8;
+    public List<Player> Targets { get; set; }
+    public Player Purchaser { get; set; }
+    public SkipOpponentsCurrent(Player purchaser, List<Player> targets)
+    {
+        this.Purchaser = purchaser;
+        this.Targets = targets;
+    }
+    public int CooldownTimer { get; set; } = 0;
+    public int Duration { get; set; } = 0;
+    public int DurationTimer { get; set; } = 0;
+    public bool Disabled { get; set; } = true;
+
+    public void Use()
+    {
+        if ((CooldownTimer <= 0) && Disabled)
+        {
+            Disabled = false;
+            Targets.ForEach(target => target.Board.FallingPolyominoes.RemoveAt(0));
+            CooldownTimer = Cooldown;
+        }
+    }
+
+    public void Disable()
+    {
+        Disabled = true;
+    }
+}
 
 // class DisableQuickDrop : IAbilityProduct
 // {
