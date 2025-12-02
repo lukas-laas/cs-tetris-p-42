@@ -5,8 +5,8 @@
 //     överskrivas eller expanderas så denna implementation är lämplig.
 // 3: Alla arvtagare kan behandlas som Polyomino-objekt i resten av koden som 
 //     gör det väldigt flexibelt. Det kan argumenteras att alla polyominoes 
-//     kunde vara instanser av Polyomino men olika data men i längden skulle 
-//     det endast leda till undantag i basklassen exempelvis "bool canRotate" 
+//     kunde vara instanser av Polyomino med olika data men i längden skulle 
+//     det endast leda till undantag i basklassen, exempelvis "bool canRotate" 
 //     istället för subtypspolymorfism som är en renare lösning i längden även 
 //     om det inte används fullt ut just nu. Nu används det främst för att 
 //     överskriva Rotate()-metoden för vissa polyominoes.
