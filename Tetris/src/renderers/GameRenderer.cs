@@ -93,8 +93,9 @@ class GameRenderer
 
         // Info lines (prepended later)
         string infoLines = "";
-        infoLines += InfoLine("Score", player.Score);
+        infoLines += InfoLine("Player", player.Name);
         infoLines += InfoLine("Money", player.Money + "cu");
+        infoLines += InfoLine("Score", player.Score);
 
         string buffer = "";
 
@@ -211,7 +212,7 @@ class GameRenderer
         return buffer;
     }
     private static string InfoLine(string label, string value)
-        => AnsiColor.Gray($" {label}:{value}\n");
+        => AnsiColor.Gray($" {label}: {value}\n");
 
     private static string InfoLine(string label, int value)
         => InfoLine(label, value.ToString());
