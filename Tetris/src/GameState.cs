@@ -17,6 +17,13 @@ class GameState
         // new AIPlayer(), // AI Player
     ];
 
+    // KRAV 1:
+    // 1: Inkapsling / Informationsgömning
+    // 2: Privata fältet används för för att gömma renderarna från omvärlden.
+    // 3: Renderarna är enbart side-effekter för GameState och bör inte röras 
+    //     någon annanstans än här. I en perfekt värld hade de inte ens 
+    //     definierats som fält, snarare bara skapas lokalt vid varje rendering 
+    //     men då görs en mass onödig instansiering som kan bekosta prestanda.
     private readonly GameRenderer gameRenderer;
     private readonly ShopRenderer shopRenderer;
 
@@ -36,6 +43,7 @@ class GameState
         bool shopping = false;
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
+        // TODO remove
         // Players[0].Shop.ProductPool[6]().Purchase();
         // Players[0].Shop.ProductPool[6]().Purchase();
         // Players[0].Shop.ProductPool[6]().Purchase();

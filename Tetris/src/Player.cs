@@ -133,7 +133,7 @@ class AIPlayer : Player
 {
     private readonly Random aiRng = new();
 
-    public AIPlayer() : base(true) { }
+    public AIPlayer() : base(isAI: true) { }
 
     protected override Input? GetInput(string key)
     {
