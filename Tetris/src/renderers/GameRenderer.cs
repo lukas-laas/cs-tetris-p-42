@@ -56,7 +56,9 @@ class GameRenderer
 
         // Shop timer bar
         buffer += "\n";
-        buffer += MakeShopTimerBar(gameState.ShopTimerMs, GameState.GameplayDuration * 1_000);
+        int totalMs = GameState.GameplayDuration * 1_000;
+        int remainingMs = Math.Max(0, totalMs - gameState.ElapsedMs);
+        buffer += MakeShopTimerBar(remainingMs, totalMs);
 
         RenderUtils.Render(buffer);
     }

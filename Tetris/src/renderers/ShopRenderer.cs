@@ -21,6 +21,7 @@ class ShopRenderer(GameState gameState)
                 8, false)
         );
         buffer += "\n";
+        buffer += "\n";
         buffer += RenderUtils.Center2DString(MakeReadyPlayerDisplay());
 
         RenderUtils.Render(buffer);
