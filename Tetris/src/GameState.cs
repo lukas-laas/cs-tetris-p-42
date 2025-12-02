@@ -14,7 +14,7 @@ class GameState
     private readonly ShopRenderer shopRenderer;
 
     public readonly HashSet<Player> ReadyPlayers = [];
-    public static readonly int GameplayDuration = 10; // TODO - Test 20 seconds
+    public static readonly int GameplayDuration = 30;
     public int ElapsedMs { get; private set; } = 0; // Elapsed milliseconds since the current gameplay phase started.
 
     public GameState()
