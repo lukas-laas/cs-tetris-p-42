@@ -34,13 +34,6 @@ class GameRenderer
     {
         this.players = gameState.Players;
         this.gameState = gameState;
-
-        if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
-        if (Console.WindowHeight == 0) throw new Exception("Console window height is 0. Cannot render.");
-
-        Console.CursorLeft = 0;
-        Console.CursorTop = 0;
-        Console.CursorVisible = false; // Will not restore on exit, but oh well
     }
 
     public void Render()
@@ -63,7 +56,7 @@ class GameRenderer
         RenderUtils.Render(buffer);
     }
 
-    private static string MakeTitle()
+    public static string MakeTitle()
     {
         string title = $"""
 

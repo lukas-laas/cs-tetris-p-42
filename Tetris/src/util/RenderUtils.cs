@@ -61,7 +61,7 @@ static class RenderUtils
 
         int paddingLeft = (consoleWidth - visibleWidth) / 2;
         string padding = new(' ', paddingLeft);
-        return padding + input2d.Replace("\n", "\n" + padding).TrimEnd();
+        return padding + input2d.Replace("\n", "\n" + padding).TrimEnd() + "\n";
     }
 
     public static int GetVisibleLength(string text)

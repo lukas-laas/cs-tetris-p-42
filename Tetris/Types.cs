@@ -31,3 +31,8 @@ class Shelves(Shop shop, List<Shelf> shelves)
     public Shop Shop { get; set; } = shop;
     public List<Shelf> ShelvesList { get; set; } = shelves;
 }
+enum GameModeSelect
+{
+    Singleplayer,
+    Multiplayer,
+}
