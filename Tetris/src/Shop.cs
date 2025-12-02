@@ -1,6 +1,6 @@
 class Shop
 {
-    public List<IProduct> Products = new();
+    public List<IProduct> Products = [];
 
     public Player Owner; // The player who buys stuff
     private List<Player> others = [];
@@ -245,7 +245,7 @@ class MoreI : ITemporaryProduct
 {
     // Buff
     // Gets more I pieces but may result in esoteric I's
-    public string name { get; } = "More I-Tetrominos";
+    public string name { get; } = "More I-Tetrominoes";
     public string description { get; } = "Increases frequency of I pieces, may result in esoteric pieces";
     public double rarity { get; } = 0.08;
     public int price { get; } = 120;
@@ -273,7 +273,7 @@ class MoreI : ITemporaryProduct
     }
     public void Disable()
     {
-        polyominoes.ForEach(polynomino => Purchaser.Board.PolyominoPool.Remove(polynomino));
+        polyominoes.ForEach(polyomino => Purchaser.Board.PolyominoPool.Remove(polyomino));
     }
 }
 
@@ -340,7 +340,7 @@ class SpeedUp : IStaticProduct
     }
     public List<Player> Targets { get; set; }
     public string name { get; } = "Speed Up";
-    public string description { get; } = "Increases opponents droprate";
+    public string description { get; } = "Increases opponents drop rate";
     public double rarity { get; } = 0.14;
     public int price { get; } = 90;
     public Player Purchaser { get; set; }
@@ -432,7 +432,7 @@ class Tax : ITemporaryProduct
 // class DisableQuickDrop : IAbilityProduct
 // {
 //     // Debuff
-//     // Make your opponent wait ages for their tetrominos
+//     // Make your opponent wait ages for their tetrominoes
 //     // to hit the ground
 //     public string name { get; } = "DisableQuickDrop";
 //     public string description { get; } = "Disables opponents quick drop";
