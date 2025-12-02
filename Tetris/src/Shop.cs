@@ -69,9 +69,10 @@ interface ITemporaryProduct : IProduct
 {
     // Active for set amount of time / rounds
     int lifetime { get; set; }
-    public void UpdateLifetime()
+    public void Tick()
     {
         lifetime--;
+        if (lifetime <= 0) Disable();
     }
     public void Disable();
 }
@@ -123,12 +124,13 @@ class SlowDown : IStaticProduct
 {
     // Buff
     // Lowers speed of own board
-    public string name { get; } = "LowerDT";
+    public string name { get; } = "Slow down";
     public string description { get; } = "Lowers own drop timer";
     public double rarity { get; } = 0.15;
     public int price { get; } = 40;
     public List<Player> Targets { get; set; }
     public Player Purchaser { get; set; }
+    private double multiplier = 1.1;
     public SlowDown(Player purchaser)
     {
         this.Targets = [purchaser];
@@ -137,7 +139,7 @@ class SlowDown : IStaticProduct
 
     public void Use()
     {
-        Purchaser.Board.DT = (int)Math.Floor(Purchaser.Board.DT * 1.1);
+        Purchaser.Board.DT = (int)Math.Floor(Purchaser.Board.DT * multiplier);
     }
 }
 
@@ -170,7 +172,7 @@ class MoneyMultiplier : IStaticProduct
     // Multiplies money
     // Buff
     // Multiplies score
-    public string name { get; } = "ScoreMultiplier";
+    public string name { get; } = "Score Multiplier";
     public string description { get; } = "Multiplies score";
     public double rarity { get; } = 0.05;
     public int price { get; } = 200;
@@ -193,7 +195,7 @@ class MoreRows : IStaticProduct
 {
     // Buff
     // Adds more rows to board
-    public string name { get; } = "MoreRows";
+    public string name { get; } = "More Rows";
     public string description { get; } = "Adds extra rows to board";
     public double rarity { get; } = 0.12;
     public int price { get; } = 80;
@@ -226,7 +228,7 @@ class LongerPreview : IStaticProduct
 {
     // Buff
     // Shows more upcoming blocks in queue
-    public string name { get; } = "LongerPreview";
+    public string name { get; } = "Longer Preview";
     public string description { get; } = "Shows more upcoming pieces";
     public double rarity { get; } = 0.16;
     public int price { get; } = 70;
@@ -237,11 +239,7 @@ class LongerPreview : IStaticProduct
         this.Purchaser = purchaser;
         this.Targets = [purchaser];
     }
-    public void Purchase()
-    {
-        Purchaser.AddToInventory(this);
-        Use();
-    }
+
     public void Use()
     {
         Purchaser.Board.AddToQueue();
@@ -252,36 +250,36 @@ class MoreI : ITemporaryProduct
 {
     // Buff
     // Gets more I pieces but may result in esoteric I's
-    public string name { get; } = "MoreTetrominoI";
-    public string description { get; } = "Increases frequency of I pieces";
+    public string name { get; } = "More I-Tetrominos";
+    public string description { get; } = "Increases frequency of I pieces, may result in esoteric pieces";
     public double rarity { get; } = 0.08;
     public int price { get; } = 120;
     public int LifeTime { get; } = 5;
 
     public Player Purchaser { get; set; }
+    private List<Func<Polyomino>> polyominoes = [
+        () => new TetrominoI(),
+        () => new OctominoThiccI(),
+        () => new OctominoThiccI(),
+        () => new TrominoLowerI(),
+    ];
 
-    public int lifetime { get; set; }
+    public int lifetime { get; set; } = 5;
     public List<Player> Targets { get; set; }
     public MoreI(Player purchaser, List<Player> targets)
     {
         this.Purchaser = purchaser;
         this.Targets = targets;
     }
-    public void Purchase(Player purchaser)
-    {
-        this.Purchaser = purchaser;
-        this.lifetime = LifeTime;
-        purchaser.AddToInventory(this);
-    }
     public void Use()
     {
         if (Purchaser == null) return;
-        Purchaser.Board.PolyominoPool.Add(() => new TetrominoI());
-        Purchaser.Board.PolyominoPool.Add(() => new OctominoThiccI());
-        Purchaser.Board.PolyominoPool.Add(() => new OctominoIII());
-        Purchaser.Board.PolyominoPool.Add(() => new TrominoLowerI());
+        Purchaser.Board.PolyominoPool.AddRange(polyominoes);
     }
-    public void Disable() { }
+    public void Disable()
+    {
+        polyominoes.ForEach(polynomino => Purchaser.Board.PolyominoPool.Remove(polynomino));
+    }
 }
 
 // class CandyCrush : ITemporaryProduct
@@ -346,16 +344,12 @@ class SpeedUp : IStaticProduct
         this.Targets = targets;
     }
     public List<Player> Targets { get; set; }
-    public string name { get; } = "IncreaseDT";
-    public string description { get; } = "Increases opponent DT";
+    public string name { get; } = "Speed Up";
+    public string description { get; } = "Increases opponents droprate";
     public double rarity { get; } = 0.14;
     public int price { get; } = 90;
     public Player Purchaser { get; set; }
-    public void Purchase()
-    {
-        Purchaser.AddToInventory(this);
-        Use();
-    }
+
     public void Use()
     {
         Targets.ForEach(target => target.Board.DT = (int)Math.Floor(target.Board.DT * 0.90));
@@ -384,40 +378,31 @@ class Tax : ITemporaryProduct
         this.Purchaser = purchaser;
         this.Targets = targets;
     }
-    public string name { get; } = "TaxTime";
+    public string name { get; } = "Tax Time!";
     public Player Purchaser { get; set; }
     public List<Player> Targets { get; set; }
-    public int lifetime { get; set; }
+    public int lifetime { get; set; } = 5;
 
-    public string description { get; } = "Taxes opponent earnings";
+    public string description { get; } = "Taxes opponents earnings";
     public double rarity { get; } = 0.06;
     public int price { get; } = 140;
     public int LifeTime { get; } = 4;
+    private double taxRate = 0.9;
 
-    // Called when purchased
-    public void Purchase(Player purchaser)
-    {
-        purchaser.AddToInventory(this);
-        this.Purchaser = purchaser;
-        this.lifetime = LifeTime;
-    }
-
-    // Called every tick (or when effect should apply)
     public void Use()
     {
-        if (Purchaser == null) return;
         int taxed = 0;
         foreach (var target in Targets)
         {
             int before = target.Money;
-            target.Money = (int)Math.Floor(target.Money * 0.90); // 10% tax
-            taxed += (before - target.Money);
+            target.Money = (int)Math.Floor(target.Money * taxRate);
+            taxed += before - target.Money;
         }
         Purchaser.Money += taxed;
     }
     public void Disable()
     {
-
+        Purchaser.Inventory.Remove(this);
     }
 }
 

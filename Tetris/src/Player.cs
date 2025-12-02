@@ -11,6 +11,8 @@ class Player
     public List<IProduct> Inventory = [];
     public Board Board;
     public Shop? Shop { get; set; }
+    private long lastTick = 0;
+    private long inventoryTickRate = GameState.GameplayDuration;
 
     public readonly ControlScheme ControlScheme;
     // Krav 3
@@ -43,8 +45,14 @@ class Player
         Input? input = GetInput(key);
         if (input is Input moveInput) Board.Move(moveInput);
 
+        // Tick the temporary products every round
+        long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        if (currentTime - lastTick > inventoryTickRate)
+        {
+            TickInventory();
+        }
+        lastTick = currentTime;
         Board.Tick();
-        TickInventory();
 
         // Every tick it will empty the boards local score and money buffers into the player's total
         this.Score += Board.ScoreBuffer;
@@ -86,11 +94,7 @@ class Player
         {
             if (product is ITemporaryProduct temp)
             {
-                temp.UpdateLifetime();
-                if (temp.lifetime == 0)
-                {
-                    temp.Disable();
-                }
+                temp.Tick();
             }
         }
         if ((currentAbility != null) && (currentAbility.Cooldown > 0)) currentAbility.Cooldown--;
