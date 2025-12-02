@@ -15,13 +15,15 @@ class GameState
             { "A", Input.Left },
             { "D", Input.Right },
             { "W", Input.Up },
-            { "S", Input.Down }
+            { "S", Input.Down },
+            { "Q", Input.Ability }
         }),
         new HumanPlayer("Vena", new () {
             { "LeftArrow",  Input.Left },
             { "RightArrow", Input.Right },
             { "UpArrow",    Input.Up },
-            { "DownArrow",  Input.Down }
+            { "DownArrow",  Input.Down },
+            { "Subtract",   Input.Ability }
         }),
         // new AIPlayer(), // AI Player
     ];
@@ -68,6 +70,7 @@ class GameState
 
             if (shopping)
             {
+                Players.ForEach(player => player.Shop.ReStock());
                 ShoppingMode(); // Holds until user exits shop
                 shopping = false;
                 lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();

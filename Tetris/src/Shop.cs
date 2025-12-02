@@ -15,6 +15,8 @@ class Shop
     private List<Player> others = [];
 
     public List<Func<IProduct>> ProductPool = [];
+    private int productsLength = 4;
+    private Random rng = new();
 
     public Shop(Player owner, List<Player> others)
     {
@@ -29,17 +31,21 @@ class Shop
             () => new DotTime(owner),
             () => new MoneyMultiplier(owner),
             () => new LongerPreview(owner),
+            () => new SlowMotion(owner)
         ];
 
-        int productsLength = 4;
-        Random rng = new();
         this.Products = [];
 
+        ReStock();
+    }
+
+    public void ReStock()
+    {
+        Products = [];
         for (int i = 0; i < productsLength; i++)
         {
             Products.Add(ProductPool[rng.Next(ProductPool.Count)].Invoke());
         }
-
     }
 }
 

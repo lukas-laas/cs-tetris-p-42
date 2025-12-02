@@ -5,7 +5,8 @@ enum Input
     Left,
     Right,
     Up,
-    Down, // Hard drop not implemented, maybe l8r B)
+    Down,
+    Ability // TODO: Hard drop as standard
 };
 enum Orientation
 {

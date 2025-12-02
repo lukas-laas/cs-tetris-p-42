@@ -65,7 +65,11 @@ class Player
     public virtual void Tick(string key)
     {
         Input? input = GetInput(key);
-        if (input is Input moveInput) Board.Move(moveInput);
+        if (input is Input.Ability && CurrentAbility != null)
+        {
+            CurrentAbility.Use();
+        }
+        else if (input is Input moveInput) Board.Move(moveInput);
 
         Board.Tick();
         TickInventory();

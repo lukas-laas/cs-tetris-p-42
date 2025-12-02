@@ -206,6 +206,8 @@ class Board
                 case Input.Up:
                     polyomino.Rotate(this);
                     break;
+                case Input.Ability:
+                    break; // NoOp
                 default:
                     throw new Exception("Unrecognized input");
             }
