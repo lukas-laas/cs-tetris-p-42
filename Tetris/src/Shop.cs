@@ -72,11 +72,11 @@ interface IStaticProduct : IProduct
 interface ITemporaryProduct : IProduct
 {
     // Active for set amount of time / rounds
-    int lifetime { get; set; }
+    int Lifetime { get; set; }
     public void Tick()
     {
-        lifetime--;
-        if (lifetime <= 0) Disable();
+        Lifetime--;
+        if (Lifetime <= 0) Disable();
     }
     public void Disable();
 }
@@ -85,6 +85,22 @@ interface IAbilityProduct : IProduct
 {
     // Can be activated any time but has Cooldown
     public int Cooldown { get; set; }
+    public int CooldownTimer { get; set; }
+    public int Duration { get; set; }
+    public int DurationTimer { get; set; }
+    protected bool Disabled { get; set; }
+    public void Disable();
+    public void Tick()
+    {
+        CooldownTimer--;
+        DurationTimer--;
+        if (DurationTimer <= 0)
+        {
+            DurationTimer = 0;
+            if (!Disabled) Disable();
+        }
+        if (CooldownTimer <= 0) { CooldownTimer = 0; }
+    }
 }
 
 // class Communism : ITemporaryProduct
@@ -268,7 +284,7 @@ class MoreI : ITemporaryProduct
         () => new TrominoLowerI(),
     ];
 
-    public int lifetime { get; set; } = 5;
+    public int Lifetime { get; set; } = 5;
     public List<Player> Targets { get; set; }
     public MoreI(Player purchaser, List<Player> targets)
     {
@@ -312,17 +328,47 @@ class MoreI : ITemporaryProduct
 //     public void Purchase() { }
 // }
 
-// class SlowMotion : IAbilityProduct
-// {
-//     // Buff
-//     // Halves drop speed of board
-//     public string name { get; } = "SlowMotion";
-//     public string description { get; } = "Halves drop speed";
-//     public double rarity { get; } = 0.09;
-//     public int price { get; } = 150;
-//     public int Cooldown { get; } = 10;
-//     public void Purchase() { }
-// }
+class SlowMotion : IAbilityProduct
+{
+    // Buff
+    // Halves drop speed of board
+    public List<Player> Targets { get; set; }
+    public Player Purchaser { get; set; }
+    public string name { get; } = "Slow Motion";
+    public string description { get; } = "Halves drop speed";
+    public double rarity { get; } = 0.09;
+    public int price { get; } = 150;
+    public int Cooldown { get; set; } = 10;
+    public int CooldownTimer { get; set; } = 0;
+    public int Duration { get; set; } = 5;
+    public int DurationTimer { get; set; } = 0;
+    private double multiplier = 2;
+    public bool Disabled { get; set; } = true;
+
+    public SlowMotion(Player purchaser)
+    {
+        this.Targets = [purchaser];
+        this.Purchaser = purchaser;
+    }
+
+    public void Use()
+    {
+        Log.Add(Purchaser.Board.DT.ToString());
+        if ((CooldownTimer <= 0) && Disabled)
+        {
+            Disabled = false;
+            Purchaser.Board.DT = (int)Math.Floor(Purchaser.Board.DT * multiplier);
+            DurationTimer = Duration;
+        }
+    }
+
+    public void Disable()
+    {
+        CooldownTimer = 10;
+        Disabled = true;
+        Purchaser.Board.DT = (int)Math.Floor(Purchaser.Board.DT / multiplier);
+    }
+}
 
 // class Skip : IAbilityProduct
 // {
@@ -385,7 +431,7 @@ class Tax : ITemporaryProduct
     public string name { get; } = "Tax Time!";
     public Player Purchaser { get; set; }
     public List<Player> Targets { get; set; }
-    public int lifetime { get; set; } = 5;
+    public int Lifetime { get; set; } = 5;
 
     public string description { get; } = "You will take a part of your opponents money.";
     public double rarity { get; } = 0.06;

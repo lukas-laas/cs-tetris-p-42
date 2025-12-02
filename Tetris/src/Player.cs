@@ -7,7 +7,7 @@ class Player
     private static readonly string[] aiNames = ["AI_Lukas", "AI_Vena", "AI_Morgan", "AI_Samuel", "AI_Alex"];
     public int Score = 0;
     public int Money = 200;
-    private IAbilityProduct? currentAbility;
+    public IAbilityProduct? CurrentAbility;
     public List<IProduct> Inventory = [];
     // KRAV 4:
     // 1: Objektkomposition
@@ -23,6 +23,9 @@ class Player
     public Board Board;
     public Shop? Shop { get; set; }// TODO make non-nullable
     private long lastTick = 0;
+    private long lastInventoryTick = 0;
+    private long lastAbilityTick = 0;
+
     private long inventoryTickRate = GameState.GameplayDuration;
 
     public readonly ControlScheme ControlScheme;
@@ -64,14 +67,8 @@ class Player
         Input? input = GetInput(key);
         if (input is Input moveInput) Board.Move(moveInput);
 
-        // Tick the temporary products every round
-        long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        if (currentTime - lastTick > inventoryTickRate)
-        {
-            TickInventory();
-        }
-        lastTick = currentTime;
         Board.Tick();
+        TickInventory();
 
         // Every tick it will empty the boards local score and 
         //  money buffers into the player's total
@@ -89,9 +86,9 @@ class Player
     // TODO: implement
     public void UseAbility()
     {
-        if (currentAbility?.Cooldown == 0)
+        if (CurrentAbility?.Cooldown == 0)
         {
-            currentAbility.Use();
+            CurrentAbility.Use();
         }
     }
 
@@ -99,7 +96,7 @@ class Player
     {
         if (product is IAbilityProduct temp)
         {
-            currentAbility = temp;
+            CurrentAbility = temp;
         }
         else
         {
@@ -110,14 +107,26 @@ class Player
 
     public void TickInventory()
     {
-        foreach (IProduct product in Inventory)
-        {
-            if (product is ITemporaryProduct temp)
+        int abilityTickRate = 1000;
+        long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        if (currentTime - lastInventoryTick > inventoryTickRate)
+
+            foreach (IProduct product in Inventory)
             {
-                temp.Tick();
+                if (product is ITemporaryProduct temp)
+                {
+                    temp.Tick();
+                }
             }
+        lastInventoryTick = currentTime;
+
+        if ((CurrentAbility != null)
+            && (currentTime - lastAbilityTick >= abilityTickRate))
+        {
+            CurrentAbility.Tick();
+            lastAbilityTick = currentTime;
         }
-        if ((currentAbility != null) && (currentAbility.Cooldown > 0)) currentAbility.Cooldown--;
+
     }
 }
 
