@@ -535,8 +535,8 @@ class SkipOpponentsCurrent : IAbilityProduct
 {
     // Debuff
     // Skip the next piece for your opponent
-    public string Name { get; } = "SkipOpponentsPiece";
-    public string description { get; } = "Skips opponents next piece";
+    public string Name { get; } = "Skip Opponents Piece";
+    public string description { get; } = "Discard the currently falling piece of all opponents.";
     public double rarity { get; } = 0.04;
     public int price { get; } = 170;
     public int Cooldown { get; set; } = 8;
