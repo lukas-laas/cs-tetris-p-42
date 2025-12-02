@@ -27,7 +27,6 @@ class Player
         get => shop ?? throw new InvalidOperationException("Player shop has not been assigned.");
         set => shop = value ?? throw new ArgumentNullException(nameof(value));
     }
-    private long lastTick = 0;
     private long lastInventoryTick = 0;
     private long lastAbilityTick = 0;
 
@@ -119,7 +118,6 @@ class Player
         int abilityTickRate = 1000;
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         if (currentTime - lastInventoryTick > inventoryTickRate)
-
             foreach (IProduct product in Inventory)
             {
                 if (product is ITemporaryProduct temp)
