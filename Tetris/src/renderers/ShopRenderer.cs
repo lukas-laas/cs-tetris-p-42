@@ -15,7 +15,11 @@ class ShopRenderer(GameState gameState)
         buffer += MakeTitle();
         buffer += "\n\n";
 
-        buffer += RenderUtils.Center2DString(RenderUtils.Merge2DStrings([.. players.Select(p => MakeShoppingStand(p, shopStates))], 8));
+        buffer += RenderUtils.Center2DString(
+            RenderUtils.Merge2DStrings(
+                [.. players.Select(p => MakeShoppingStand(p, shopStates))],
+                8, false)
+        );
         buffer += "\n";
         buffer += RenderUtils.Center2DString(MakeReadyPlayerDisplay());
 
@@ -53,6 +57,8 @@ class ShopRenderer(GameState gameState)
         buffer += $"{title.PadVisibleLeft((shelfWidth + title.VisibleLength()) / 2).PadVisibleRight(shelfWidth)}\n";
         buffer += $" {balance.PadVisibleRight(shelfWidth - cartTotal.VisibleLength() - 2)}{cartTotal}\n";
         buffer += $"╭───────────── SHOP ─────────────┬───────────── CART ─────────────╮\n";
+
+        // Items
         for (int i = 0; i < shopItems.Count; i++)
         {
             buffer += "│ ";
@@ -83,9 +89,28 @@ class ShopRenderer(GameState gameState)
         string readyText = $"{readyLabel.PadVisibleLeft((itemWidth + "READY".Length) / 2).PadVisibleRight(itemWidth)}";
         buffer += $"│ {readyText} │ {"".PadVisibleRight(itemWidth)} │\n";
 
-        // Bottom
+        // Padding
         buffer += $"│ {"".PadVisibleRight(itemWidth)} │ {"".PadVisibleRight(itemWidth)} │\n";
         buffer += $"├─{new string('─', itemWidth)}─┴─{new string('─', itemWidth)}─┤\n";
+
+        // Item description
+        for (int i = 0; i < shopItems.Count; i++)
+        {
+            Shelf shelf = shopItems[i];
+            if (shelves.ShelfIndex == i)
+            {
+                string description = shelf.Product.description;
+                List<string> descriptionLines = [.. RenderUtils.WrapText(description, shelfWidth - 4).Split('\n')];
+                foreach (string line in descriptionLines)
+                {
+                    buffer += $"│ {line.PadVisibleRight(shelfWidth - 4)} │\n";
+                }
+                // buffer += $"│ {"".PadVisibleRight(shelfWidth - 4)} │\n";
+                buffer += $"├─{new string('─', shelfWidth - 4)}─┤\n";
+            }
+        }
+
+        // Instructions
         buffer += $"│ {"Use Up/Down to select an item.".PadVisibleRight(shelfWidth - 4)} │\n";
         buffer += $"│ {"Use Left/Right to put back/to cart.".PadVisibleRight(shelfWidth - 4)} │\n";
         buffer += $"│ {"Select READY to mark yourself as ready to continue.".PadVisibleRight(shelfWidth - 4)} │\n";

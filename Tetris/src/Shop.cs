@@ -31,7 +31,7 @@ class Shop
             () => new LongerPreview(owner),
         ];
 
-        int productsLength = 3;
+        int productsLength = 4;
         Random rng = new();
         this.Products = [];
 

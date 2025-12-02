@@ -161,4 +161,41 @@ static class RenderUtils
     {AnsiColor.Red("██  ██")}
     {AnsiColor.Red("▝████▘")}
     """;
+
+    public static string WrapText(string text, int maxLineLength)
+    {
+        List<string> words = [.. text.Split(' ')];
+        string buffer = "";
+        string currentLine = "";
+
+        foreach (string word in words)
+        {
+            int wordLength = GetVisibleLength(word);
+            int currentLineLength = GetVisibleLength(currentLine);
+
+            if (currentLineLength + wordLength + 1 <= maxLineLength)
+            {
+                if (currentLineLength > 0)
+                {
+                    currentLine += " ";
+                }
+                currentLine += word;
+            }
+            else
+            {
+                if (currentLineLength > 0)
+                {
+                    buffer += currentLine + "\n";
+                }
+                currentLine = word;
+            }
+        }
+
+        if (currentLine.Length > 0)
+        {
+            buffer += currentLine + "\n";
+        }
+
+        return buffer.TrimEnd('\n');
+    }
 }
