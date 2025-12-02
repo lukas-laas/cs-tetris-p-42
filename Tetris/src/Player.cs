@@ -150,12 +150,45 @@ class AIPlayer : Player
 
     protected override Input? GetInput(string key)
     {
-        bool noOp = aiRng.NextDouble() < 0.8;
-        if (!noOp)
+        // Strategy: Tend toward columns with the most empty space
+        CollisionGrid grid = Board.CollisionGrid;
+        if (grid == null || grid.Count == 0) return null;
+
+        int cols = grid[0].Count;
+        List<int> columnHeights = [.. new int[cols]];
+
+        // Count occupied cells per column (true == occupied)
+        foreach (List<bool> row in grid)
         {
-            Input[] possibleInputs = Enum.GetValues<Input>();
-            return possibleInputs[aiRng.Next(possibleInputs.Length)];
+            for (int c = 0; c < Math.Min(cols, row.Count); c++)
+            {
+                if (row[c]) columnHeights[c]++;
+            }
         }
-        return null;
+
+        int targetColumn = columnHeights.IndexOf(columnHeights.Min());
+        Polyomino? piece = Board.FallingPolyominoes.FirstOrDefault();
+        if (piece is null) return null;
+        int pieceColumn = piece.X;
+        if (pieceColumn < targetColumn)
+        {
+            return Input.Right;
+        }
+        else if (pieceColumn > targetColumn)
+        {
+            return Input.Left;
+        }
+        else if (aiRng.NextDouble() < 0.1)
+        {
+            return Input.Down; // Soft drop
+        }
+        else if (aiRng.NextDouble() < 0.01)
+        {
+            return Input.Up; // Rotate
+        }
+        else
+        {
+            return null;
+        }
     }
 }
