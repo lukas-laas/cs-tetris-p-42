@@ -19,4 +19,39 @@ static class Log
         logFileStream.Write(messageBytes, 0, messageBytes.Length);
         logFileStream.Flush();
     }
+    public static void Add(int message)
+        => Add(message.ToString());
+
+    public static void Add(double message)
+        => Add(message.ToString());
+
+    public static void Add(float message)
+        => Add(message.ToString());
+
+    public static void Add(object message)
+    {
+        if (message is null)
+        {
+            Add("null");
+        }
+        else
+        {
+            Add(message.ToString() ?? "null");
+        }
+    }
+
+    public static void Add(bool message)
+        => Add(message.ToString());
+
+    public static void Add(char message)
+        => Add(message.ToString());
+
+    public static void Add(byte message)
+        => Add(message.ToString());
+
+    public static void Add(long message)
+        => Add(message.ToString());
+
+    public static void Close()
+        => logFileStream.Close();
 }
