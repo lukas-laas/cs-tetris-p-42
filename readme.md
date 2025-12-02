@@ -5,6 +5,7 @@ Made for the Object Oriented Programming 1 course at Uppsala University.
 Prerequisites:
 - .NET 9 SDK
 - A terminal that supports ANSI escape codes (most do) and even if not, it will just look bad.
+- Not the MAC terminal on macOS, it has poor ANSI support and renders unicode poorly.
 
 ```bash
 # In the root directory of the project
