@@ -39,7 +39,7 @@ class GameState
     private readonly ShopRenderer shopRenderer;
 
     public readonly HashSet<Player> ReadyPlayers = [];
-    public static readonly int GameplayDuration = 20; // TODO - Test 20 seconds
+    public static readonly int GameplayDuration = 10; // TODO - Test 20 seconds
 
     public GameState()
     {
@@ -70,7 +70,7 @@ class GameState
 
             if (shopping)
             {
-                Players.ForEach(player => player.Shop.ReStock());
+                Players.ForEach(player => player.Shop!.ReStock());
                 ShoppingMode(); // Holds until user exits shop
                 shopping = false;
                 lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();

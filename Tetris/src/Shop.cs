@@ -54,7 +54,7 @@ class Shop
 
 interface IProduct
 {
-    string name { get; }
+    public string Name { get; }
     string description { get; }
     double rarity { get; }
     int price { get; }
@@ -97,7 +97,7 @@ interface IAbilityProduct : IProduct
     public int CooldownTimer { get; set; }
     public int Duration { get; set; }
     public int DurationTimer { get; set; }
-    protected bool Disabled { get; set; }
+    public bool Disabled { get; set; }
     public void Disable();
     public void Tick()
     {
@@ -131,7 +131,7 @@ class DotTime : IStaticProduct
     // Buff
     // Have a chance to fill in the gaps 
     // with the new exciting . (dot) monomino!
-    public string name { get; } = "DotTime";
+    public string Name { get; } = "DotTime";
     public string description { get; } = "Add a dot monomino to your queue so you have a chance of getting it in your queue.";
     public double rarity { get; } = 0.2;
     public int price { get; } = 50;
@@ -153,7 +153,7 @@ class SlowDown : IStaticProduct
 {
     // Buff
     // Lowers speed of own board
-    public string name { get; } = "Slow down";
+    public string Name { get; } = "Slow down";
     public string description { get; } = "Slows down how fast your board updates its physics.";
     public double rarity { get; } = 0.15;
     public int price { get; } = 40;
@@ -201,7 +201,7 @@ class MoneyMultiplier : IStaticProduct
     // Multiplies money
     // Buff
     // Multiplies score
-    public string name { get; } = "Money Multiplier";
+    public string Name { get; } = "Money Multiplier";
     public string description { get; } = "Increase the amount of currency units (cu) you earn.";
     public double rarity { get; } = 0.05;
     public int price { get; } = 200;
@@ -224,7 +224,7 @@ class MoreRows : IStaticProduct
 {
     // Buff
     // Adds more rows to board
-    public string name { get; } = "More Rows";
+    public string Name { get; } = "More Rows";
     public string description { get; } = "Adds extra rows to your board, giving you more time to react.";
     public double rarity { get; } = 0.12;
     public int price { get; } = 80;
@@ -257,7 +257,7 @@ class LongerPreview : IStaticProduct
 {
     // Buff
     // Shows more upcoming blocks in queue
-    public string name { get; } = "Bigger Preview";
+    public string Name { get; } = "Bigger Preview";
     public string description { get; } = "Shows more upcoming pieces in your queue.";
     public double rarity { get; } = 0.16;
     public int price { get; } = 70;
@@ -279,7 +279,7 @@ class MoreI : ITemporaryProduct
 {
     // Buff
     // Gets more I pieces but may result in esoteric I's
-    public string name { get; } = "More I-Tetrominoes";
+    public string Name { get; } = "More I-Tetrominoes";
     public string description { get; } = "Increases frequency of I pieces, may result in esoteric pieces.";
     public double rarity { get; } = 0.08;
     public int price { get; } = 120;
@@ -343,7 +343,7 @@ class SlowMotion : IAbilityProduct
     // Halves drop speed of board
     public List<Player> Targets { get; set; }
     public Player Purchaser { get; set; }
-    public string name { get; } = "Slow Motion";
+    public string Name { get; } = "Slow Motion";
     public string description { get; } = "Halves drop speed";
     public double rarity { get; } = 0.09;
     public int price { get; } = 150;
@@ -382,7 +382,7 @@ class SkipOwnCurrent : IAbilityProduct
 {
     // Buff
     // Discard current falling polyomino
-    public string name { get; } = "Skip";
+    public string Name { get; } = "Skip";
     public string description { get; } = "Discards currently falling polyomino.";
     public double rarity { get; } = 0.11;
     public int price { get; } = 130;
@@ -428,7 +428,7 @@ class SpeedUp : IStaticProduct
         this.Targets = targets;
     }
     public List<Player> Targets { get; set; }
-    public string name { get; } = "Speed Up";
+    public string Name { get; } = "Speed Up";
     public string description { get; } = "Make your opponents boards apply physics faster.";
     public double rarity { get; } = 0.14;
     public int price { get; } = 90;
@@ -445,7 +445,7 @@ class MonochromeBoard : IStaticProduct
     // Debuff
     // Make opponents board black & white 
     // (might not pair well if they have with candy crush)
-    public string name { get; } = "MonochromeBoard";
+    public string Name { get; } = "MonochromeBoard";
     public string description { get; } = "Turn opponents polyominoes monochrome. It will affect both settled and falling pieces as well as the visible queue.";
     public double rarity { get; } = 0.13;
     public int price { get; } = 95;
@@ -487,7 +487,7 @@ class Tax : ITemporaryProduct
         this.Purchaser = purchaser;
         this.Targets = targets;
     }
-    public string name { get; } = "Tax Time!";
+    public string Name { get; } = "Tax Time!";
     public Player Purchaser { get; set; }
     public List<Player> Targets { get; set; }
     public int Lifetime { get; set; } = 5;
@@ -535,7 +535,7 @@ class SkipOpponentsCurrent : IAbilityProduct
 {
     // Debuff
     // Skip the next piece for your opponent
-    public string name { get; } = "SkipOpponentsPiece";
+    public string Name { get; } = "SkipOpponentsPiece";
     public string description { get; } = "Skips opponents next piece";
     public double rarity { get; } = 0.04;
     public int price { get; } = 170;

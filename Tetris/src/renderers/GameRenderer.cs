@@ -96,6 +96,7 @@ class GameRenderer
         infoLines += InfoLine("Player", player.Name);
         infoLines += InfoLine("Money", player.Money + "cu");
         infoLines += InfoLine("Score", player.Score);
+        infoLines += MakeAbilityInfo(player);
 
         string buffer = "";
 
@@ -216,4 +217,37 @@ class GameRenderer
 
     private static string InfoLine(string label, int value)
         => InfoLine(label, value.ToString());
+
+    private static string MakeAbilityInfo(Player player)
+    {
+        if (player.CurrentAbility is null) return InfoLine("Ability", "None");
+
+        IAbilityProduct ability = player.CurrentAbility;
+
+        int barWidth = 10;
+
+        double percentReady = 1.0 - (double)ability.CooldownTimer / ability.Cooldown;
+        int readySegments = Math.Clamp((int)(percentReady * barWidth), 0, barWidth);
+
+        string readyPart = new('█', readySegments);
+        string emptyPart = new('░', barWidth - readySegments);
+        string bar = $"{readyPart}{emptyPart}";
+
+        string status;
+        if (ability.CooldownTimer <= 0 && ability.DurationTimer > 0)
+        {
+            status = "ACTIVE";
+            bar = new('▒', barWidth);
+        }
+        else if (ability.CooldownTimer <= 0)
+        {
+            status = "READY";
+        }
+        else
+        {
+            status = "Charging...";
+        }
+
+        return InfoLine("Ability", $"{ability.Name}\n [{bar}] {status}");
+    }
 }

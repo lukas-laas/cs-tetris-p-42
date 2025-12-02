@@ -139,7 +139,7 @@ class ShopRenderer(GameState gameState)
                     AnsiColor.Red($"{shelf.Product.price}cu");
             }
         }
-        string line = $"{shelf.Product.name.PadVisibleRight(itemWidth - displayPrice.VisibleLength() - 1)} {displayPrice}";
+        string line = $"{shelf.Product.Name.PadVisibleRight(itemWidth - displayPrice.VisibleLength() - 1)} {displayPrice}";
 
         return isSelected ? AnsiColor.Black(AnsiColor.BgWhite(line)) : line;
     }
