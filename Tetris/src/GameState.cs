@@ -56,6 +56,7 @@ class GameState
         switch (gameModeSelected)
         {
             case GameModeSelect.Singleplayer:
+                Players.Add(new AIPlayer());
                 Players.Add(new HumanPlayer("Player 1", new() {
                     { "A", Input.Left },
                     { "D", Input.Right },
@@ -68,7 +69,6 @@ class GameState
                     { "DownArrow",  Input.Down },
                     { "Subtract",   Input.Ability }
                 }));
-                Players.Add(new AIPlayer());
                 break;
 
             case GameModeSelect.Multiplayer:
