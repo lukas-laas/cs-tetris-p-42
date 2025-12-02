@@ -4,7 +4,7 @@ class Player
     private static readonly Random rng = new();
     public string Name;
     public bool IsAI { get; protected set; } = false;
-    private static readonly string[] aiNames = ["AI_Lukas", "AI_Vena", "AI_Morgan", "AI_Samuel", "AI_Alex", "AI_Klara", "AI_Moa", "AI_Alice"];
+    private static readonly string[] aiNames = ["AI_Lukas", "AI_Vena", "AI_Mina", "AI_Sammy", "AI_Kassandra", "AI_Klara", "AI_Moa", "AI_Alice"];
     public int Score = 0;
     public int Money = 200;
     public IAbilityProduct? CurrentAbility;
