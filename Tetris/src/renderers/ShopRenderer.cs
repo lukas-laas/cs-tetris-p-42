@@ -42,7 +42,6 @@ class ShopRenderer(GameState gameState)
 
     private static string MakeShoppingStand(Player player, List<Shelves> shopStates)
     {
-        if (player.Shop is null) throw new Exception("Player has no shop!");
         Shop shop = player.Shop;
 
         Shelves shelves = shopStates.First(s => s.Shop == shop);

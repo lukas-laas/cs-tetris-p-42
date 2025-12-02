@@ -117,7 +117,7 @@ class GameState
 
             if (shopping)
             {
-                Players.ForEach(player => player.Shop!.ReStock());
+                Players.ForEach(player => player.Shop.ReStock());
                 ShoppingMode(); // Holds until user exits shop
                 shopping = false;
                 lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -149,7 +149,7 @@ class GameState
         ReadyPlayers.Clear();
         List<Shelves> shopStates = [.. Players
             .Where(p => !p.IsAI)
-            .Select(p => new Shelves(p.Shop!, [.. p.Shop!.Products.Select(prod => new Shelf(Side.Stand, prod))]))];
+            .Select(p => new Shelves(p.Shop, [.. p.Shop.Products.Select(prod => new Shelf(Side.Stand, prod))]))];
 
         while (true)
         {
@@ -193,7 +193,6 @@ class GameState
 
     private void ShoppingActions(Player player, string key, List<Shelves> shopStates)
     {
-        if (player.Shop is null) throw new Exception("Player has no shop!");
         Shop shop = player.Shop;
         Shelves shelves = shopStates.First(s => s.Shop == shop);
 

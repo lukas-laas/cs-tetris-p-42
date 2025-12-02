@@ -21,7 +21,12 @@ class Player
     //     som inte behöver rapportera upp något samt publika buffrar som tömmer 
     //     sig själva på board änden.
     public Board Board;
-    public Shop? Shop { get; set; }// TODO make non-nullable
+    private Shop? shop;
+    public Shop Shop
+    {
+        get => shop ?? throw new InvalidOperationException("Player shop has not been assigned.");
+        set => shop = value ?? throw new ArgumentNullException(nameof(value));
+    }
     private long lastTick = 0;
     private long lastInventoryTick = 0;
     private long lastAbilityTick = 0;
