@@ -5,11 +5,12 @@ class GameState
 
     // KRAV 1:
     // 1: Inkapsling / Informationsgömning
-    // 2: Privata fältet används för för att gömma renderarna från omvärlden.
-    // 3: Renderarna är enbart side-effekter för GameState och bör inte röras 
+    // 2: Privata fältet används för för att gömma renderarna från övriga scope 
+    //     i koden. Barnen av den här klassen bör inte röra dem.
+    // 3: Renderarna är enbart side-effects för GameState och bör inte röras 
     //     någon annanstans än här. I en perfekt värld hade de inte ens 
     //     definierats som fält, snarare bara skapas lokalt vid varje rendering 
-    //     men då görs en mass onödig instansiering som kan bekosta prestanda.
+    //     men då görs en massa onödig instansiering som kan bekosta prestanda.
     private readonly GameRenderer gameRenderer;
     private readonly ShopRenderer shopRenderer;
 
