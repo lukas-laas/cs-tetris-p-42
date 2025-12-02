@@ -2,11 +2,6 @@ class Shop
 {
     public List<IProduct> Products = new();
 
-    // Products
-    // Buffs
-    // Debuffs
-
-    // Casino? blackjack, slots, roulette osv
     public Player Owner; // The player who buys stuff
     private List<Player> others = [];
 
