@@ -2,6 +2,7 @@
 class GameRenderer
 {
     private readonly List<Player> players;
+    private readonly GameState gameState;
 
     private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
     private static readonly int boardSpacing = 16;
@@ -32,6 +33,7 @@ class GameRenderer
     public GameRenderer(GameState gameState)
     {
         this.players = gameState.Players;
+        this.gameState = gameState;
 
         if (Console.WindowWidth == 0) throw new Exception("Console window width is 0. Cannot render.");
         if (Console.WindowHeight == 0) throw new Exception("Console window height is 0. Cannot render.");
@@ -52,6 +54,10 @@ class GameRenderer
         // Boards
         buffer += RenderUtils.Center2DString(RenderUtils.Merge2DStrings([.. players.Select(MakeBoard)], boardSpacing));
 
+        // Shop timer bar
+        buffer += "\n";
+        buffer += MakeShopTimerBar(gameState.ShopTimerMs, GameState.GameplayDuration * 1_000);
+
         RenderUtils.Render(buffer);
     }
 
@@ -69,6 +75,24 @@ class GameRenderer
         """;
 
         return RenderUtils.Center2DString(title);
+    }
+
+    private static string MakeShopTimerBar(int remainingMs, int totalMs)
+    {
+        const int barWidth = 30;
+        double fraction = totalMs <= 0 ? 0 : 1.0 - (double)remainingMs / totalMs;
+        fraction = Math.Clamp(fraction, 0.0, 1.0);
+
+        int filled = (int)Math.Round(fraction * barWidth);
+        filled = Math.Clamp(filled, 0, barWidth);
+
+        string filledPart = new('█', filled);
+        string emptyPart = new('░', barWidth - filled);
+
+        string label = remainingMs <= 0 ? "Shop open!" : $"Shop in {remainingMs / 1000.0:0.0}s";
+        string bar = $"[{filledPart}{emptyPart}] {label}";
+
+        return RenderUtils.Center2DString(AnsiColor.Gray(bar)) + "\n";
     }
 
     private static string[,] MakeColorGrid(Board board)

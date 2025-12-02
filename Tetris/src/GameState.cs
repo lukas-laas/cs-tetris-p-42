@@ -41,6 +41,9 @@ class GameState
     public readonly HashSet<Player> ReadyPlayers = [];
     public static readonly int GameplayDuration = 10; // TODO - Test 20 seconds
 
+    // Remaining milliseconds until the next shop phase. Used by GameRenderer.
+    public int ShopTimerMs { get; private set; } = GameplayDuration * 1_000;
+
     public GameState()
     {
         // Instantiate shops
@@ -53,6 +56,7 @@ class GameState
         // State management variables
         bool shopping = false;
         long lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        ShopTimerMs = GameplayDuration * 1_000;
 
         // TODO remove
         // Players[0].Shop.ProductPool[6]().Purchase();
@@ -63,10 +67,9 @@ class GameState
         while (true)
         {
             long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            if (currentTime - lastTick >= GameplayDuration * 1_000)
-            {
-                shopping = true;
-            }
+            int elapsed = (int)(currentTime - lastTick);
+            ShopTimerMs = Math.Max(0, GameplayDuration * 1_000 - elapsed);
+            if (elapsed >= GameplayDuration * 1_000) shopping = true;
 
             if (shopping)
             {
