@@ -12,14 +12,14 @@ class Player
     // KRAV 4:
     // 1: Objektkomposition
     // 2: Vi använder objektkomposition för att ge varje spelare en egen spelplan.
-    //     Boards Move() och Tick() metoder anropas från Player klassen. Samt läser
-    //     player-klassen Boardens publika ScoreBuffer och MoneyBuffer fält. 
-    // 3: Konceptuellt är det rimligt att en spelar har koll på sitt eget bräde,
-    //     och programetiskt är det smidigt eftersom spelaren agerar identifierar 
+    //     Boards Move() och Tick() metoder anropas från Player klassen, dessutom 
+    //     läser player-klassen Boardens publika ScoreBuffer och MoneyBuffer fält. 
+    // 3: Konceptuellt är det rimligt att en spelare har koll på sitt eget bräde,
+    //     och programetiskt är det smidigt eftersom spelaren agerar identifierare 
     //     till sitt eget bräde när det gäller interaktion med shoppen. Board är
     //     väldigt inkapslad och interagerar endast med spelaren via "kommandon"
     //     som inte behöver rapportera upp något samt publika buffrar som tömmer 
-    //     sig själva på board änden.
+    //     sig själva på Boarden.
     public Board Board;
     private Shop? shop;
     public Shop Shop
@@ -34,10 +34,14 @@ class Player
 
     public readonly ControlScheme ControlScheme;
     // KRAV 3:
-    // 1: Computed property.
-    // 2: Vi använder konceptet för att dynamiskt få en lista av giltiga tangenter.
+    // 1: Computed properties
+    // 2: Vi använder konceptet vid ValidKeys för att dynamiskt få en lista av 
+    //     giltiga tangenter.
     // 3: När vi kontrollerar inputs så används denna egenskap för att verifiera 
-    //     om en tangent är giltig så switchen eller dicionary access inte throwar.
+    //     om en tangent är giltig så switchen eller dicionary access inte throwar. 
+    //     Det är en computed property eftersom nycklarna i control scheme inte 
+    //     är satta vid konstruktionstid, dessutom leder det också till 
+    //     dynamiska kontrollscheman.
     public string[] ValidKeys => [.. ControlScheme.Keys];
 
     public Player(string name, ControlScheme controlScheme)
@@ -52,8 +56,9 @@ class Player
     //     utan att behöva hitta på låtsasdata vid varje implementation.
     // 3: Det är smidigt och rimligt att ha denna skyddade konstruktor som en 
     //     subklass anropar för att skapa AI-spelare. Det ger en mer explicit 
-    //     och tydlig implementation som inte kräver onödig data som dessutom 
-    //     kan behöva skapas på olika platser.
+    //     och tydlig implementation som inte kräver onödig data och dessutom 
+    //     kan behövs datan inte skapas på olika platser. För exempelvis namnet 
+    //     så tar den här konstruktorn ett slumpat namn från en lista.
     protected Player(bool isAI)
     {
         if (isAI == false) throw new ArgumentException("Use other constructor for non-AI players");

@@ -75,13 +75,17 @@ class GameState
             case GameModeSelect.Multiplayer:
                 // KRAV 5:
                 // 1: Beroendeinjektion
-                // 2: Player instansieras med med olika kontrollscheman för att stödja
-                //     flera spelare på samma maskin. Kontrollschemat injiceras in i
-                //     Player-objektet vid konstruktion.
-                // 3: Det är en ren och tydlig implementation som gör det enkelt att
-                //     skapa nya spelare med olika kontroller utan att behöva hårdkoda
-                //     eller ändra i Player-klassen. Det är antingen den här lösningen eller
-                //     att direkt sätta ett fält efter konstruktion vilket är mindre önskvärt.
+                // 2: Player instansieras med med olika kontrollscheman för att 
+                //     stödja flera spelare på samma maskin. Kontrollschemat 
+                //     injiceras in i Player-objektet vid konstruktion.
+                // 3: Det är en ren och tydlig implementation som gör det enkelt 
+                //     att skapa nya spelare med olika kontroller utan att behöva 
+                //     hårdkoda eller ändra i Player-klassen. Det är antingen 
+                //     den här lösningen eller att direkt sätta ett fält efter 
+                //     konstruktion, vilket är mindre önskvärt eftersom det lätt 
+                //     kan missas eller implementeras inkonsekvent. 
+                //     Kod-maintainability-wise är det nice att det sker här via 
+                //     injektion så man inte "tappar bort" sin kod.
                 Players.Add(new HumanPlayer("Player 1", new() {
                     { "A", Input.Left },
                     { "D", Input.Right },
