@@ -1,5 +1,5 @@
 /// <summary>
-/// The most non OOP class ever
+/// The most non OOP class ever...
 /// </summary>
 static class Log
 {

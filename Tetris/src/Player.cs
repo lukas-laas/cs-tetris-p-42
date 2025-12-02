@@ -9,16 +9,28 @@ class Player
     public int Money = 200;
     private IAbilityProduct? currentAbility;
     public List<IProduct> Inventory = [];
+    // KRAV 4:
+    // 1: Objektkomposition
+    // 2: Vi använder objektkomposition för att ge varje spelare en egen spelplan.
+    //     Boards Move() och Tick() metoder anropas från Player klassen. Samt läser
+    //     player-klassen Boardens publika ScoreBuffer och MoneyBuffer fält. 
+    // 3: Konceptuellt är det rimligt att en spelar har koll på sitt eget bräde,
+    //     och programetiskt är det smidigt eftersom spelaren agerar identifierar 
+    //     till sitt eget bräde när det gäller interaktion med shoppen. Board är
+    //     väldigt inkapslad och interagerar endast med spelaren via "kommandon"
+    //     som inte behöver rapportera upp något samt publika buffrar som tömmer 
+    //     sig själva på board änden.
     public Board Board;
-    public Shop? Shop { get; set; }
+    public Shop? Shop { get; set; }// TODO make non-nullable
     private long lastTick = 0;
     private long inventoryTickRate = GameState.GameplayDuration;
 
     public readonly ControlScheme ControlScheme;
-    // Krav 3
-    // 1. Computed property.
-    // 2. Vi använder konceptet för att dynamiskt få en lista av giltiga tangenter.
-    // 3. När vi kontrollerar inputs så används denna egenskap för att verifiera om en tangent är giltig så switchen inte throwar.
+    // KRAV 3:
+    // 1: Computed property.
+    // 2: Vi använder konceptet för att dynamiskt få en lista av giltiga tangenter.
+    // 3: När vi kontrollerar inputs så används denna egenskap för att verifiera 
+    //     om en tangent är giltig så switchen eller dicionary access inte throwar.
     public string[] ValidKeys => [.. ControlScheme.Keys];
 
     public Player(string name, ControlScheme controlScheme)
@@ -27,7 +39,14 @@ class Player
         this.Name = name;
         this.Board = new();
     }
-
+    // KRAV 2:
+    // 1: Overloading av konstruktorer
+    // 2: Det finns två konstruktorer för att kunna instansiera en AI-spelare 
+    //     utan att behöva hitta på låtsasdata vid varje implementation.
+    // 3: Det är smidigt och rimligt att ha denna skyddade konstruktor som en 
+    //     subklass anropar för att skapa AI-spelare. Det ger en mer explicit 
+    //     och tydlig implementation som inte kräver onödig data som dessutom 
+    //     kan behöva skapas på olika platser.
     protected Player(bool isAI)
     {
         if (isAI == false) throw new ArgumentException("Use other constructor for non-AI players");
@@ -54,7 +73,8 @@ class Player
         lastTick = currentTime;
         Board.Tick();
 
-        // Every tick it will empty the boards local score and money buffers into the player's total
+        // Every tick it will empty the boards local score and 
+        //  money buffers into the player's total
         this.Score += Board.ScoreBuffer;
         this.Money += Board.MoneyBuffer;
 
