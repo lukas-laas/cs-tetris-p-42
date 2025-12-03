@@ -1,8 +1,8 @@
 
 class Player
 {
-    private static readonly Random rng = new();
     private static readonly string[] aiNames = ["AI_Lukas", "AI_Vena", "AI_Mina", "AI_Sammy", "AI_Kassandra", "AI_Klara", "AI_Moa", "AI_Alice"];
+    private readonly Random rng = new();
     public string Name;
     public bool IsAI { get; protected set; } = false;
     public readonly ControlScheme ControlScheme;

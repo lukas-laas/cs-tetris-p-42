@@ -1,19 +1,19 @@
 class Shop
 {
-    public List<IProduct> Products = [];
+    private const int ProductsPerRestock = 4;
 
-    public Player Owner; // The player who buys stuff
-    private List<Player> others = [];
+    private readonly Random rng = new();
+    private readonly List<Player> others = [];
+    private readonly List<Func<IProduct>> productPool = [];
 
-    public List<Func<IProduct>> ProductPool = [];
-    private int productsLength = 4;
-    private Random rng = new();
+    public Player Owner { get; }
+    public List<IProduct> Products { get; private set; } = [];
 
     public Shop(Player owner, List<Player> others)
     {
         this.Owner = owner;
         this.others = others;
-        this.ProductPool = [
+        this.productPool = [
             () => new SpeedUp(owner, others),
             () => new MoreI(owner, others),
             () => new Tax(owner, others),
@@ -28,17 +28,15 @@ class Shop
             () => new MonochromeBoard(owner, others),
         ];
 
-        this.Products = [];
-
-        ReStock();
+        Restock();
     }
 
-    public void ReStock()
+    public void Restock()
     {
         Products = [];
-        for (int i = 0; i < productsLength; i++)
+        for (int i = 0; i < ProductsPerRestock; i++)
         {
-            Products.Add(ProductPool[rng.Next(ProductPool.Count)].Invoke());
+            Products.Add(productPool[rng.Next(productPool.Count)].Invoke());
         }
     }
 }
@@ -112,20 +110,17 @@ interface IAbilityProduct : IProduct
     }
 }
 
-// class Communism : ITemporaryProduct
-// {
-//     // Buff/Debuff
-//     // Split income evenly with opponent
-//     public string name { get; } = "Communism";
-//     public string description { get; } = "Splits income evenly with opponent";
-//     public double rarity { get; } = 0.1;
-//     public int price { get; } = 100;
-//     public int LifeTime { get; } = 3;
-//     public void Purchase() { }
-// }
+// Future product ideas (placeholder notes, not implemented yet):
+// - Communism (temporary): splits income evenly with opponents.
+// - ScoreMultiplier (static): multiplies score gains.
+// - TetrominoProjection (static): shows landing projection for active piece.
+// - CandyCrush (temporary): breaks connected colors.
+// - NuclearDrop (temporary): loosens drop collision on the Y-axis.
+// - ExtraBoard (temporary): forces opponents to juggle a second board.
+// - DisableQuickDrop (ability): blocks opponents from fast dropping.
+// - FreezeInput (ability): briefly freezes opponent inputs.
 
-
-// // ==================== BUFFS ===================
+// ================== BUFFS ==================
 class DotTime : IStaticProduct
 {
     // Buff
@@ -171,29 +166,6 @@ class SlowDown : IStaticProduct
         Purchaser.Board.DT = (int)Math.Floor(Purchaser.Board.DT * multiplier);
     }
 }
-
-// class ScoreMultiplier : IStaticProduct
-// {
-//     // Buff
-//     // Multiplies score
-//     public string name { get; } = "ScoreMultiplier";
-//     public string description { get; } = "Multiplies score";
-//     public double rarity { get; } = 0.05;
-//     public int price { get; } = 200;
-//     public List<Player> Targets { get; set; }
-//     public Player Purchaser { get; set; }
-
-//     public ScoreMultiplier(Player purchaser)
-//     {
-//         this.Purchaser = purchaser;
-//         this.Targets = [purchaser];
-//     }
-
-//     public void Use()
-//     {
-//         Purchaser.Board.
-//     }
-// }
 
 class MoneyMultiplier : IStaticProduct
 {
@@ -241,17 +213,6 @@ class MoreRows : IStaticProduct
         Purchaser.Board.VisibleHeight += 1;
     }
 }
-
-// class TetrominoProjection : IStaticProduct
-// {
-//     // Buff
-//     // Shows where tetromino is going to land
-//     public string name { get; } = "TetrominoProjection";
-//     public string description { get; } = "Shows landing projection";
-//     public double rarity { get; } = 0.18;
-//     public int price { get; } = 60;
-//     public void Purchase() { }
-// }
 
 class LongerPreview : IStaticProduct
 {
@@ -310,32 +271,6 @@ class MoreI : ITemporaryProduct
         polyominoes.ForEach(polyomino => Purchaser.Board.PolyominoPool.Remove(polyomino));
     }
 }
-
-// class CandyCrush : ITemporaryProduct
-// {
-//     // Buff
-//     // Breaks connecting colors
-//     public string name { get; } = "CandyCrush";
-//     public string description { get; } = "Breaks connecting colors";
-//     public double rarity { get; } = 0.07;
-//     public int price { get; } = 110;
-//     public int LifeTime { get; } = 4;
-//     public void Purchase() { }
-// }
-
-
-
-// class NuclearDrop : ITemporaryProduct
-// {
-//     // Buff
-//     // Loosened y-axis block collision
-//     public string name { get; } = "NuclearDrop";
-//     public string description { get; } = "Alters drop collision";
-//     public double rarity { get; } = 0.03;
-//     public int price { get; } = 250;
-//     public int LifeTime { get; } = 3;
-//     public void Purchase() { }
-// }
 
 class SlowMotion : IAbilityProduct
 {
@@ -515,22 +450,6 @@ class Tax : ITemporaryProduct
     }
 }
 
-// class ExtraBoard : ITemporaryProduct
-// {
-//     // Debuff
-//     // Your opponent will love playing two games at once
-//     // but watch out, the money is still counted..
-
-//     // Different pieces on second board
-//     // Faster dt as well?
-//     public string name { get; } = "ExtraBoard";
-//     public string description { get; } = "Adds a second board for opponent";
-//     public double rarity { get; } = 0.02;
-//     public int price { get; } = 300;
-//     public int LifeTime { get; } = 6;
-//     public void Purchase() { }
-// }
-
 class SkipOpponentsCurrent : IAbilityProduct
 {
     // Debuff
@@ -567,28 +486,3 @@ class SkipOpponentsCurrent : IAbilityProduct
         Disabled = true;
     }
 }
-
-// class DisableQuickDrop : IAbilityProduct
-// {
-//     // Debuff
-//     // Make your opponent wait ages for their tetrominoes
-//     // to hit the ground
-//     public string name { get; } = "DisableQuickDrop";
-//     public string description { get; } = "Disables opponents quick drop";
-//     public double rarity { get; } = 0.05;
-//     public int price { get; } = 160;
-//     public int Cooldown { get; } = 9;
-//     public void Purchase() { }
-// }
-
-// class FreezeInput : IAbilityProduct
-// {
-//     // Debuff
-//     // Freeze opponents input for a couple seconds
-//     public string name { get; } = "FreezeInput";
-//     public string description { get; } = "Freezes opponents input briefly";
-//     public double rarity { get; } = 0.04;
-//     public int price { get; } = 180;
-//     public int Cooldown { get; } = 12;
-//     public void Purchase() { }
-// }

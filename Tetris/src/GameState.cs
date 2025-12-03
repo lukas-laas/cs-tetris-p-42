@@ -122,7 +122,7 @@ class GameState
 
             if (shopping)
             {
-                Players.ForEach(player => player.Shop.ReStock());
+                Players.ForEach(player => player.Shop.Restock());
                 ShoppingMode(); // Holds until user exits shop
                 shopping = false;
                 lastTick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
