@@ -1,12 +1,3 @@
-// KRAV 7:
-// 1: Subtypspolymorfism #2
-// 2: ProductPool och Products är av typen IProduct, men fylls med olika
-//     konkreta produktklasser (DotTime, SpeedUp, Tax, osv). När spelaren
-//     senare köper en produkt och Player.AddToInventory anropar product.Use()
-//     anropas rätt Use()-implementation beroende på faktisk produkttyp.
-// 3: Detta gör att shoppen kan hantera alla produkter på ett enhetligt sätt
-//     utan switch-satser per produkttyp. Vi kan enkelt lägga till nya
-//     produkter genom att bara lägga till en ny klass och fabrik i ProductPool.
 class Shop
 {
     public List<IProduct> Products = [];
@@ -52,6 +43,15 @@ class Shop
     }
 }
 
+// KRAV 7:
+// 1: Subtypspolymorfism #2
+// 2: ProductPool och Products använder typen IProduct, men fylls med olika
+//     konkreta subklasser (DotTime, SpeedUp, Tax, osv). När spelaren
+//     senare köper en produkt och Player.AddToInventory anropar product.Use()
+//     anropas rätt Use()-implementation beroende på faktisk produkttyp.
+// 3: Detta gör att shoppen kan hantera alla produkter på ett enhetligt sätt
+//     utan switch-satser per produkttyp. Vi kan enkelt lägga till nya
+//     produkter genom att bara lägga till en ny klass och fabrik i ProductPool.
 interface IProduct
 {
     public string Name { get; }
