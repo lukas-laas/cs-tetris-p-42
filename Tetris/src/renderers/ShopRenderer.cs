@@ -105,7 +105,6 @@ class ShopRenderer(GameState gameState)
                 {
                     buffer += $"│ {line.PadVisibleRight(shelfWidth - 4)} │\n";
                 }
-                // buffer += $"│ {"".PadVisibleRight(shelfWidth - 4)} │\n";
                 buffer += $"├─{new string('─', shelfWidth - 4)}─┤\n";
             }
         }

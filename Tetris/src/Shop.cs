@@ -26,6 +26,7 @@ class Shop
             () => new SkipOwnCurrent(owner),
             () => new SkipOpponentsCurrent(owner, others),
             () => new MonochromeBoard(owner, others),
+            () => new EsotericPolyominoes(owner, others),
         ];
 
         Restock();
@@ -170,8 +171,6 @@ class SlowDown : IStaticProduct
 class MoneyMultiplier : IStaticProduct
 {
     // Buff
-    // Multiplies money
-    // Buff
     // Multiplies score
     public string Name { get; } = "Money Multiplier";
     public string description { get; } = "Increase the amount of currency units (cu) you earn.";
@@ -252,6 +251,7 @@ class MoreI : ITemporaryProduct
         () => new OctominoThiccI(),
         () => new OctominoThiccI(),
         () => new TrominoLowerI(),
+        () => new DominoSmallI(),
     ];
 
     public int Lifetime { get; set; } = 5;
@@ -271,6 +271,45 @@ class MoreI : ITemporaryProduct
         polyominoes.ForEach(polyomino => Purchaser.Board.PolyominoPool.Remove(polyomino));
     }
 }
+
+class EsotericPolyominoes : ITemporaryProduct
+{
+    // Debuff
+    // Adds esoteric I's to opponents pool
+    public string Name { get; } = "Esoteric Polyominoes";
+    public string description { get; } = "Adds esoteric polyominoes to opponents spawn pool.";
+    public double rarity { get; } = 0.08;
+    public int price { get; } = 120;
+    public int LifeTime { get; } = 10;
+
+    public Player Purchaser { get; set; }
+    private List<Func<Polyomino>> polyominoes = [
+        () => new OctominoIII(),
+        () => new OctominoDonut(),
+        () => new NonominoBlocc(),
+        () => new PentominoArchBTW(),
+    ];
+
+    public int Lifetime { get; set; } = 5;
+    public List<Player> Targets { get; set; }
+    public EsotericPolyominoes(Player purchaser, List<Player> targets)
+    {
+        this.Purchaser = purchaser;
+        this.Targets = targets;
+    }
+    public void Use()
+    {
+        if (Purchaser == null) return;
+        Targets.ForEach(target => { target.Board.PolyominoPool.AddRange(polyominoes); });
+    }
+    public void Disable()
+    {
+        Targets.ForEach(target =>
+            polyominoes.ForEach(polyomino => target.Board.PolyominoPool.Remove(polyomino))
+        );
+    }
+}
+
 
 class SlowMotion : IAbilityProduct
 {
