@@ -35,4 +35,6 @@ enum GameModeSelect
 {
     Singleplayer,
     Multiplayer,
+    BotWars,
+    SingularPlayer
 }

@@ -89,7 +89,8 @@ class GameState
         if (draw)
         {
             GameOverRenderer.Render(isDraw: true);
-            Thread.Sleep(5000);
+            Thread.Sleep(1000);
+            Console.ReadKey();
             Program.Restart();
         }
         foreach (Player player in Players)
@@ -99,7 +100,8 @@ class GameState
             if (!player.HasLiveBoard())
             {
                 GameOverRenderer.Render(winner: Players.First(p => p != player && p.HasLiveBoard()), losers: [.. Players.Where(p => p != player)]);
-                Thread.Sleep(5000);
+                Thread.Sleep(1000);
+                Console.ReadKey();
                 Program.Restart();
             }
         }
@@ -293,6 +295,25 @@ class GameState
                     { "DownArrow",  Input.Down },
                     { "Subtract",   Input.Ability }
                 }),
+            ],
+            GameModeSelect.BotWars => [
+                new AIPlayer(),
+                new AIPlayer(),
+                new AIPlayer(),
+            ],
+            GameModeSelect.SingularPlayer => [
+                new HumanPlayer("Last living being", new() {
+                    { "A", Input.Left },
+                    { "D", Input.Right },
+                    { "W", Input.Up },
+                    { "S", Input.Down },
+                    { "Q", Input.Ability },
+                    { "LeftArrow",  Input.Left },
+                    { "RightArrow", Input.Right },
+                    { "UpArrow",    Input.Up },
+                    { "DownArrow",  Input.Down },
+                    { "Subtract",   Input.Ability },
+                })
             ],
             _ => throw new Exception("Unrecognized game mode selected"),
         };
