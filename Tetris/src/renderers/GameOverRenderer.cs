@@ -32,14 +32,16 @@ class GameOverRenderer
         buffer += "\n";
 
         buffer += childContent;
-        buffer += "\n";
+        buffer += "\n\n";
 
-        buffer += "\n";
         buffer += RenderUtils.Center2DString(MakeScoreboard(players));
         buffer += "\n";
+
+        buffer += RenderUtils.Center2DString("Go to https://dotfic.com/zDyk to see your score online!");
+        buffer += "\n";
         buffer += "\n";
 
-        buffer += RenderUtils.Center2DString("Press any key to play again...");
+        buffer += RenderUtils.Center2DString(AnsiColor.Gray("Press any key to play again..."));
 
         RenderUtils.Render(buffer);
     }
