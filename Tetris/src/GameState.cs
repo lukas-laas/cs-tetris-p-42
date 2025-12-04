@@ -88,7 +88,7 @@ class GameState
         bool draw = Players.All(p => !p.HasLiveBoard());
         if (draw)
         {
-            GameOverRenderer.Render(isDraw: true);
+            GameOverRenderer.Render(drawees: Players, Players);
             Thread.Sleep(1000);
             Console.ReadKey();
             Program.Restart();
@@ -99,7 +99,8 @@ class GameState
             //  the looser will be the first in this enumeration
             if (!player.HasLiveBoard())
             {
-                GameOverRenderer.Render(winner: Players.First(p => p != player && p.HasLiveBoard()), losers: [.. Players.Where(p => p != player)]);
+                Player winner = Players.First(p => p != player && p.HasLiveBoard());
+                GameOverRenderer.Render(winner, Players);
                 Thread.Sleep(1000);
                 Console.ReadKey();
                 Program.Restart();
