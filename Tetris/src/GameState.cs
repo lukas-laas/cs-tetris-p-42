@@ -27,81 +27,8 @@ class GameState
         Console.CursorTop = 0;
         Console.CursorVisible = false; // Will not restore on exit, but oh well
 
-        // Instantiate players via welcome page
-        GameModeSelect gameModeSelected = GameModeSelect.Singleplayer;
-        while (true)
-        {
-            int frameTarget = 20; // milliseconds per frame
-            long frameStart = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-            string key = KeyInput.Read() ?? "";
-            if (key == "UpArrow" || key == "DownArrow" || key == "W" || key == "S")
-            {
-                gameModeSelected = gameModeSelected == GameModeSelect.Singleplayer
-                    ? GameModeSelect.Multiplayer
-                    : GameModeSelect.Singleplayer;
-            }
-            else if (key == "Enter")
-            {
-                break;
-            }
-
-            WelcomeRenderer welcomeRenderer = new(this);
-            welcomeRenderer.Render(gameModeSelected);
-
-            int remaimingWait = frameTarget - (int)(DateTimeOffset.Now.ToUnixTimeMilliseconds() - frameStart);
-            if (remaimingWait > 0) Thread.Sleep(remaimingWait);
-        }
-
-        // Create players based on selection
-        switch (gameModeSelected)
-        {
-            case GameModeSelect.Singleplayer:
-                Players.Add(new AIPlayer());
-                Players.Add(new HumanPlayer("Player 1", new() {
-                    { "A", Input.Left },
-                    { "D", Input.Right },
-                    { "W", Input.Up },
-                    { "S", Input.Down },
-                    { "Q", Input.Ability },
-                    { "LeftArrow",  Input.Left },
-                    { "RightArrow", Input.Right },
-                    { "UpArrow",    Input.Up },
-                    { "DownArrow",  Input.Down },
-                    { "Subtract",   Input.Ability }
-                }));
-                break;
-
-            case GameModeSelect.Multiplayer:
-                // KRAV 5:
-                // 1: Beroendeinjektion
-                // 2: Player instansieras med med olika kontrollscheman för att 
-                //     stödja flera spelare på samma maskin. Kontrollschemat 
-                //     injiceras in i Player-objektet vid konstruktion.
-                // 3: Det är en ren och tydlig implementation som gör det enkelt 
-                //     att skapa nya spelare med olika kontroller utan att behöva 
-                //     hårdkoda eller ändra i Player-klassen. Det är antingen 
-                //     den här lösningen eller att direkt sätta ett fält efter 
-                //     konstruktion, vilket är mindre önskvärt eftersom det lätt 
-                //     kan missas eller implementeras inkonsekvent. 
-                //     Kod-maintainability-wise är det nice att det sker här via 
-                //     injektion så man inte "tappar bort" sin kod.
-                Players.Add(new HumanPlayer("Player 1", new() {
-                    { "A", Input.Left },
-                    { "D", Input.Right },
-                    { "W", Input.Up },
-                    { "S", Input.Down },
-                    { "Q", Input.Ability }
-                }));
-                Players.Add(new HumanPlayer("Player 2", new() {
-                    { "LeftArrow",  Input.Left },
-                    { "RightArrow", Input.Right },
-                    { "UpArrow",    Input.Up },
-                    { "DownArrow",  Input.Down },
-                    { "Subtract",   Input.Ability }
-                }));
-                break;
-        }
+        // Construct players via welcome UI
+        Players = [.. GetPlayersWithAWelcome()];
 
         // Instantiate shops
         Players.ForEach(player => player.Shop = new(player, [.. Players.Where(p => p != player)]));
@@ -261,5 +188,84 @@ class GameState
         {
             ReadyPlayers.Remove(player);
         }
+    }
+
+    private Player[] GetPlayersWithAWelcome()
+    {
+        // Instantiate players via welcome page
+        GameModeSelect gameModeSelected = GameModeSelect.Singleplayer;
+        while (true)
+        {
+            int frameTarget = 20; // milliseconds per frame
+            long frameStart = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+            string key = KeyInput.Read() ?? "";
+            if (key == "UpArrow" || key == "DownArrow" || key == "W" || key == "S")
+            {
+                gameModeSelected = gameModeSelected == GameModeSelect.Singleplayer
+                    ? GameModeSelect.Multiplayer
+                    : GameModeSelect.Singleplayer;
+            }
+            else if (key == "Enter")
+            {
+                break;
+            }
+
+            WelcomeRenderer welcomeRenderer = new(this);
+            welcomeRenderer.Render(gameModeSelected);
+
+            int remaimingWait = frameTarget - (int)(DateTimeOffset.Now.ToUnixTimeMilliseconds() - frameStart);
+            if (remaimingWait > 0) Thread.Sleep(remaimingWait);
+        }
+
+        // Create players based on selection
+        return gameModeSelected switch
+        {
+            GameModeSelect.Singleplayer => [
+                new AIPlayer(),
+                new HumanPlayer("Player 1", new() {
+                    { "A", Input.Left },
+                    { "D", Input.Right },
+                    { "W", Input.Up },
+                    { "S", Input.Down },
+                    { "Q", Input.Ability },
+                    { "LeftArrow",  Input.Left },
+                    { "RightArrow", Input.Right },
+                    { "UpArrow",    Input.Up },
+                    { "DownArrow",  Input.Down },
+                    { "Subtract",   Input.Ability },
+                }
+            )],
+            GameModeSelect.Multiplayer => [
+                // KRAV 5:
+                // 1: Beroendeinjektion
+                // 2: Player instansieras med med olika kontrollscheman för att 
+                //     stödja flera spelare på samma maskin. Kontrollschemat 
+                //     injiceras in i Player-objektet vid konstruktion.
+                // 3: Det är en ren och tydlig implementation som gör det enkelt 
+                //     att skapa nya spelare med olika kontroller utan att behöva 
+                //     hårdkoda eller ändra i Player-klassen. Det är antingen 
+                //     den här lösningen eller att direkt sätta ett fält efter 
+                //     konstruktion, vilket är mindre önskvärt eftersom det lätt 
+                //     kan missas eller implementeras inkonsekvent. 
+                //     Kod-maintainability-wise är det nice att det sker här via 
+                //     injektion så man inte "tappar bort" sin kod.
+                new HumanPlayer("Player 1", new() {
+                    { "A", Input.Left },
+                    { "D", Input.Right },
+                    { "W", Input.Up },
+                    { "S", Input.Down },
+                    { "Q", Input.Ability }
+                }),
+                new HumanPlayer("Player 2", new() {
+                    { "LeftArrow",  Input.Left },
+                    { "RightArrow", Input.Right },
+                    { "UpArrow",    Input.Up },
+                    { "DownArrow",  Input.Down },
+                    { "Subtract",   Input.Ability }
+                }),
+            ],
+            _ => throw new Exception("Unrecognized game mode selected"),
+        };
     }
 }
