@@ -30,7 +30,7 @@ class Board
     public Queue<Polyomino> Queue { get; set; } = [];
     public CollisionGrid CollisionGrid { get; private set; } = [];
     public List<Tile> SettledTiles { get; private set; } = [];
-    public List<Polyomino> FallingPolyominoes { get; set; } = []; // usually just one but debuffs might change that
+    public List<Polyomino> FallingPolyominoes { get; set; } = []; // usually just contains one at a time but debuffs might change that :eyes:
 
     private int score = 0;
     private int money = 0;

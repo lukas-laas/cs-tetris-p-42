@@ -74,9 +74,35 @@ class GameState
         // Render
         gameRenderer.Render();
 
+        // Win/loss check
+        GameOverHandler();
+
         // Throttle
         int remaimingWait = frameTarget - (int)(DateTimeOffset.Now.ToUnixTimeMilliseconds() - frameStart);
         if (remaimingWait > 0) Thread.Sleep(remaimingWait);
+    }
+
+    private void GameOverHandler()
+    {
+        // Win loss check
+        bool draw = Players.All(p => !p.HasLiveBoard());
+        if (draw)
+        {
+            GameOverRenderer.Render(isDraw: true);
+            Thread.Sleep(5000);
+            Environment.Exit(0);
+        }
+        foreach (Player player in Players)
+        {
+            // Note, if 3 players are playing and 2 lose simultaneously, 
+            //  the looser will be the first in this enumeration
+            if (!player.HasLiveBoard())
+            {
+                GameOverRenderer.Render(winner: Players.First(p => p != player && p.HasLiveBoard()), losers: [.. Players.Where(p => p != player)]);
+                Thread.Sleep(5000);
+                Environment.Exit(0);
+            }
+        }
     }
 
     private void ShoppingMode()

@@ -1,8 +1,8 @@
 
-class GameRenderer
+class GameRenderer(GameState gameState)
 {
-    private readonly List<Player> players;
-    private readonly GameState gameState;
+    private readonly List<Player> players = gameState.Players;
+    private readonly GameState gameState = gameState;
 
     private static readonly int aspectRatioCorrection = 2; // Console characters are taller than they are wide
     private static readonly int boardSpacing = 16;
@@ -29,12 +29,6 @@ class GameRenderer
         {"bottomRight",      "╝"},
         {"bottomHorizontal", "═"},
     };
-
-    public GameRenderer(GameState gameState)
-    {
-        this.players = gameState.Players;
-        this.gameState = gameState;
-    }
 
     public void Render()
     {

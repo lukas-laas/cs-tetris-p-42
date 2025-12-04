@@ -87,13 +87,6 @@ class Player
         //  money buffers into the player's total
         this.Score += Board.ScoreBuffer;
         this.Money += Board.MoneyBuffer;
-
-        if (Board.HasLost)
-        {
-            // TODO: not like this...
-            Console.WriteLine($"{Name} has lost the game!");
-            Environment.Exit(0); // TODO: implement proper game over handling
-        }
     }
 
     public void AddToInventory(IProduct product)
@@ -130,6 +123,19 @@ class Player
             lastAbilityTick = currentTime;
         }
 
+    }
+
+    /// <summary>
+    /// Checks if the player has a live board (not lost).
+    /// </summary>
+    /// <returns></returns>
+    public bool HasLiveBoard()
+    {
+        /** 
+         * Some support for future multiboard causing power-ups / debuffs.
+         */
+        List<Board> boards = [Board];
+        return boards.Any(b => !b.HasLost);
     }
 }
 
