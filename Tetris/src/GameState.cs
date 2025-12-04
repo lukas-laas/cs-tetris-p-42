@@ -226,7 +226,7 @@ class GameState
         {
             GameModeSelect.Singleplayer => [
                 new AIPlayer(),
-                new HumanPlayer("Player 1", new() {
+                new HumanPlayer("The sole survivor", new() {
                     { "A", Input.Left },
                     { "D", Input.Right },
                     { "W", Input.Up },
@@ -253,14 +253,14 @@ class GameState
                 //     kan missas eller implementeras inkonsekvent. 
                 //     Kod-maintainability-wise är det nice att det sker här via 
                 //     injektion så man inte "tappar bort" sin kod.
-                new HumanPlayer("Player 1", new() {
+                new HumanPlayer("Gordon", new() {
                     { "A", Input.Left },
                     { "D", Input.Right },
                     { "W", Input.Up },
                     { "S", Input.Down },
                     { "Q", Input.Ability }
                 }),
-                new HumanPlayer("Player 2", new() {
+                new HumanPlayer("Alyx", new() {
                     { "LeftArrow",  Input.Left },
                     { "RightArrow", Input.Right },
                     { "UpArrow",    Input.Up },
