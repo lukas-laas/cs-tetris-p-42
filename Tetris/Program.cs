@@ -12,12 +12,17 @@ internal class Program
         // Game entry point
         try
         {
-            _ = new GameState();
+            Restart();
         }
         catch (Exception e)
         {
             Log.Add(e.ToString());
         }
+    }
+
+    public static void Restart()
+    {
+        _ = new GameState();
     }
 
 }

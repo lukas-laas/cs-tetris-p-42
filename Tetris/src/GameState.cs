@@ -90,7 +90,7 @@ class GameState
         {
             GameOverRenderer.Render(isDraw: true);
             Thread.Sleep(5000);
-            Environment.Exit(0);
+            Program.Restart();
         }
         foreach (Player player in Players)
         {
@@ -100,7 +100,7 @@ class GameState
             {
                 GameOverRenderer.Render(winner: Players.First(p => p != player && p.HasLiveBoard()), losers: [.. Players.Where(p => p != player)]);
                 Thread.Sleep(5000);
-                Environment.Exit(0);
+                Program.Restart();
             }
         }
     }
