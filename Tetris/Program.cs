@@ -1,4 +1,8 @@
-﻿internal class Program
+﻿/** 
+ * Please have a look at the ../readme.md file for information about this project.
+ */
+
+internal class Program
 {
     private static void Main()
     {

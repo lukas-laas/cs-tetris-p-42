@@ -1,11 +1,11 @@
 ## TETRIS in C#
-Made for the Object Oriented Programming 1 course at Uppsala University.
+Made for the Object Oriented Programming 1 course (2IS006-26005-HT2025) at Uppsala University by **Lukas Låås** and **Vena Ström**.
 
 ### Running
 Prerequisites:
 - .NET 9 SDK
 - A terminal that supports ANSI escape codes (most do) and even if not, it will just look bad.
-- Not the MAC terminal on macOS, it has poor ANSI support and renders unicode poorly.
+- Not the MAC terminal on macOS, it has poor ANSI (color) support and renders unicode poorly.
 
 ```bash
 # In the root directory of the project

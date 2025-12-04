@@ -15,8 +15,11 @@ class GameState
     private readonly ShopRenderer shopRenderer;
 
     public readonly HashSet<Player> ReadyPlayers = [];
+
+    /** Seconds between the shopping mode activating */
     public static readonly int GameplayDuration = 30;
-    public int ElapsedMs { get; private set; } = 0; // Elapsed milliseconds since the current gameplay phase started.
+    /** Milliseconds since this round started */
+    public int ElapsedMs { get; private set; } = 0;
 
     public GameState()
     {
