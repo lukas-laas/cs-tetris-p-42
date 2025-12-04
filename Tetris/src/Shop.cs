@@ -19,7 +19,7 @@ class Shop
             () => new Tax(owner, others),
             () => new MoreRows(owner),
             () => new SlowDown(owner),
-            () => new DotTime(owner),
+            () => new AddDot(owner),
             () => new MoneyMultiplier(owner),
             () => new LongerPreview(owner),
             () => new SlowMotion(owner),
@@ -44,8 +44,8 @@ class Shop
 // KRAV 7:
 // 1: Subtypspolymorfism #2
 // 2: ProductPool och Products använder typen IProduct, men fylls med olika
-//     konkreta subklasser (DotTime, SpeedUp, Tax, osv). När spelaren
-//     senare köper en produkt och Player.AddToInventory anropar product.Use()
+//     konkreta subklasser (AddDot, SpeedUp, Tax, osv). När spelaren
+//     senare köper en produkt anropas Player.AddToInventory och vid product.Use()
 //     anropas rätt Use()-implementation beroende på faktisk produkttyp.
 // 3: Detta gör att shoppen kan hantera alla produkter på ett enhetligt sätt
 //     utan switch-satser per produkttyp. Vi kan enkelt lägga till nya
@@ -121,18 +121,18 @@ interface IAbilityProduct : IProduct
 // - FreezeInput (ability): briefly freezes opponent inputs.
 
 // ================== BUFFS ==================
-class DotTime : IStaticProduct
+class AddDot : IStaticProduct
 {
     // Buff
     // Have a chance to fill in the gaps 
     // with the new exciting . (dot) monomino!
-    public string Name { get; } = "DotTime";
+    public string Name { get; } = "Add Dot";
     public string description { get; } = "Add a dot monomino to your queue so you have a chance of getting it in your queue.";
     public double rarity { get; } = 0.2;
     public int price { get; } = 50;
     public Player Purchaser { get; set; }
     public List<Player> Targets { get; set; }
-    public DotTime(Player purchaser)
+    public AddDot(Player purchaser)
     {
         this.Purchaser = purchaser;
         this.Targets = [purchaser];

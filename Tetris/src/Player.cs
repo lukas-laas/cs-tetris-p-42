@@ -17,8 +17,8 @@ class Player
     //     läser player-klassen Boardens publika ScoreBuffer och MoneyBuffer fält. 
     // 3: Konceptuellt är det rimligt att en spelare har koll på sitt eget bräde,
     //     och programetiskt är det smidigt eftersom spelaren agerar identifierare 
-    //     till sitt eget bräde när det gäller interaktion med shoppen. Board är
-    //     väldigt inkapslad och interagerar endast med spelaren via "kommandon"
+    //     till sitt eget bräde när det gäller interaktion med shoppen. Board 
+    //     interagerar endast med spelaren via "kommandon"
     //     som inte behöver rapportera upp något samt publika buffrar som tömmer 
     //     sig själva på Boarden.
     public Board Board;
