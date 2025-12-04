@@ -27,6 +27,7 @@ class Shop
             () => new SkipOpponentsCurrent(owner, others),
             () => new MonochromeBoard(owner, others),
             () => new EsotericPolyominoes(owner, others),
+            () => new AddX(owner, others)
         ];
 
         Restock();
@@ -248,7 +249,7 @@ class MoreI : ITemporaryProduct
     public Player Purchaser { get; set; }
     private List<Func<Polyomino>> polyominoes = [
         () => new TetrominoI(),
-        () => new OctominoThiccI(),
+        () => new OctominoIII(),
         () => new OctominoThiccI(),
         () => new TrominoLowerI(),
         () => new DominoSmallI(),
@@ -516,6 +517,47 @@ class SkipOpponentsCurrent : IAbilityProduct
         {
             Disabled = false;
             Targets.ForEach(target => target.Board.FallingPolyominoes.RemoveAt(0));
+            CooldownTimer = Cooldown;
+        }
+    }
+
+    public void Disable()
+    {
+        Disabled = true;
+    }
+}
+class AddX : IAbilityProduct
+{
+    // Debuff
+    // Replace opponents next piece with X
+    public string Name { get; } = "X lovers";
+    public string description { get; } = "Replaces next in opponents queue with X.";
+    public double rarity { get; } = 0.04;
+    public int price { get; } = 170;
+    public int Cooldown { get; set; } = 30;
+    public List<Player> Targets { get; set; }
+    public Player Purchaser { get; set; }
+    public AddX(Player purchaser, List<Player> targets)
+    {
+        this.Purchaser = purchaser;
+        this.Targets = targets;
+    }
+    public int CooldownTimer { get; set; } = 0;
+    public int Duration { get; set; } = 0;
+    public int DurationTimer { get; set; } = 0;
+    public bool Disabled { get; set; } = true;
+
+    public void Use()
+    {
+        if ((CooldownTimer <= 0) && Disabled)
+        {
+            Disabled = false;
+            Targets.ForEach(target =>
+            {
+                List<Polyomino> temp = target.Board.Queue.ToList();
+                temp[0] = new PentominoX();
+                target.Board.Queue = new(temp);
+            });
             CooldownTimer = Cooldown;
         }
     }
